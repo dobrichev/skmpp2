@@ -72,7 +72,7 @@ void ZHOU::ImageCandidats() {// only active digits ??
 	int i, j, l, lcol[9], tcol = 0,ncand=0;
 	cout <<"PM map "<<endl<<endl;
 	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
-		lcol[i] = 2;    // 2  mini tous chiffres imposés
+		lcol[i] = 2;    // 2  mini tous chiffres imposÃ©s
 		for(j = 0; j < 9; j++) {
 			l = __popcnt(dig_cells[9 * j + i]);
 			if(l > lcol[i])       lcol[i] = l;
@@ -108,7 +108,7 @@ void ZHOU::ImageCandidats_b3() {// only active digits ??
 	int i, j, l, lcol[9], tcol = 0,ncand=0;
 	cout <<"PM map bande 3"<<endl<<endl;
 	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
-		lcol[i] = 2;    // 2  mini tous chiffres imposés
+		lcol[i] = 2;    // 2  mini tous chiffres imposÃ©s
 		for(j = 6; j < 9; j++) {
 			l = __popcnt(dig_cells[9 * j + i]);
 			if(l > lcol[i])       lcol[i] = l;
