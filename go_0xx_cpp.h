@@ -512,7 +512,7 @@ int ZHOU::RateSingle(GINT64 * t, int nt){// look if a single appears after a hid
 				else zh_g.AddSingle(iband, b0);
 			}
 			if (pm_go.opprint2 & 1)cout << " nsingles after col " << zh_g.nsingles << endl;
-			//cout << "après col zh_g.nsingles=" << zh_g.nsingles << endl;
+			//cout << "aprÃ¨s col zh_g.nsingles=" << zh_g.nsingles << endl;
 		}
 	}
 	return zh_g.nsingles;
@@ -550,7 +550,7 @@ int ZHOU::RateSingleDiag(GINT64 * t, int nt){// look if a single appears after a
 				else if (b2)zh_g.AddSingleDiag(p[2], b2);
 				else zh_g.AddSingleDiag(iband, b0);
 			}
-			//cout << "après col zh_g.nsingles=" << zh_g.nsingles << endl;
+			//cout << "aprÃ¨s col zh_g.nsingles=" << zh_g.nsingles << endl;
 		}
 	}
 	return zh_g.nsingles;
@@ -1276,7 +1276,7 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 				if (__popcnt(digs3) > 3) continue;
 				// this is a naked triplet 
 				int btrip = t3b[i1] | t3b[i2] | t3b[i3];
-				//cout << Char27out(btrip) << " triplet à voir band=" << iband + 1 << " mode=" << mode << endl;
+				//cout << Char27out(btrip) << " triplet Ã  voir band=" << iband + 1 << " mode=" << mode << endl;
 				zh_g.locked_nacked_brc_done[mode].bf.u32[iband] |= btrip;
 				int zclean = unit & ~btrip;
 				for (int idig = 0; idig < 9; idig++) {// box or row
@@ -1320,7 +1320,7 @@ int ZHOU::Rate36_FindClean_NakedTripletCol(int unit_triplet_cells, int unit, int
 				if (__popcnt(digs3) > 3) continue;
 				// this is a naked triplet 
 				int btrip = t3b[i1] | t3b[i2] | t3b[i3];
-				//cout << Char27out(btrip) << "col  triplet à voir band=" << iband + 1  << endl;
+				//cout << Char27out(btrip) << "col  triplet Ã  voir band=" << iband + 1  << endl;
 				zh_g.locked_nacked_brc_done[2].bf.u32[iband] |= btrip;
 				int zclean = unit & ~btrip;
 				for (int idig = 0; idig < 9; idig++){// box or row
