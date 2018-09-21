@@ -295,10 +295,10 @@ loop_upd:
 	zh_g.cpt[3]++;
 	cur_assigned = last_assigned; last_assigned = 0;
 	UPD_ONE_DIGIT(8, 0377) UPD_ONE_DIGIT(7, 0577) UPD_ONE_DIGIT(6, 0677)
-		//if (zh_g.diag){ cout << "après 987" << endl; Debug(); }
+		//if (zh_g.diag){ cout << "aprÃ¨s 987" << endl; Debug(); }
 		//if (cur_assigned > 5)goto exit_digits;
 	UPD_ONE_DIGIT(5, 0737) UPD_ONE_DIGIT(4, 0757) UPD_ONE_DIGIT(3, 0767)
-		//if (zh_g.diag){ cout << "après 654" << endl; Debug(0); }
+		//if (zh_g.diag){ cout << "aprÃ¨s 654" << endl; Debug(0); }
 	//if (cur_assigned > 3)goto exit_digits;
 	UPD_ONE_DIGIT(2, 0773) UPD_ONE_DIGIT(1, 0775) UPD_ONE_DIGIT(0, 0776)
 	exit_digits:
