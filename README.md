@@ -13,4 +13,4 @@ Logic solver with many logical rules
 SudokuExplainer mode ratings
 And miscellaneous tasks related to the sudoku fields
 
-==Not here==  the work on sudoku solution grids (separate project)
+==Not yet here==  the work on sudoku solution grids (separate project)
