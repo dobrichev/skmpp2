@@ -1,9 +1,9 @@
 
 
 #define _CRT_SECURE_NO_DEPRECATE
-#include <sys\timeb.h>
+#include <sys/timeb.h>
 #include "sk_t.h"  // tab0  
-#include "zhn.h"
+#include "Zhn.h"
 
 struct SGO{
 	int command;

@@ -94,19 +94,6 @@ typedef union p9x9 {
 	char puz[82];
 	char gr[9][9];
 } p9_9;
-struct PUZ{
-	p9x9 gg;
-	void OutGrid();
-}; 
-
-struct TUA64{// table outside the struct
-	uint64_t * t, wt;
-	int nua, tsize;
-	inline void Init(uint64_t * e_t, int n){ t = e_t; tsize = n; nua = 0; }
-	void AddUA(int debug = 0);
-	void Print(int start = 0, int end = 0);
-	void Print(char * lib);
-};
 
 //==============================tables and functions  in tab0 and tab0b
 
@@ -220,6 +207,23 @@ public:
 	void First(int ne, int pe, USHORT * d, USHORT * f); // initial
 	int Next(); // get next group of index
 };
+
+//========================== various old struct or UA collection
+struct PUZ {
+	p9x9 gg;
+	void OutGrid();
+};
+
+struct TUA64 {// table outside the struct UA handling 
+	uint64_t * t, wt;
+	int nua, tsize;
+	inline void Init(uint64_t * e_t, int n) { t = e_t; tsize = n; nua = 0; }
+	void AddUA(int debug = 0);
+	void Print(int start = 0, int end = 0);
+	void Print(char * lib);
+};
+
+
 class GG {
 public:
 	char g[9][9],	///<The grid
@@ -263,6 +267,8 @@ public: char v[10];
 		}
 
 };
+
+//================= symmetry of given 
 
 extern USHORT sh_36[36][2];
 extern USHORT sv_36[36][2];

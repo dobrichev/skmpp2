@@ -330,7 +330,7 @@ void Go_c200(){// just split the entry file
 	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
 	char ze[82]; ze[81] = 0;
 	while (finput.GetPuzzle(ze)){
-		if (zh_g.diag)cout << ze << "traitÃ©" << endl;
+		if (zh_g.diag)cout << ze << "traité" << endl;
 		zh_g.npuz++;
 		gscom.Init();
 		for (int i = 0; i < 81; i++)if (ze[i] != '.'){// catch given

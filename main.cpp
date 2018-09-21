@@ -1,7 +1,7 @@
 
 #define _CRT_SECURE_NO_DEPRECATE
 #include "main.h"
-#include "zhn.cpp"
+#include "Zhn_cpp.h"
 
 
 // catching time as seconds+millis  (seconds since year 1970)

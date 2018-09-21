@@ -3,10 +3,10 @@
 //========================================
 char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
 "fupd ", "hpair ", "htripl ", " ", " " };
-#include "go_0xx.cpp"
-#include "go_1xx.cpp"
-#include "go_2xx.cpp"
-#include "go_4xx.cpp"
+#include "go_0xx_cpp.h"
+#include "go_1xx_cpp.h"
+#include "go_2xx_cpp.h"
+#include "go_4xx_cpp.h"
  void Go_0xx(){
 		Go_c0();
 }

@@ -6,7 +6,7 @@ The copyright is not specified.
 //====================================
 //#include "sk_t.h"  // tab0  
 //#include "Zhn.h"
-#include "Zhtables.cpp" // also describes the pattern
+#include "Zhtables_cpp.h" // also describes the pattern
 //#define DIAG
 
 ZH_GLOBAL zh_g;
@@ -145,12 +145,15 @@ int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
 	strcpy(puz, ze);
 	NoMorph();
 	ngiven = 0;
+	int digs = 0;
     for (int i = 0; i < 81; i++){
 		register int c = puz[i];
 		if (c<'1' || c>'9') continue;
 		c -= '1';
+		digs |= 1 << c;
 		tgiven[ngiven++].u16 = i | (c << 8);
 	}
+	if (__popcnt(digs) < 8) return 1; // don't accept less than 8 digits given
 	return InitSudoku();
 }
 int ZH_GLOBAL::Go_InitSolve(char * ze){
@@ -160,12 +163,15 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 	strcpy(puz, ze);
 	NoMorph();
 	ngiven = 0;
+	int digs = 0;
 	for (int i = 0; i < 81; i++){
 		register int c = puz[i];
 		if (c<'1' || c>'9') continue;
 		c -= '1';
+		digs |= 1 << c;
 		tgiven[ngiven++].u16 = i | (c << 8);
 	}
+	if (__popcnt(digs) < 8) return 1; // don't accept less than 8 digits given
 	if( InitSudoku()) return 1;
 	zhou_solve = zhou[0];
 	zhou[0].ComputeNext();
@@ -295,10 +301,10 @@ loop_upd:
 	zh_g.cpt[3]++;
 	cur_assigned = last_assigned; last_assigned = 0;
 	UPD_ONE_DIGIT(8, 0377) UPD_ONE_DIGIT(7, 0577) UPD_ONE_DIGIT(6, 0677)
-		//if (zh_g.diag){ cout << "aprÃ¨s 987" << endl; Debug(); }
+		//if (zh_g.diag){ cout << "après 987" << endl; Debug(); }
 		//if (cur_assigned > 5)goto exit_digits;
 	UPD_ONE_DIGIT(5, 0737) UPD_ONE_DIGIT(4, 0757) UPD_ONE_DIGIT(3, 0767)
-		//if (zh_g.diag){ cout << "aprÃ¨s 654" << endl; Debug(0); }
+		//if (zh_g.diag){ cout << "après 654" << endl; Debug(0); }
 	//if (cur_assigned > 3)goto exit_digits;
 	UPD_ONE_DIGIT(2, 0773) UPD_ONE_DIGIT(1, 0775) UPD_ONE_DIGIT(0, 0776)
 	exit_digits:
@@ -395,8 +401,8 @@ int ZHOU::Isvalid(){ // usually after init 2 steps
 }
 int ZHOU::CheckValidityQuick(char *puzzle){
 	zh_g.nsol = 0; zh_g.lim = 1;
-	//if (zh_g.Go_InitSudoku_NoMorph(puzzle)) return 0;
-	if (zh_g.Go_InitSudoku(puzzle)) return 0;;
+	if (zh_g.Go_InitSudoku_NoMorph(puzzle)) return 0;
+	//if (zh_g.Go_InitSudoku(puzzle)) return 0;;
 	//if (ApplySingleOrEmptyCells())	return 0; // pas bon
 	if (0){
 		Debug(1);
@@ -430,7 +436,7 @@ int ZHOU::IsMinimale(GINT16 * to, int no){// assumed checked valid before
 	return 1;
 }
 
-#include "Zhn_doc_debug.cpp"
+#include "Zhn_doc_debug_cpp.h"
 /*Zhn Control of flow
 -b9- use of hidden pairs triplets zhg_modeguess
  abc  a use pairs  b use triplets c use pairs not hidden pair

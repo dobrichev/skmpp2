@@ -125,7 +125,7 @@ struct BF64 {
 
 	inline BF64 operator& (const uint64_t &r) const { BF64 w; w.bf.u64 = bf.u64 & r; return w; }
 	inline BF64 operator& (const BF64& r) const { BF64 w; w.bf.u64 = bf.u64 & r.bf.u64; return w; }
-	inline void operator&= (const __int64 &r) { bf.u64 &= r; }
+	inline void operator&= (const uint64_t &r) { bf.u64 &= r; }
 	inline void operator&= (const BF64& r) { bf.u64 &= r.bf.u64; }
 
 	inline BF64 operator^ (const uint64_t &r) const { BF64 w; w.bf.u64 = bf.u64 ^ r; return w; }
