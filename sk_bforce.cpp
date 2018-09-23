@@ -1,7 +1,7 @@
 
 #define _CRT_SECURE_NO_DEPRECATE
 //#define ZHOU_OLD
-#include <sys\timeb.h>
+#include <sys/timeb.h>
 #include "main.h"  // tab0  
 
 uint64_t p_cptg[40], p_cpt1g[20], p_cpt2g[20];
