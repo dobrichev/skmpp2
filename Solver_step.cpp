@@ -69,7 +69,7 @@ void STORE_UL::Print(char * lib){
 int  BUG::DoChange(int iplus, int el){
 	int  & wd = tplus_digits[iplus];
 	int & elpar = el_par_ch[el], wx = wd & elpar;
-	if (__popcnt(wx) != 2) return 1; // not valid
+	if (_popcnt32(wx) != 2) return 1; // not valid
 	if (elpar != wx)return 1; // here one cell with extra digits, must be the same
 	if (wchange) return(wchange != wx);// return 0 if ok
 	wchange = wx;
@@ -153,7 +153,7 @@ int BUG::Init(){
 		}
 		if (aig) return 1;
 	}
-	if (__popcnt(or_change) > 4)	return 1;  // maxi  4 extra candidates
+	if (_popcnt32(or_change) > 4)	return 1;  // maxi  4 extra candidates
 	return 0;
 }
 //============================================= WWUR2
@@ -522,7 +522,7 @@ void XSTATUS::Init(int dig){
 	pmbiv.SetAll_0();
 	bivsets.f=0;
 	for (int iu = 0; iu < 27; iu++){
-		if (__popcnt(dig_sets[iu]) == 2){
+		if (_popcnt32(dig_sets[iu]) == 2){
 			BF128 w = units3xBM[iu]; w &= pm;
 			bivsets.Set(iu);
 			pmbiv |= w;
@@ -619,7 +619,7 @@ int XSTATUS::XCycle(int fast){
 		cout << "try XCycle for digit " << digit + 1 << endl;
 		zhou_solve.DebugDigit(digit);
 		char ws[82];
-		cout << elims.String3X(ws) << " elims à voir" << endl;
+		cout << elims.String3X(ws) << " elims ï¿½ voir" << endl;
 	}
 	// start from bi values seen by an elimination
 	int xce, xce1, xce2, tback[30], nstarts = 0,iret=0;
@@ -732,7 +732,7 @@ int XSTATUS::XChain(int fast){
 	if (pm_go.opprint2 & 2){
 		cout << "try XChain for digit " << digit + 1 << endl;
 		char ws[82];
-		cout << elims.String3X(ws) << " elims à voir" << endl;
+		cout << elims.String3X(ws) << " elims ï¿½ voir" << endl;
 	}
 	// start from bi values seen by an elimination
 	int xce, xce1, tback[20], iret = 0, store_start = pm_go.nstore_xlc;
@@ -1028,7 +1028,7 @@ int XSTATUS::Nishio1(){// this is for a given digit
 	if (pm_go.opprint2 & 8){
 		cout << "try Nishio1 for digit " << digit + 1 << endl;
 		char ws[82];
-		cout << elims.String3X(ws) << " elims à voir" << endl;
+		cout << elims.String3X(ws) << " elims ï¿½ voir" << endl;
 		zhou_solve.DebugDigit(digit);
 	}
 	int tp[80], ntp = elims.String3X27(tp);
@@ -1049,7 +1049,7 @@ int XSTATUS::Nishio2(){// must also consider bi value multi chains seen as x->~a
 	if (diagloc){
 		cout << "try Nishio2 for digit " << digit + 1 << endl;
 		char ws[82];
-		cout << elims.String3X(ws) << " elims à voir" << endl;
+		cout << elims.String3X(ws) << " elims ï¿½ voir" << endl;
 	}
 	int  iret = 0;
 
@@ -1677,7 +1677,7 @@ int XYSEARCH::CleanXYChain(){
 
 int XYSEARCH::Expand_true_false(){// start is {cell c1 digit idig} false exit loop or chain
 	// in fact c1 is true in the solution
-	// one step is ã=b-c all belonging to bi-values 
+	// one step is ï¿½=b-c all belonging to bi-values 
 	int diag = 0;
 	//if (fastmode && idig == 4 && c1 >63)		diag = 1;
 	int ichain, c1digs = zh_g.dig_cells[c1];;
@@ -1800,7 +1800,7 @@ void XYSEARCH::Init(){//Collect bi values
 		memcpy(&wds[18], zh_g.dig_boxes[idig], 36);
 		BF128 & pmb = dbiv.pmdig[idig];
 		for (int iu = 0; iu < 27; iu++){
-			int nc = __popcnt(wds[iu]);
+			int nc = _popcnt32(wds[iu]);
 			if (nc == 2){
 				dig_bivsets[idig].Set(iu);
 				pmb |= units3xBM[iu];
@@ -2083,7 +2083,7 @@ int XYSEARCH::MultiCell(int c0){
 	if (diagloc>1)cout << "start Multicell for " << cellsFixedData[c0].pt << endl;
 	cleang = zh_g.pm;
 	if (diagloc>1)	cleang.Print("cleang at start");
-	int digs = zh_g.dig_cells[c0], ndigits = __popcnt(digs);
+	int digs = zh_g.dig_cells[c0], ndigits = _popcnt32(digs);
 	npaths = 0;
 	for (int idig = 0, bit = 1; idig < 9; idig++, bit <<= 1){
 		if (!(digs & bit))continue;
@@ -2436,7 +2436,7 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 			cout << "cells " << cellsFixedData[xcell].pt << endl;
 		}
 		wp.Clear_c(xcell);
-		int digs = zh_g.dig_cells[xcell], ndigs=__popcnt(digs);
+		int digs = zh_g.dig_cells[xcell], ndigs=_popcnt32(digs);
 		if (nmax < 8 && ndigs>3)continue;
 		welims.SetAll_1();
 		while (_BitScanForward(&d2, digs)){
@@ -2631,7 +2631,7 @@ void XYSEARCH::DynamicSolveContradiction(GINT cand,PM3X cont){// find path and e
 		}
 	}
 }
-/* this is for the serate mode x-> ~a and ~x -> ã 
+/* this is for the serate mode x-> ~a and ~x -> ï¿½ 
    here a bi value at start ~x -> y 
    x is dig1 cell1
    y is dig2 cell2
@@ -2880,7 +2880,7 @@ int PM_GO::CleanOr(int d1, int c1, int d2, int c2){
 	}
 	else if (c1 == c2) {
 		int digs_c = zh_g.dig_cells[c1];
-		if (__popcnt(digs_c) < 3) return 0;
+		if (_popcnt32(digs_c) < 3) return 0;
 		digs_c &= (~digits);
 		zhou_solve.CleanCellForDigits(c1, digs_c);
 		return 1;
@@ -3076,6 +3076,7 @@ void PM_GO::SolveSerate111(){// quick rate ans split serate mode
 	//cout << "end low " << rat_er / 10 << "." << rat_er % 10 << ";" << rat_ep / 10 << "." << rat_ep % 10
 	//	<< ";" << rat_ed / 10 << "." << rat_ed % 10 << endl;
 	// the puzzle is solved pack the results
+	{
 	int r_list[17] = { 10, 12, 15, 17, 20, 23, 25, 26,
 		28, 30, 32, 34, 36, 38, 40, 42, 44 };
 	// ignore it if already the same ER
@@ -3089,6 +3090,7 @@ void PM_GO::SolveSerate111(){// quick rate ans split serate mode
 		return;
 	}
 	return;// ask to ignore it
+	}//end of int r_list scope
 
 	//=============================== rating over 44
 
@@ -3654,7 +3656,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 						int cell2 = startbox + ((bande<3) ? (9 * rc2 + cr1) : (9 * cr1 + rc2));
 						if (uns.Off_c(cell2)) continue;
 						int digs2 = zh_g.dig_cells[cell2]& digs1;
-						if (__popcnt(digs2) < 2) continue;
+						if (_popcnt32(digs2) < 2) continue;
 						for (int ib2 = ib1 + 1; ib2 < 3; ib2++){// box2
 							int box2 = (bande < 3) ? (3 * bande + ib2) : (bande - 3 + 3 * ib2),
 								startbox2 = cellbox0[box2];
@@ -3663,7 +3665,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								int cell4 = startbox2 + ((bande<3) ? (9 * rc1 + cr2) : (9 * cr2 + rc1));
 								int cell3 = startbox2 + ((bande<3) ? (9 * rc2 + cr2) : (9 * cr2 + rc2));
 								int digs = zh_g.dig_cells[cell3] & digs2 & zh_g.dig_cells[cell4];
-								if (__popcnt(digs) < 2) continue;
+								if (_popcnt32(digs) < 2) continue;
 								// we have a potential UR in serate mode max 2 consecutive cells more than 2
 								if (zh_g.pairs.Off_c(cell1) && zh_g.pairs.On_c(cell4)){
 									tcells[0] = cell1; tcells[1] = cell2; tcells[2] = cell3; tcells[3] = cell4;
@@ -3713,7 +3715,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								ws.u8[1] = c2;
 								ws.u16[1] = digs;
 								ws.u16[3] = (digc1|digc2)^digs;
-								ws.u8[5] = __popcnt(ws.u16[3]);
+								ws.u8[5] = _popcnt32(ws.u16[3]);
 							}
 						}
 					}
@@ -3794,7 +3796,7 @@ int PM_GO::Rate45_el(GINT64 & t, int unit,int degree){
 	int locdiag = 1;
 	// voir ici tentative de rallier le rating serate
 	// le rating demarre  sur le nombre de "digitsothers"
-	// et on serait limité à nb cases >= 2*digitsothers pour naked > sec pour hidden
+	// et on serait limitï¿½ ï¿½ nb cases >= 2*digitsothers pour naked > sec pour hidden
 
 	BF128 wcells = zhou_solve.cells_unsolved;
 	wcells &= units3xBM[unit];
@@ -3818,7 +3820,7 @@ int PM_GO::Rate45_el(GINT64 & t, int unit,int degree){
 
 	int digits_ur = (zh_g.dig_cells[cell1] | zh_g.dig_cells[cell2]),
 		digitsothers = digits_ur & ~digs;// all digits of the UR not base digits
-	int nothers = __popcnt(digitsothers);
+	int nothers = _popcnt32(digitsothers);
 	if (rbase  > hint.rating) return 0;
 
 
@@ -4027,7 +4029,7 @@ int PM_GO::RateUL_base(STORE_UL & wul){// try to rate the UL table
 		<< " c1=" << cellsFixedData[cell1].pt << " c2=" << cellsFixedData[cell2].pt << endl;
 	switch (wul.type){
 	case 0:{// one cell with digits in excess
-		if (__popcnt(digc1) == 3)zhou_solve.Setcell(cell1);
+		if (_popcnt32(digc1) == 3)zhou_solve.Setcell(cell1);
 		else zhou_solve.CleanCellForDigits(cell1, digs);
 		if (opprint2 & 2)wul.Print("type 1 UL ");
 		wul.ur2.u16[1] = 0;
@@ -4112,7 +4114,8 @@ int PM_GO::Rate46_Find_ULs(){
 				nextspot:
 					if (ispot > 18) return 0; // safety control
 					sp = s++;		ispot++;		*s = *sp;
-					int digs = zh_g.dig_cells[scell], ndigs = __popcnt(digs);
+					{
+					int digs = zh_g.dig_cells[scell], ndigs = _popcnt32(digs);
 					s->loop.Set_c(scell);
 					if(locdiag>1){
 						char ws[82];
@@ -4121,7 +4124,7 @@ int PM_GO::Rate46_Find_ULs(){
 					s->digst |= digs;
 					s->parity[ispot & 1] |= cell_z3x[scell];
 					s->parity_rcb ^= C_rbc27[scell];
-					ndigst = __popcnt(s->digst);
+					ndigst = _popcnt32(s->digst);
 					// prepare next step
 					if (ndigs > 2){//============== extra digits 
 						s->nplus++;
@@ -4146,6 +4149,7 @@ int PM_GO::Rate46_Find_ULs(){
 							if (s->nplus > 1 && s->bf_one_digit.isEmpty()) goto back;
 						}
 					}
+					} //end of int digs scope
 
 					s->wgo = allcells - s->loop;
 					s->wgo &= cell_z3x[scell];// chain scell
@@ -4190,7 +4194,7 @@ int PM_GO::Rate46_Find_ULs(){
 						if (z.isEmpty())ntul--;// skipped if not same unit
 						wsul.ur2.u16[3] = (zh_g.dig_cells[wsul.ur2.u8[0]]| zh_g.dig_cells[wsul.ur2.u8[1]])
 							^ wsul.ur2.u16[1];
-						wsul.ur2.u8[5] = __popcnt(wsul.ur2.u16[3]);
+						wsul.ur2.u8[5] = _popcnt32(wsul.ur2.u16[3]);
 						wsul.type++;// goto nextidig2;// only on valid UL per pair is enough
 					}
 				next:
@@ -4220,13 +4224,14 @@ int PM_GO::Rate_ULs(int plus45){// try to rate the UL table
 	for (int iul = 0; iul < ntul; iul++){// all pending ul
 		STORE_UL & wul = tul[iul];
 		if ((int)wul.ur2.u8[4]>plus45)goto skip;// not yet the time to process it
+		{
 		int cell1 = (int)wul.ur2.u8[0], cell2 = (int)wul.ur2.u8[1],
 			digs = wul.ur2.u16[1], ul_plus = wul.ur2.u8[4], digc1 = zh_g.dig_cells[cell1];
 		if(locdiag)cout << "rate_uls plus=" << plus45 << " wul.type=" << wul.type << " my_plus=" << (int)wul.ur2.u8[4] 
 			<< " c1=" << cellsFixedData[cell1].pt << " c2=" << cellsFixedData[cell2].pt << endl;
 		switch (wul.type){
 		case 0:{// one cell with digits in excess
-			if (__popcnt(digc1) == 3)zhou_solve.Setcell(cell1);
+			if (_popcnt32(digc1) == 3)zhou_solve.Setcell(cell1);
 			else zhou_solve.CleanCellForDigits(cell1, digs);
 			iret = 1;
 			hint.Done(45 + ul_plus);
@@ -4262,6 +4267,7 @@ int PM_GO::Rate_ULs(int plus45){// try to rate the UL table
 
 		}//end case2
 		}//end switch
+		}//end cell1 scope
 	skip://just copy for later use
 		if (iul > ntuln)tul[ntuln++] = tul[iul];
 		else ntuln++;
@@ -4281,7 +4287,7 @@ int PM_GO::Rate56BUG() {
 		hint.Done(56);
 		return 1;
 	}
-	if (__popcnt(bug.or_change) == 1){	//======================= bug type 2 same digit
+	if (_popcnt32(bug.or_change) == 1){	//======================= bug type 2 same digit
 		unsigned long dig1; _BitScanForward(&dig1, bug.change_plus[0]);
 		if (opprint2 & 2)cout << "bug type 2 same digit=" << dig1 + 1 << endl;
 		if (0){
@@ -4307,7 +4313,7 @@ int PM_GO::Rate56BUG() {
 		int nmix = 0, nchange = 0, nothers = 0,
 			changet=bug.or_change,
 			changen=0x1ff^changet,
-			count_change = __popcnt(changet);
+			count_change = _popcnt32(changet);
 		while ((cell = wupw.getFirsCell()) >= 0){// analyse and store pairs
 			wupw.Clear_c(cell);
 			register int d = zh_g.dig_cells[cell];
@@ -4356,7 +4362,7 @@ int PM_GO::Rate56BUG() {
 		for (int i1 = 0; i1 < ntpairs - 1; i1++){
 			for (int i2 = i1 + 1; i2 < ntpairs; i2++){
 				int digt = tpairs_digits[i1] | tpairs_digits[i2] | changet;
-				if (__popcnt(digt) ==3){
+				if (_popcnt32(digt) ==3){
 					hint.Done(59);
 					if (opprint2 & 2)cout << "bug 3/4 naked triplet" << endl;
 					BF128 cells_clean = wu_pairs; cells_clean.Clear_c(tpairs[i1]); cells_clean.Clear_c(tpairs[i2]);
@@ -4375,7 +4381,7 @@ int PM_GO::Rate56BUG() {
 				int dig2 = dig1 | tpairs_digits[i2];
 				for (int i3 = i2 + 1; i3 < ntpairs; i3++){
 					int digt = dig2 | tpairs_digits[i3];
-					if (__popcnt(digt) == 4){
+					if (_popcnt32(digt) == 4){
 						hint.Done(60);
 						if (opprint2 & 2)cout << "bug 3/4 naked quad" << endl;
 						BF128 cells_clean = wu_pairs; cells_clean.Clear_c(tpairs[i1]); 
@@ -4397,7 +4403,7 @@ int PM_GO::Rate56BUG() {
 					int dig3 = dig2 | tpairs_digits[i3];
 					for (int i4 = i3 + 1; i4 < ntpairs; i4++){
 						int digt = dig3 | tpairs_digits[i4];
-						if (__popcnt(digt) == 5){
+						if (_popcnt32(digt) == 5){
 							hint.Done(61);
 							if (opprint2 & 2)cout << "bug 3/4 naked (5)" << endl;
 							BF128 cells_clean = wu_pairs; cells_clean.Clear_c(tpairs[i1]);
@@ -4456,7 +4462,7 @@ int PM_GO::Rate62_APE(){
 					seen &= cell_z3x[cell_base];
 					wdigs ^= bit;
 				}
-				if (wd.Count() < (int) __popcnt(wdigs))continue; // = is the minimum
+				if (wd.Count() < (int) _popcnt32(wdigs))continue; // = is the minimum
 				if (0 &&opprint2 & 2)
 				cout << "more for digit " << idig + 1 << " cell base " << cellsFixedData[cell_base].pt << endl;
 				// digit of the base cell must see a pair of the digit
@@ -4494,7 +4500,7 @@ int PM_GO::Rate75_ATE() {
 		zbaset;	// set of cells that are visible by one potential excluding cells
 	z23t.SetAll_0(); zbaset.SetAll_0();
 	for (int i = 0; i < 81; i++) {
-		int ncd = __popcnt(zh_g.dig_cells[i]);
+		int ncd = _popcnt32(zh_g.dig_cells[i]);
 		if (ncd < 2 || ncd > 3)			continue;
 		z23t.Set_c(i);
 		zbaset |= cell_z3x[i];

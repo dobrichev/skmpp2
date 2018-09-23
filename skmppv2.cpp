@@ -1,7 +1,7 @@
 
 #define _CRT_SECURE_NO_DEPRECATE
 //#define ZHOU_OLD
-#include <sys\timeb.h>
+#include <sys/timeb.h>
 #include "main.h"  // tab0  
 
 uint64_t p_cptg[40], p_cpt1g[20], p_cpt2g[20];
@@ -16,5 +16,5 @@ fout_diam, fout_pearl, fout_l45, fout_l65, fout_solved, fout_unsolved;
 
 #include "solver_step.h"
 FINPUT finput;
-#include "Go_0_cpp.h"
+#include "go_0_cpp.h"
 // updated file for test upload

@@ -237,7 +237,7 @@ int tperm6[6][3]={{0,1,2},{0,2,1},{1,0,2},{1,2,0},{2,0,1},{2,1,0}};// band order
 int tperm3[3][3]={{0,1,2},{1,2,0},{2,0,1}}; // here all boxes are in pos 1
 
 
-static const T128 maskLSB[129] =
+const T128 maskLSB[129] =
 {
 	{ 0, 0 },
 	{ 0x00000001, 0 }, { 0x00000003, 0 }, { 0x00000007, 0 }, { 0x0000000F, 0 },
@@ -274,7 +274,7 @@ static const T128 maskLSB[129] =
 	{ 0xFFFFFFFFFFFFFFFF, 0x1FFFFFFFFFFFFFFF }, { 0xFFFFFFFFFFFFFFFF, 0x3FFFFFFFFFFFFFFF }, { 0xFFFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF }, { 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF },
 };
 
-static const T128 maskffff = { 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF };
+const T128 maskffff = { 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF };
 
 
 extern T128 cellsInBandBM[6] = {

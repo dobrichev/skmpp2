@@ -153,7 +153,7 @@ int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
 		digs |= 1 << c;
 		tgiven[ngiven++].u16 = i | (c << 8);
 	}
-	if (__popcnt(digs) < 8) return 1; // don't accept less than 8 digits given
+	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
 	return InitSudoku();
 }
 int ZH_GLOBAL::Go_InitSolve(char * ze){
@@ -171,7 +171,7 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 		digs |= 1 << c;
 		tgiven[ngiven++].u16 = i | (c << 8);
 	}
-	if (__popcnt(digs) < 8) return 1; // don't accept less than 8 digits given
+	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
 	if( InitSudoku()) return 1;
 	zhou_solve = zhou[0];
 	zhou[0].ComputeNext();
@@ -301,10 +301,10 @@ loop_upd:
 	zh_g.cpt[3]++;
 	cur_assigned = last_assigned; last_assigned = 0;
 	UPD_ONE_DIGIT(8, 0377) UPD_ONE_DIGIT(7, 0577) UPD_ONE_DIGIT(6, 0677)
-		//if (zh_g.diag){ cout << "après 987" << endl; Debug(); }
+		//if (zh_g.diag){ cout << "aprï¿½s 987" << endl; Debug(); }
 		//if (cur_assigned > 5)goto exit_digits;
 	UPD_ONE_DIGIT(5, 0737) UPD_ONE_DIGIT(4, 0757) UPD_ONE_DIGIT(3, 0767)
-		//if (zh_g.diag){ cout << "après 654" << endl; Debug(0); }
+		//if (zh_g.diag){ cout << "aprï¿½s 654" << endl; Debug(0); }
 	//if (cur_assigned > 3)goto exit_digits;
 	UPD_ONE_DIGIT(2, 0773) UPD_ONE_DIGIT(1, 0775) UPD_ONE_DIGIT(0, 0776)
 	exit_digits:
@@ -614,23 +614,23 @@ int ZHOU::GuessHiddenBivalue(){// look for a single or a hidden pair in row or b
 		if (Rows & 7){//try row band1
 			dcell = dxcell = 0;
 			register int  band = fd.bf.u32[0];
-			hidden = band & 0777;			if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000000;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 0777;			if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000000;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 		if (Rows & 070)	{// try row band2
 			dcell = 27; dxcell = 32;
 			register int  band = fd.bf.u32[1];
-			hidden = band & 0777;			if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000000;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 0777;			if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000000;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 		if (Rows & 0700)	{//try row band3
 			dcell = 54; dxcell = 64;
 			register int  band = fd.bf.u32[2];
-			hidden = band & 0777;			if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0777000000;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 0777;			if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0777000000;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 	}
 	// no bi value row, try bi value box
@@ -641,23 +641,23 @@ int ZHOU::GuessHiddenBivalue(){// look for a single or a hidden pair in row or b
 		if (Rows & 7){//try bow band1
 			dcell = dxcell = 0;
 			register int  band = fd.bf.u32[0];
-			hidden = band & 07007007;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 070070070;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0700700700;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 07007007;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 070070070;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0700700700;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 		if (Rows & 070)	{// try box band2
 			dcell = 27; dxcell = 32;
 			register int  band = fd.bf.u32[1];
-			hidden = band & 07007007;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 070070070;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0700700700;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 07007007;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 070070070;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0700700700;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 		if (Rows & 0700)	{//try bow band3
 			dcell = 54; dxcell = 64;
 			register int  band = fd.bf.u32[2];
-			hidden = band & 07007007;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 070070070;		if (__popcnt(hidden) == 2)goto exitok;
-			hidden = band & 0700700700;		if (__popcnt(hidden) == 2)goto exitok;
+			hidden = band & 07007007;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 070070070;		if (_popcnt32(hidden) == 2)goto exitok;
+			hidden = band & 0700700700;		if (_popcnt32(hidden) == 2)goto exitok;
 		}
 	}
 	return 0;
@@ -688,9 +688,9 @@ int ZHOU::GuessHiddenTriplet(){// look for a triplet in row or box
 		register int  band = fd.bf.u32[2], maskrow = 0777, maskbox = 07007007;
 		for (int i = 0; i < 3; i++, rows >>= 1, maskrow <<= 9, maskbox <<= 3){// band or box
 			if (rows & 1){
-				hidden = band &maskrow;		if (__popcnt(hidden) ==3)goto exitok;
+				hidden = band &maskrow;		if (_popcnt32(hidden) ==3)goto exitok;
 			}
-			hidden = band &maskbox;		if (__popcnt(hidden) == 3)goto exitok;
+			hidden = band &maskbox;		if (_popcnt32(hidden) == 3)goto exitok;
 		}
 	}
 	return 0;
@@ -762,7 +762,7 @@ int ZHOU::SolveHiddenPair_Box_Row(){// look for a single or a hidden pair in row
 			int tbiv[9], digbiv[9], nbiv = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in box
 				int hidden = mask & FD[idig][0].bf.u32[iband];
-				if (__popcnt(hidden) == 2){
+				if (_popcnt32(hidden) == 2){
 					digbiv[nbiv] = idig;
 					tbiv[nbiv++] = hidden;
 					//cout << Char27out(hidden) << " biv dig=" << idig + 1 << endl;
@@ -813,10 +813,10 @@ int ZHOU::SolveHiddenTriplet_Box_Row(){// look a hidden triplet in row or box
 		int bandpairs = zh_g.pairs.bf.u32[iband];
 		for (int iboxr = 0, mask = 07007007; iboxr < 3; iboxr++, ibox++, mask <<= 3){
 			if (box_hidden_pair & (1 << ibox)) continue;
-			if (__popcnt(cells_unsolved.bf.u32[iband] & mask) < 5) continue;
+			if (_popcnt32(cells_unsolved.bf.u32[iband] & mask) < 5) continue;
 			int t3[9], dig3[9], n3 = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in box
-				int hidden = mask & FD[idig][0].bf.u32[iband], n = __popcnt(hidden);
+				int hidden = mask & FD[idig][0].bf.u32[iband], n = _popcnt32(hidden);
 				if (n>1 && n<4){
 					dig3[n3] = idig;
 					t3[n3++] = hidden;
@@ -829,10 +829,10 @@ int ZHOU::SolveHiddenTriplet_Box_Row(){// look a hidden triplet in row or box
 				register int R = t3[i];
 				for (int j = i + 1; j < n3 - 1; j++){
 					register int R2 = R | t3[j];
-					if (__popcnt(R2) > 3) continue;
+					if (_popcnt32(R2) > 3) continue;
 					for (int k = j + 1; k < n3; k++){
 						register int R3 = R2 | t3[k];
-						if (__popcnt(R3) != 3) continue;
+						if (_popcnt32(R3) != 3) continue;
 						int aig = 0;
 						for (int dig = 0; dig < 9; dig++)
 							if (dig != dig3[i] && dig != dig3[j] && dig != dig3[k]){
@@ -911,7 +911,7 @@ void ZHOU::GuessFloor(){
 		int  band = fd.bf.u32[iband];
 		for (int irb = 0; irb < 6; irb++){// boxes and rows of the band
 			hidden = band & tband_box[irb];
-			int cc = __popcnt(hidden);
+			int cc = _popcnt32(hidden);
 			if (cc < 2)continue;
 			if (cc == 2) goto exitok;
 			if ( cc < ccmin){ ccmin = cc; min = hidden;	bmin = iband; }

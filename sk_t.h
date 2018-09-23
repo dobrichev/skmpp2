@@ -8,13 +8,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 using namespace std;
+
+//platform-specific settings
+#ifdef _MSC_VER
 inline char * stpcpy(char * d, const char * o)
 	{strcpy(d,o); return (d+strlen(d));}
+#else
+//stpcpy is part of POSIX: http://pubs.opengroup.org/onlinepubs/9699919799/functions/stpcpy.html
+#endif
 
 #ifndef _MSC_VER
 //assume every compiler but MS is C99 compliant and has inttypes
 #include <inttypes.h>
-#define __stosq(a,b,c) memset(a,b,c*8)
 
 #else
 typedef unsigned __int8   uint8_t;
@@ -33,10 +38,56 @@ typedef unsigned __int64  uint64_t;
 
 #ifdef   _MSC_VER
 #define _popcnt64(a) __popcnt64(a)
+#define _popcnt32(a) __popcnt(a)
+//__movsb is builtin
+//__movsd is builtin
+//__movsq is builtin
+//__stosd is builtin
+//__stosq is builtin
+//_bittestandset64 is builtin
+//_bittestandreset64 is builtin
+//_bittest64 is builtin
+//_BitScanForward64 is builtin
+//_BitScanForward is builtin
+//_BitScanReverse64 is builtin
+//_BitScanReverse is builtin
+//strcpy_s is implemented
+//strncpy_s is implemented
+//_timeb has the same fields as timeb
+//_ftime64_s does the same as ftime64
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
+#define _popcnt32(a) __builtin_popcount(a)
+#define __movsb(dst,src,count) memcpy(dst,src,count)
+#define __movsd(dst,src,count) memcpy(dst,src,count*4)
+#define __movsq(dst,src,count) memcpy(dst,src,count*8)
+#define __stosd(dst, c, N) \
+   __asm__ __volatile__( \
+       "rep stosl %%eax, (%%rdi)\n\t" \
+       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
+//#define __stosq(a,b,c) memset(a,b,c*8)
+#define __stosq(dst, c, N) \
+   __asm__ __volatile__( \
+       "rep stosq %%rax, (%%rdi)\n\t" \
+       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
+#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
+#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
+#define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)
+#define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
+#define _BitScanForward(res, src) (*res = __builtin_ctz(src))
+#define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
+#define _BitScanReverse(res, src) (*res = __builtin_ffs(src))
+//strcpy_s isn't implemented
+#define strcpy_s(dest, size, src) (strncpy(dest, src, size))
+//strncpy_s isn't implemented
+#define strncpy_s(dest, size, src, n) {strncpy(dest, src, size < n ? size : n); dest[n] = 0;}
+#define _timeb timeb
+#define _ftime64_s ftime
 #endif
 
+#ifndef __AVX2__
+#define _blsi_u32(v) ((v | (v - 1)) ^ (v - 1))
+#endif
 
 
 //=======
@@ -173,7 +224,7 @@ public:
 		pl,     ///< column index (0-8)
 		plu,     /// same 9 17
 		eb,     ///< box index(0-8) 
-		ebu,     ///< box index(18_éè) 
+		ebu,     ///< box index(18_ï¿½ï¿½) 
 		pb;     ///< relative position in the box (0-8)
 	char pt[5];	///< printing string like R4C9 with \0
 	T128 z;     ///< list of the  20 cells controled by a cell in a bit field

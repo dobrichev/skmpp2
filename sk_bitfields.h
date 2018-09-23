@@ -45,7 +45,7 @@ struct BF8 {
 	inline void operator |=(UCHAR fe) {f |= fe;	}
 	inline void operator ^=(UCHAR fe) {f ^= fe;	}
 	inline void operator -=(UCHAR fe) {f ^= (f & fe);	}
-	inline unsigned int Count() {return __popcnt((unsigned int)f);	}
+	inline unsigned int Count() {return _popcnt32((unsigned int)f);	}
 
 }; // BF8
 
@@ -82,8 +82,8 @@ struct BF16 {
 		if (_BitScanForward(&res, f))	return  res;
 		return 0;
 	} // must be one bit
-	inline USHORT bitCount() { return __popcnt(f); }
-	inline int paire() { return (__popcnt(f) == 2); }
+	inline USHORT bitCount() { return _popcnt32(f); }
+	inline int paire() { return (_popcnt32(f) == 2); }
 
 	USHORT CountEtString(char *s);
 	char * String(char * ws, int lettre = 0);
@@ -237,7 +237,7 @@ public:
 	inline bool isNotEmpty() const { return bf.u64[0] != 0 || bf.u64[1] != 0; }
 
 	inline int Count(){ return (int)(_popcnt64(bf.u64[0]) + _popcnt64(bf.u64[1])); }
-	inline int Count96(){ return (int)(_popcnt64(bf.u64[0]) + __popcnt(bf.u32[2])); }
+	inline int Count96(){ return (int)(_popcnt64(bf.u64[0]) + _popcnt32(bf.u32[2])); }
 
 	inline int isSubsetOf(const BF128 &s) const { return  _mm_testc_si128(s.bf.u128, bf.u128); }
 	inline int isDisjoint(const BF128& r) const { return _mm_test_all_zeros(r.bf.u128, bf.u128); }

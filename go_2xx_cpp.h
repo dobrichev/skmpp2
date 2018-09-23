@@ -99,7 +99,7 @@ struct GENSTEP{
 			 << " cell=" << (int)tclues[iclue].u8[0] << " digit=" << (int)tclues[iclue].u8[1] + 1 
 			 <<"bfree=0"<<oct << free << dec << endl;
 		}
-		if ((int)__popcnt(free) < lim) return 0;// locked or not minimal
+		if ((int)_popcnt32(free) < lim) return 0;// locked or not minimal
 		return 1;
 	}
 	void Gengo(int istart);
@@ -134,8 +134,9 @@ struct GENSTEP{
 int GENSTEP::PuzzleToTest(){
 	int digits = 0;
 	for (int i = 0; i < nclues; i++) digits |= 1<<tclues[i].u8[1];
-	if (__popcnt(digits) < 8) return 0;// minimum 8 digits given to have a sudoku
+	if (_popcnt32(digits) < 8) return 0;// minimum 8 digits given to have a sudoku
 	if (zh_g.Go_InitSolve(tclues, nclues))goto no;
+	{
 	int nguess = (int)zh_g.cpt[1];
 	strcpy(puz, zh_g.puz);
 	zh_g.zsol = 0; // be sure to keep the solution 
@@ -150,6 +151,7 @@ int GENSTEP::PuzzleToTest(){
 	if (pm_go.rat_ed>23){ fout3 << puz << ";" << nguess << endl; return 3; }
 	fout2 << puz << ";" << nguess << endl;
 	return 2;
+	} //end of int nguess scope
 no:
 	if (sgo.command == 202)	{
 		char puz[82];
@@ -257,13 +259,14 @@ nextind2:
 	i += 2;
 	{	register CLUE & c = tc[i];
 		int free = row_free[c.er] & col_free[c.ec] & box_free[c.eb] & c.unlocked;
-		if (__popcnt(free) <2)  goto back2; // locked or not minimal
+		if (_popcnt32(free) <2)  goto back2; // locked or not minimal
 		tc[i].free = tfree[i]=free;
 	}
 	{	register CLUE & c = tc[i+1];
 		int free = row_free[c.er] & col_free[c.ec] & box_free[c.eb] & c.unlocked;
 		tc[i + 1].free = tfree[i+1] = free;
 	}
+	{
 	int digits = 0,level=sym36;
 	for (int ic = 0; ic < i; ic++) digits |= 1 << tclues[ic].u8[1];
 	if (i) level = tc[i - 2].level_dig;
@@ -276,6 +279,7 @@ nextind2:
 	if (i == nclues - 2 && level==2+sym36){// must be 89
 		tfree[i] &= 0x180;
 	}
+	} //end of int digits scope
 next2:
 	while (_BitScanForward(&digit, tfree[i])){
 		//if (i == 1)cout << "loop1 0x" << hex << tfree[i]<<dec << endl;
@@ -330,7 +334,7 @@ void Go_c200(){// just split the entry file
 	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
 	char ze[82]; ze[81] = 0;
 	while (finput.GetPuzzle(ze)){
-		if (zh_g.diag)cout << ze << "traité" << endl;
+		if (zh_g.diag)cout << ze << "traitï¿½" << endl;
 		zh_g.npuz++;
 		gscom.Init();
 		for (int i = 0; i < 81; i++)if (ze[i] != '.'){// catch given

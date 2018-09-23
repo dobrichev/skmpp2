@@ -100,7 +100,7 @@ int TWO_DIGITS::Hiden_Pairs_Box(){// etude recherche hidden biv
 		if (!iband) continue;
 		for (int ibox = 0; ibox < 3; ibox++){
 			int box = band & tband_box[ibox];
-			if (__popcnt(box) - 2) continue;
+			if (_popcnt32(box) - 2) continue;
 			// if ! naked pair store it  set up naked pair 
 			int locked = box & zh_g.pairs.bf.u32[ibox];
 			if (box & (~locked)){// some eliminations 
@@ -121,7 +121,7 @@ void ZH_GLOBAL::Pm_Status(ZHOU * z){
 		BF128 w = z->FD[idig][0];
 		pm.pmdig[idig] = w& cells_unsolved_e;
 		pmdiag.pmdig[idig].Diag3x27(pm.pmdig[idig]);
-		unsolved_r_count[idig] = __popcnt(w.bf.u32[3]);
+		unsolved_r_count[idig] = _popcnt32(w.bf.u32[3]);
 		//unsolved_c_count[idig] = __popcnt(pmdiag.pmdig[idig].bf.u32[3]);  idiot
 		int row = 0;
 		for (int iband = 0; iband < 3; iband++){// fill rows cols 9 bits
@@ -248,12 +248,12 @@ void ZHOU::Naked_Pairs_Seen(){
 void ZHOU::XW_template(int idig){
 	int rx2 = zh_g.row_col_x2[idig][0], cx2 = zh_g.row_col_x2[idig][1];
 	int tr[9], nr = 0, nfree = zh_g.unsolved_r_count[idig];
-	if (nfree - __popcnt(rx2) < 3) return;
+	if (nfree - _popcnt32(rx2) < 3) return;
 	int *rows = zh_g.dig_rows[idig], *cols = zh_g.dig_cols[idig];
 	// collect all rows/cols 2 cells
 	for (int irow = 0; irow < 9; irow++){
 		if (rx2 & (1 << irow))continue;
-		if (__popcnt(rows[irow]) == 2)tr[nr++] = irow;
+		if (_popcnt32(rows[irow]) == 2)tr[nr++] = irow;
 	}
 	if (nr < 2) return;
 	for (int ir1 = 0; ir1 < nr - 1; ir1++){
@@ -300,11 +300,11 @@ int ZHOU::Rate10_LastInUnit(){// look for a single in box
 		register int  band = cells_unsolved.bf.u32[iband];
 		for (int ibox = 0; ibox < 3; ibox++){
 			hidden = band & tband_box[ibox];
-			if (__popcnt(hidden) == 1)zh_g.AddSingle(iband,  hidden); 
+			if (_popcnt32(hidden) == 1)zh_g.AddSingle(iband,  hidden);
 		}
 		for (int irow = 0; irow < 3; irow++){
 			hidden = band & tband_row[irow];
-			if (__popcnt(hidden) == 1)zh_g.AddSingle(iband, hidden);
+			if (_popcnt32(hidden) == 1)zh_g.AddSingle(iband, hidden);
 		}
 		register int R = band & 0777;	R2 |= R&R1; R1 |= R;
 		R = (band >> 9) & 0777;	R2 |= R&R1; R1 |= R;
@@ -335,7 +335,7 @@ int ZHOU::Rate12_SingleBox(){// look for a single in box
 			int  band = fd.bf.u32[iband] & cells_unsolved.bf.u32[iband];
 			for (int ibox = 0; ibox < 3; ibox++){
 				hidden = band & tband_box[ibox];
-				if (hidden && __popcnt(hidden) == 1)
+				if (hidden && _popcnt32(hidden) == 1)
 					zh_g.AddSingle(iband, hidden);
 			}
 		}
@@ -353,7 +353,7 @@ int ZHOU::Rate15_SingleRow(){// look for a single in Rox
 			int  band = fd.bf.u32[iband] & cells_unsolved.bf.u32[iband];
 			for (int irow = 0; irow < 3; irow++){
 				hidden = band & trow[irow];
-				if (hidden && __popcnt(hidden) == 1)
+				if (hidden && _popcnt32(hidden) == 1)
 					zh_g.AddSingle(iband,  hidden);
 			}
 		}
@@ -369,7 +369,7 @@ int ZHOU::Rate15_SingleColumn(){// look for a single in column
 		for (int icol = 0; icol < 9; icol++,col<<=1){
 			int nn = 0;
 			for (int iband = 0; iband < 3; iband++){
-				nn += __popcnt(fd.bf.u32[iband]&col);
+				nn += _popcnt32(fd.bf.u32[iband]&col);
 			}
 			if (nn!= 1) continue;
 			// redo it to catch the band
@@ -400,17 +400,17 @@ int ZHOU::Rate17_lockedBox_Assign(){
 				(TblShrinkMask[(band >> 18) & 0x1FF] << 6);
 			for (int irow1 = 0; irow1 < 3; irow1++){
 				register int x = (shrink>>(3*irow1)) & 7 ;
-				if (__popcnt(x) - 1)continue;
+				if (_popcnt32(x) - 1)continue;
 				// this is a minirow locked in box
 				//cout << "17 row dig=" << idig + 1 << " band=" << iband + 1
 				//	<< " rrow=" << irow1+1 << endl;
 				unsigned long rbox;// relative box
 				_BitScanForward(&rbox, x);
-				if (__popcnt(shrink & tboxskrink[rbox]) == 1)continue;
+				if (_popcnt32(shrink & tboxskrink[rbox]) == 1)continue;
 				int nbox = ~tband_box[rbox];
 				for (int irow2 = 0; irow2 < 3; irow2++) if(irow2-irow1){
 					int hidden = band &tband_row[irow2] & nbox;
-					if (__popcnt(hidden) - 1)continue;
+					if (_popcnt32(hidden) - 1)continue;
 					zh_g.AddSingle(iband,  hidden);
 					//cout << Char27out(hidden) << " add irow2=" << irow2 + 1 << endl;
 				}
@@ -422,7 +422,7 @@ int ZHOU::Rate17_lockedBox_Assign(){
 				or23=b2|b3,and23=b2&b3,single23=or23^and23;
 			for (int ibox = 0; ibox < 3; ibox++){
 				int mask = 7 << (3 * ibox), b1m = b1&mask;
-				if (__popcnt(b1m) < 2) continue; // solved or cleaned
+				if (_popcnt32(b1m) < 2) continue; // solved or cleaned
 				int col23 = or23 & mask, colsingle = b1m & (~col23);
 				if (!colsingle)continue;
 				int single23box = single23&mask;
@@ -435,7 +435,7 @@ int ZHOU::Rate17_lockedBox_Assign(){
 					_BitScanForward(&icol, singleb2);
 					int colmask = 01001001 << icol;
 					int bx = fd.bf.u32[p[1]] & tband_box[ibox] & colmask;
-					if (__popcnt(bx) == 1){
+					if (_popcnt32(bx) == 1){
 						zh_g.AddSingle(p[1], bx);
 						//cout << Char27out(bx) << " add singleb2" << endl;
 					}
@@ -446,7 +446,7 @@ int ZHOU::Rate17_lockedBox_Assign(){
 					_BitScanForward(&icol, singleb3);
 					int colmask = 01001001 << icol;
 					int bx = fd.bf.u32[p[2]] & tband_box[ibox] & colmask;
-					if (__popcnt(bx) == 1){
+					if (_popcnt32(bx) == 1){
 						zh_g.AddSingle(p[2], bx);
 						//cout << Char27out(bx) << " add singleb3" << endl;
 					}
@@ -492,13 +492,13 @@ int ZHOU::RateSingle(GINT64 * t, int nt){// look if a single appears after a hid
 			for (int iboxr = 0; iboxr < 3; iboxr++){// try a box
 				int box = fdb & tband_box[iboxr];		if (!(box&R))continue;
 				int hidden = box & (~R);
-				if (__popcnt(hidden) == 1)	zh_g.AddSingle(iband, hidden);
+				if (_popcnt32(hidden) == 1)	zh_g.AddSingle(iband, hidden);
 			}	
 			if (pm_go.opprint2 & 1)cout << " nsingles after box " << zh_g.nsingles<<endl;
 			for (int irow = 0; irow < 3; irow++){// try a row
 				int row = fdb & tband_row[irow];		if (!(row&R))continue;
 				int hidden = row & (~R);
-				if (__popcnt(hidden) == 1) zh_g.AddSingle(iband, hidden);
+				if (_popcnt32(hidden) == 1) zh_g.AddSingle(iband, hidden);
  			}
 			if (pm_go.opprint2 & 1)cout << " nsingles after row " << zh_g.nsingles << endl;
 			for (int icol = 0, col = Zhoucol; icol < 9; icol++, col <<= 1){// try a column
@@ -506,13 +506,13 @@ int ZHOU::RateSingle(GINT64 * t, int nt){// look if a single appears after a hid
 				if (!(fdb & Rcol)) continue;
 				int * p = tperm3[iband],		b0 = fdb & col & (~R),
                     b1 = fd.bf.u32[p[1]]&col,   b2 = fd.bf.u32[p[2]]&col;
-				if ((__popcnt(b0) + __popcnt(b1) + __popcnt(b2)) != 1) continue;
+				if ((_popcnt32(b0) + _popcnt32(b1) + _popcnt32(b2)) != 1) continue;
 				if (b1)zh_g.AddSingle(p[1], b1);	
 				else if (b2)zh_g.AddSingle(p[2], b2);
 				else zh_g.AddSingle(iband, b0);
 			}
 			if (pm_go.opprint2 & 1)cout << " nsingles after col " << zh_g.nsingles << endl;
-			//cout << "après col zh_g.nsingles=" << zh_g.nsingles << endl;
+			//cout << "aprï¿½s col zh_g.nsingles=" << zh_g.nsingles << endl;
 		}
 	}
 	return zh_g.nsingles;
@@ -531,12 +531,12 @@ int ZHOU::RateSingleDiag(GINT64 * t, int nt){// look if a single appears after a
 			for (int iboxr = 0; iboxr < 3; iboxr++){// try a box
 				int box = fdb & tband_box[iboxr];		if (!(box&R))continue;
 				int hidden = box & (~R);
-				if (__popcnt(hidden) == 1)	zh_g.AddSingleDiag(iband, hidden);
+				if (_popcnt32(hidden) == 1)	zh_g.AddSingleDiag(iband, hidden);
 			}
 			for (int irow = 0; irow < 3; irow++){// try a row
 				int row = fdb & tband_row[irow];		if (!(row&R))continue;
 				int hidden = row & (~R);
-				if (__popcnt(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
+				if (_popcnt32(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
 			}
 			for (int icol = 0, col = Zhoucol; icol < 9; icol++, col <<= 1){// try a column
 				int Rcol = R & col; if (!Rcol) continue;
@@ -545,12 +545,12 @@ int ZHOU::RateSingleDiag(GINT64 * t, int nt){// look if a single appears after a
 					b0 = fdb & col & (~R),
 					b1 = fd.bf.u32[p[1]] & col,
 					b2 = fd.bf.u32[p[2]] & col;
-				if ((__popcnt(b0) + __popcnt(b1) + __popcnt(b2)) != 1) continue;
+				if ((_popcnt32(b0) + _popcnt32(b1) + _popcnt32(b2)) != 1) continue;
 				if (b1)zh_g.AddSingleDiag(p[1], b1);
 				else if (b2)zh_g.AddSingleDiag(p[2], b2);
 				else zh_g.AddSingleDiag(iband, b0);
 			}
-			//cout << "après col zh_g.nsingles=" << zh_g.nsingles << endl;
+			//cout << "aprï¿½s col zh_g.nsingles=" << zh_g.nsingles << endl;
 		}
 	}
 	return zh_g.nsingles;
@@ -572,7 +572,7 @@ int ZHOU::RateSingleBox(GINT64 * t, int nt){// look if a single appears after a 
 			for (int iboxr = 0; iboxr < 3; iboxr++){// try a box
 				int box = fdb & tband_box[iboxr];		if (!(box&R))continue;
 				int hidden = box & (~R);
-				if (__popcnt(hidden) == 1)	zh_g.AddSingle(iband, hidden);
+				if (_popcnt32(hidden) == 1)	zh_g.AddSingle(iband, hidden);
 			}
 			if (pm_go.opprint2 & 1)cout << " nsingles after box " << zh_g.nsingles << endl;
 		}
@@ -596,7 +596,7 @@ int ZHOU::RateSingleRow(GINT64 * t, int nt){// look if a single appears after a 
 			for (int irow = 0; irow < 3; irow++){// try a row
 				int row = fdb & tband_row[irow];		if (!(row&R))continue;
 				int hidden = row & (~R);
-				if (__popcnt(hidden) == 1) zh_g.AddSingle(iband, hidden);
+				if (_popcnt32(hidden) == 1) zh_g.AddSingle(iband, hidden);
 			}
 			if (pm_go.opprint2 & 1)cout << " nsingles after row " << zh_g.nsingles << endl;
 		}
@@ -620,7 +620,7 @@ int ZHOU::RateSingleCol(GINT64 * t, int nt){// look if a single appears after a 
 			for (int irow = 0; irow < 3; irow++){// try a row
 				int row = fdb & tband_row[irow];		if (!(row&R))continue;
 				int hidden = row & (~R);
-				if (__popcnt(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
+				if (_popcnt32(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
 			}
 		}
 		if (pm_go.opprint2 & 1)cout << "RateSingleCol nsingles after cols " << zh_g.nsingles << endl;
@@ -636,11 +636,11 @@ int ZHOU::CollectHiddenPairsBox(GINT64* tp, int & np, int lim){
 		int bandpairs = zh_g.locked_nacked_brc_seen[0].bf.u32[iband],
 			bandfree = wfree.bf.u32[iband];
 		for (int iboxr = 0, mask = 07007007; iboxr < 3; iboxr++,  mask <<= 3){
-			if ((int)__popcnt(bandfree & mask) < lim) continue;
+			if ((int)_popcnt32(bandfree & mask) < lim) continue;
 			int tbiv[9], digbiv[9], nbiv = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in box
 				int hidden = mask & FD[idig][0].bf.u32[iband];
-				if (__popcnt(hidden) == 2){
+				if (_popcnt32(hidden) == 2){
 					digbiv[nbiv] = idig;
 					tbiv[nbiv++] = hidden;
 				}
@@ -666,11 +666,11 @@ int ZHOU::CollectHiddenPairsRow(GINT64* tp, int & np, int lim){
 		int bandpairs = zh_g.locked_nacked_brc_seen[1].bf.u32[iband],
 			bandfree = wfree.bf.u32[iband];
 		for (int irowr = 0, mask = 0777; irowr < 3; irowr++, mask <<= 9){
-			if ((int)__popcnt(bandfree & mask) < lim) continue;
+			if ((int)_popcnt32(bandfree & mask) < lim) continue;
 			int tbiv[9], digbiv[9], nbiv = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in row
 				int hidden = mask & FD[idig][0].bf.u32[iband];
-				if (__popcnt(hidden) == 2){
+				if (_popcnt32(hidden) == 2){
 					digbiv[nbiv] = idig;
 					tbiv[nbiv++] = hidden;
 				}
@@ -697,11 +697,11 @@ int ZHOU::CollectHiddenPairsCol(GINT64* tp, int & np, int lim){
         int bandpairs = zh_g.locked_nacked_brc_seen[2].bf.u32[iband], //digonal mode
 			bandfree = wfree.bf.u32[iband];
 		for (int irowr = 0, mask = 0777; irowr < 3; irowr++, mask <<= 9){
-			if ((int)__popcnt(bandfree & mask) < lim) continue;
+			if ((int)_popcnt32(bandfree & mask) < lim) continue;
 			int tbiv[9], digbiv[9], nbiv = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in row
 				int hidden = mask & zh_g.pmdiag.pmdig[idig].bf.u32[iband];
-				if (__popcnt(hidden) == 2){
+				if (_popcnt32(hidden) == 2){
 					digbiv[nbiv] = idig;
 					tbiv[nbiv++] = hidden;
 				}
@@ -765,11 +765,11 @@ int ZHOU::CollectHiddenTripletsBox(GINT64* tp, int & np){
 		int bandpairs = zh_g.locked_nacked_brc_seen[0].bf.u32[iband],
 			bandfree = wfree.bf.u32[iband];
 		for (int iboxr = 0, mask = 07007007; iboxr < 3; iboxr++, mask <<= 3){
-			if ((int)__popcnt(bandfree & mask) < 6) continue;
+			if ((int)_popcnt32(bandfree & mask) < 6) continue;
 			int ttrip[9], digtrip[9], ntrip = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in box
 				int hidden = mask & zh_g.pm.pmdig[idig].bf.u32[iband],
-					nn = __popcnt(hidden);
+					nn = _popcnt32(hidden);
 				if (nn && nn<4){// no single so n>1
 					digtrip[ntrip] = idig;
 					ttrip[ntrip++] = hidden;
@@ -781,10 +781,10 @@ int ZHOU::CollectHiddenTripletsBox(GINT64* tp, int & np){
 				register int R = ttrip[i];
 				for (int j = i + 1; j < ntrip-1; j++) {// a pair seen
 					register int R2 = R | ttrip[j];
-					if (__popcnt(R2) > 3) continue;
+					if (_popcnt32(R2) > 3) continue;
 					for (int k = j + 1; k < ntrip; k++) {
 						register int R3 = R2 | ttrip[k];
-						if (__popcnt(R3)!= 3) continue;
+						if (_popcnt32(R3)!= 3) continue;
 						tp[np].u32[1] = R3;
 						tp[np].u16[0] = iband;
 						tp[np++].u16[1] = (1 << digtrip[i]) | (1 << digtrip[j]) | (1 << digtrip[k]);
@@ -807,11 +807,11 @@ int ZHOU::CollectHiddenTripletsRow(GINT64* tp, int & np){
 		int bandpairs = zh_g.locked_nacked_brc_seen[1].bf.u32[iband],
 			bandfree = wfree.bf.u32[iband];
 		for (int irowr = 0, mask = 0777; irowr < 3; irowr++, mask <<= 9){
-			if ((int)__popcnt(bandfree & mask) < 6) continue;
+			if ((int)_popcnt32(bandfree & mask) < 6) continue;
 			int ttrip[9], digtrip[9], ntrip = 0;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in row
 				int hidden = mask & zh_g.pm.pmdig[idig].bf.u32[iband],
-					nn = __popcnt(hidden);
+					nn = _popcnt32(hidden);
 				if (nn && nn<4){// no single so n>1
 					digtrip[ntrip] = idig;
 					ttrip[ntrip++] = hidden;
@@ -823,10 +823,10 @@ int ZHOU::CollectHiddenTripletsRow(GINT64* tp, int & np){
 				register int R = ttrip[i];
 				for (int j = i + 1; j < ntrip - 1; j++) {// a pair seen
 					register int R2 = R | ttrip[j];
-					if (__popcnt(R2) > 3) continue;
+					if (_popcnt32(R2) > 3) continue;
 					for (int k = j + 1; k < ntrip; k++) {
 						register int R3 = R2 | ttrip[k];
-						if (__popcnt(R3) != 3) continue;
+						if (_popcnt32(R3) != 3) continue;
 						tp[np].u32[1] = R3;
 						tp[np].u16[0] = iband;
 						tp[np++].u16[1] = (1 << digtrip[i]) | (1 << digtrip[j]) | (1 << digtrip[k]);
@@ -848,12 +848,12 @@ int ZHOU::CollectHiddenTripletsCol(GINT64* tp, int & np){
 		int bandpairs = zh_g.locked_nacked_brc_seen[2].bf.u32[iband], //digonal mode
 			bandfree = wfree.bf.u32[iband];
 		for (int irowr = 0, mask = 0777; irowr < 3; irowr++, mask <<= 9){
-			if ((int)__popcnt(bandfree & mask) < 6) continue;
+			if ((int)_popcnt32(bandfree & mask) < 6) continue;
 			for (int idig = 0; idig < 9; idig++){// collect digits bi values in row
 				int ttrip[9], digtrip[9], ntrip = 0;
 				for (int idig = 0; idig < 9; idig++){// collect digits bi values in row
 					int hidden = mask & zh_g.pmdiag.pmdig[idig].bf.u32[iband],
-						nn = __popcnt(hidden);
+						nn = _popcnt32(hidden);
 					if (nn && nn<4){// no single so n>1
 						digtrip[ntrip] = idig;
 						ttrip[ntrip++] = hidden;
@@ -865,10 +865,10 @@ int ZHOU::CollectHiddenTripletsCol(GINT64* tp, int & np){
 					register int R = ttrip[i];
 					for (int j = i + 1; j < ntrip - 1; j++) {// a pair seen
 						register int R2 = R | ttrip[j];
-						if (__popcnt(R2) > 3) continue;
+						if (_popcnt32(R2) > 3) continue;
 						for (int k = j + 1; k < ntrip; k++) {
 							register int R3 = R2 | ttrip[k];
-							if (__popcnt(R3) != 3) continue;
+							if (_popcnt32(R3) != 3) continue;
 							tp[np].u32[1] = R3;
 							tp[np].u16[0] = iband;
 							tp[np++].u16[1] = (1 << digtrip[i]) | (1 << digtrip[j]) | (1 << digtrip[k]);
@@ -907,7 +907,7 @@ int ZHOU::Rate26_lockedBox(){
 				(TblShrinkMask[(band >> 18) & 0x1FF] << 6);
 			for (int ibox = 0; ibox < 3; ibox++,shrink>>=1){
 				register int x = shrink & 0111;
-				if (__popcnt(x) - 1)continue;// not locked in row
+				if (_popcnt32(x) - 1)continue;// not locked in row
 				unsigned long irow;	_BitScanForward(&irow, x);// catch the row
 				irow /= 3;
 				int to_clean = tband_row[irow] & (~tband_box[ibox]) & band;
@@ -926,7 +926,7 @@ int ZHOU::Rate26_lockedBox(){
 			int colband = (band | (band >> 9) | (band >> 18)) & 0x1FF;
 			for (int ibox = 0; ibox < 3; ibox++){
 				int mask = 7 << (3 * ibox), bm = colband&mask;
-				if (__popcnt(bm) -1) continue; // solved or cleaned
+				if (_popcnt32(bm) -1) continue; // solved or cleaned
 				unsigned long icol;
 				_BitScanForward(&icol, bm);// column to clean
 				int to_clean = Zhoucol << icol, *p = tperm3[iband];
@@ -981,7 +981,7 @@ int ZHOU::Rate28_lockedRowCol(){// 26 (box) done
 				W = R & ~(tcol[p[1]] | tcol[p[2]]);// one minicol
 			for (int iboxr = 0; iboxr < 3; iboxr++, R >>= 3, W >>= 3){// check the thre boxes
 				int active_col = R & 7;
-				if (__popcnt(active_col) < 2) continue;
+				if (_popcnt32(active_col) < 2) continue;
 				if (!(W & 7))continue;
 				int columns_to_clean_in_box = active_col &  ~W;
 				int clean = ~(fd.bf.u32[iband] & (tbox_to_clean[columns_to_clean_in_box] << (3 * iboxr)));
@@ -1078,30 +1078,30 @@ int ZHOU::Rate30_NakedPair(){
 
 	for (int iband = 0; iband < 3; iband++){
 		int boxband = lb.bf.u32[iband];
-		if (__popcnt(boxband) >= 2){
+		if (_popcnt32(boxband) >= 2){
 			for (int ibox = 0; ibox < 3; ibox++){
 				int box = boxband & tband_box[ibox];
-				if (__popcnt(box) >= 2){// one or more naked pair in the box
+				if (_popcnt32(box) >= 2){// one or more naked pair in the box
 					//cout << Char27out(box) << " box naked pair band=" << iband + 1 << endl;
 					iret+=CleanNake(box, tband_box[ibox], iband,0);
 				}
 			}
 		}
 		int rowband = lr.bf.u32[iband];
-		if (__popcnt(rowband) >= 2){
+		if (_popcnt32(rowband) >= 2){
 			for (int irow = 0; irow < 3; irow++){
 				int row = rowband & tband_row[irow];
-				if (__popcnt(row) >= 2){// one or more naked pair in the row
+				if (_popcnt32(row) >= 2){// one or more naked pair in the row
 					//cout << Char27out(row) << " row naked pair band=" << iband + 1 << endl;
 					iret += CleanNake(row, tband_row[irow], iband,1);
 				}
 			}
 		}
 		int colband = lc.bf.u32[iband];
-		if (__popcnt(colband) >= 2){
+		if (_popcnt32(colband) >= 2){
 			for (int icol = 0; icol < 3; icol++){
 				int row = colband & tband_row[icol];// diagonal mode, the column looks like a row
-				if (__popcnt(row) >= 2){// one or more naked pair in the row
+				if (_popcnt32(row) >= 2){// one or more naked pair in the row
 					//cout << Char27out(row) << " col naked pair band=" << iband + 1 << endl;
 					iret += CleanNakeColumn(row, tband_row[icol], iband);
 				}
@@ -1141,9 +1141,9 @@ int ZHOU::Rate32_XWing(){
 		}
 		//============================ XWing in rows
 		int rw = rfree & ~rx2;
-		if (__popcnt(rw) < 3) continue;//not  goto columns; same count in both ways
+		if (_popcnt32(rw) < 3) continue;//not  goto columns; same count in both ways
 		for (int irow = 0; irow < 9; irow++)
-			if(rw & (1<<irow))if (__popcnt(rows[irow]) == 2)tr[nr++] = irow;
+			if(rw & (1<<irow))if (_popcnt32(rows[irow]) == 2)tr[nr++] = irow;
 		if (nr < 2) goto columns;
 		for (int ir1 = 0; ir1 < nr - 1; ir1++){
 			int r1 = tr[ir1];
@@ -1171,9 +1171,9 @@ int ZHOU::Rate32_XWing(){
 		if (locdiag) cout << "see columns" << endl;
 		nr = 0;
 		int cw = cfree & ~cx2;
-		if (__popcnt(cw) < 3) continue;
+		if (_popcnt32(cw) < 3) continue;
 		for (int icol = 0; icol < 9; icol++)
-			if (cw & (1 << icol))if (__popcnt(cols[icol]) == 2)tr[nr++] = icol;
+			if (cw & (1 << icol))if (_popcnt32(cols[icol]) == 2)tr[nr++] = icol;
 		if (nr < 2) continue;
 		if (locdiag) cout << "nr=" << nr << endl;
 		for (int ic1 = 0; ic1 < nr - 1; ic1++){
@@ -1270,13 +1270,13 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 		int digs1 = zh_g.dig_cells[t3[i1]];
 		for (int i2 = i1+1; i2 < n3 - 1; i2++){
 			int digs2 = digs1 |zh_g.dig_cells[t3[i2]];
-			if (__popcnt(digs2) > 3) continue;
+			if (_popcnt32(digs2) > 3) continue;
 			for (int i3 = i2 + 1; i3 < n3; i3++){
 				int digs3 = digs2 | zh_g.dig_cells[t3[i3]];
-				if (__popcnt(digs3) > 3) continue;
+				if (_popcnt32(digs3) > 3) continue;
 				// this is a naked triplet 
 				int btrip = t3b[i1] | t3b[i2] | t3b[i3];
-				//cout << Char27out(btrip) << " triplet à voir band=" << iband + 1 << " mode=" << mode << endl;
+				//cout << Char27out(btrip) << " triplet ï¿½ voir band=" << iband + 1 << " mode=" << mode << endl;
 				zh_g.locked_nacked_brc_done[mode].bf.u32[iband] |= btrip;
 				int zclean = unit & ~btrip;
 				for (int idig = 0; idig < 9; idig++) {// box or row
@@ -1290,7 +1290,7 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 				}
 				if (iret) return 1;// nearly no chance to have more see later
 				unit_triplet_cells ^= btrip; // loop if room for another triplet
-				if (__popcnt(unit_triplet_cells) >= 3)
+				if (_popcnt32(unit_triplet_cells) >= 3)
 					return Rate36_FindClean_NakedTriplet(unit_triplet_cells, unit, iband, mode);
 			}
 		}
@@ -1314,13 +1314,13 @@ int ZHOU::Rate36_FindClean_NakedTripletCol(int unit_triplet_cells, int unit, int
 		int digs1 = zh_g.dig_cells[t3[i1]];
 		for (int i2 = i1 + 1; i2 < n3 - 1; i2++){
 			int digs2 = digs1 | zh_g.dig_cells[t3[i2]];
-			if (__popcnt(digs2) > 3) continue;
+			if (_popcnt32(digs2) > 3) continue;
 			for (int i3 = i2 + 1; i3 < n3; i3++){
 				int digs3 = digs2 | zh_g.dig_cells[t3[i3]];
-				if (__popcnt(digs3) > 3) continue;
+				if (_popcnt32(digs3) > 3) continue;
 				// this is a naked triplet 
 				int btrip = t3b[i1] | t3b[i2] | t3b[i3];
-				//cout << Char27out(btrip) << "col  triplet à voir band=" << iband + 1  << endl;
+				//cout << Char27out(btrip) << "col  triplet ï¿½ voir band=" << iband + 1  << endl;
 				zh_g.locked_nacked_brc_done[2].bf.u32[iband] |= btrip;
 				int zclean = unit & ~btrip;
 				for (int idig = 0; idig < 9; idig++){// box or row
@@ -1334,7 +1334,7 @@ int ZHOU::Rate36_FindClean_NakedTripletCol(int unit_triplet_cells, int unit, int
 				}
 				if (iret) return 1;// nearly no chance to have more see later
 				unit_triplet_cells ^= btrip; // loop if room for another triplet
-				if (__popcnt(unit_triplet_cells) >= 3)
+				if (_popcnt32(unit_triplet_cells) >= 3)
 					return Rate36_FindClean_NakedTripletCol(unit_triplet_cells, unit, iband);
 			}
 		}
@@ -1357,11 +1357,11 @@ int ZHOU::Rate36_NakedTriplet(){
 	for (int iband = 0; iband < 3; iband++){
 		int boxband = lb.bf.u32[iband],
 			buns = lbu.bf.u32[iband];
-		if (__popcnt(buns) >= 6){// no naked pair no hidden pair seen
+		if (_popcnt32(buns) >= 6){// no naked pair no hidden pair seen
 			for (int ibox = 0; ibox < 3; ibox++){
 				int box = boxband & tband_box[ibox],
 					boxuns = buns & tband_box[ibox];
-				if (__popcnt(box) >= 3 && __popcnt(boxuns)>=6){
+				if (_popcnt32(box) >= 3 && _popcnt32(boxuns)>=6){
 					// one or more naked triplets possibles in the box
 					//cout << Char27out(box) << " box naked pair band=" << iband + 1 << endl;
 					iret += Rate36_FindClean_NakedTriplet(box, tband_box[ibox], iband, 0);
@@ -1370,11 +1370,11 @@ int ZHOU::Rate36_NakedTriplet(){
 		}
 		int rowband = lr.bf.u32[iband],
 			runs = lru.bf.u32[iband];
-		if (__popcnt(runs) >= 6){
+		if (_popcnt32(runs) >= 6){
 			for (int irow = 0; irow < 3; irow++){
 				int row = rowband & tband_row[irow],
 					rowuns = runs & tband_row[irow];
-				if (__popcnt(row) >= 3 && __popcnt(rowuns) >= 6){
+				if (_popcnt32(row) >= 3 && _popcnt32(rowuns) >= 6){
 					// one or more naked triplet possible  in the row
 					//cout << Char27out(row) << " row naked pair band=" << iband + 1 << endl;
 					iret += Rate36_FindClean_NakedTriplet(row, tband_row[irow], iband, 1);
@@ -1383,11 +1383,11 @@ int ZHOU::Rate36_NakedTriplet(){
 		}
 		int colband = lc.bf.u32[iband],
 			cuns = lcu.bf.u32[iband];;
-		if (__popcnt(cuns) >= 6){
+		if (_popcnt32(cuns) >= 6){
 			for (int icol = 0; icol < 3; icol++){
 				int col = colband & tband_row[icol],
 					coluns = cuns & tband_row[icol];// diagonal mode, the column looks like a row
-				if (__popcnt(col) >= 3 && __popcnt(coluns) >= 6){// one or more naked pair in the row
+				if (_popcnt32(col) >= 3 && _popcnt32(coluns) >= 6){// one or more naked pair in the row
 					//cout << Char27out(col) << " col possible naked triplet band=" << iband + 1 << endl;
 					iret += Rate36_FindClean_NakedTripletCol(col, tband_row[icol], iband);
 				}
@@ -1426,9 +1426,9 @@ int ZHOU::Rate38_SwordFish(){
 		}
 		//============================ SwordFish in rows
 		int rw = rfree & ~rx2;
-		if (__popcnt(rw) < 4) continue;// must be at minimum 4 "free" rows/cols
+		if (_popcnt32(rw) < 4) continue;// must be at minimum 4 "free" rows/cols
 		for (int irow = 0; irow < 9; irow++)
-			if (rw & (1 << irow))if (__popcnt(rows[irow]) <4)tr[nr++] = irow;
+			if (rw & (1 << irow))if (_popcnt32(rows[irow]) <4)tr[nr++] = irow;
 		if (nr < 3) goto columns;
 		for (int ir1 = 0; ir1 < nr - 2; ir1++){
 			int r1 = tr[ir1];
@@ -1436,11 +1436,11 @@ int ZHOU::Rate38_SwordFish(){
 			for (int ir2 = ir1 + 1; ir2 < nr-1; ir2++){
 				int r2 = tr[ir2];
 				int R2 = R1 | rows[r2];
-				if (__popcnt(R2) > 3) continue;
+				if (_popcnt32(R2) > 3) continue;
 				for (int ir3 = ir2 + 1; ir3 < nr; ir3++){
 					int r3 = tr[ir3];
 					int R3 = R2 | rows[r3];
-					if (__popcnt(R3) > 3) continue;
+					if (_popcnt32(R3) > 3) continue;
 					unsigned long c1, c2, c3;
 					_BitScanForward(&c1, R3);	_BitScanReverse(&c2, R3);
 					int w =R3 ^ ((1 << c1) | (1 <<c2));//last bit
@@ -1466,7 +1466,7 @@ int ZHOU::Rate38_SwordFish(){
 		nr = 0;
 		int cw = cfree & ~cx2;
 		for (int icol = 0; icol < 9; icol++)
-			if (cw & (1 << icol))if (__popcnt(cols[icol]) <4)tr[nr++] = icol;
+			if (cw & (1 << icol))if (_popcnt32(cols[icol]) <4)tr[nr++] = icol;
 		if (nr < 3) continue;
 		for (int ic1 = 0; ic1 < nr - 2; ic1++){
 			int c1 = tr[ic1];
@@ -1474,11 +1474,11 @@ int ZHOU::Rate38_SwordFish(){
 			for (int ic2 = ic1 + 1; ic2 < nr-1; ic2++){
 				int c2 = tr[ic2];
 				int R2 = R1 | cols[c2];
-				if (__popcnt(R2) > 3) continue;
+				if (_popcnt32(R2) > 3) continue;
 				for (int ic3 = ic2 + 1; ic3 < nr; ic3++){
 					int c3 = tr[ic3];
 					int R3 = R2 | cols[c3];
-					if (__popcnt(R3) > 3) continue;
+					if (_popcnt32(R3) > 3) continue;
 					unsigned long r1, r2, r3;
 					_BitScanForward(&r1, R3);	_BitScanReverse(&r2, R3);
 					int w = R3 ^ ((1 << r1) | (1 << r2));//last bit
@@ -1610,7 +1610,7 @@ int ZHOU::Rate50_NakedQuad(){// pair/triplets done
 		while ((cell = ww.getFirsCell()) >= 0){// collect cells with max 4 digits
 			ww.Clear_c(cell);
 			register int d = zh_g.dig_cells[cell];
-			if (__popcnt(d)>4)continue;
+			if (_popcnt32(d)>4)continue;
 			tdigs[ncells] = d;
 			tcells[ncells++] = cell; 
 		}
@@ -1620,13 +1620,13 @@ int ZHOU::Rate50_NakedQuad(){// pair/triplets done
 			int dig1 = tdigs[i1];
 			for (int i2 = i1+1; i2 < ncells - 2; i2++){
 				int dig2 = tdigs[i2]|dig1;
-				if (__popcnt(dig2) > 4)continue;
+				if (_popcnt32(dig2) > 4)continue;
 				for (int i3 = i2 + 1; i3 < ncells - 1; i3++){
 					int dig3 = tdigs[i3] | dig2;
-					if (__popcnt(dig3) > 4)continue;
+					if (_popcnt32(dig3) > 4)continue;
 					for (int i4 = i3 + 1; i4 < ncells; i4++){
 						int dig4 = tdigs[i4] | dig3;
-						if (__popcnt(dig4) != 4)continue;
+						if (_popcnt32(dig4) != 4)continue;
 						//cout << "seen a nacked quas" << endl;
 						ww = wu; ww.Clear_c(tcells[i1]); ww.Clear_c(tcells[i2]);
 						ww.Clear_c(tcells[i3]); ww.Clear_c(tcells[i4]);
@@ -1661,9 +1661,9 @@ int ZHOU::Rate52_JellyFish(){
 		for (int i = 0; i < 9; i++)if (cols[i]) cfree |= 1 << i;
 		//============================ SwordFish in rows
 		int rw = rfree & ~rx2;
-		if (__popcnt(rw) < 5) continue;// must be at minimum 5 "free" rows/cols
+		if (_popcnt32(rw) < 5) continue;// must be at minimum 5 "free" rows/cols
 		for (int irow = 0; irow < 9; irow++)
-			if (rw & (1 << irow))if (__popcnt(rows[irow]) <5)tr[nr++] = irow;
+			if (rw & (1 << irow))if (_popcnt32(rows[irow]) <5)tr[nr++] = irow;
 		if (nr < 4) goto columns;
 		for (int ir1 = 0; ir1 < nr - 3; ir1++){
 			int r1 = tr[ir1];
@@ -1671,15 +1671,15 @@ int ZHOU::Rate52_JellyFish(){
 			for (int ir2 = ir1 + 1; ir2 < nr - 2; ir2++){
 				int r2 = tr[ir2];
 				int R2 = R1 | rows[r2];
-				if (__popcnt(R2) >4 ) continue;
+				if (_popcnt32(R2) >4 ) continue;
 				for (int ir3 = ir2 + 1; ir3 < nr-1; ir3++){
 					int r3 = tr[ir3];
 					int R3 = R2 | rows[r3];
-					if (__popcnt(R3) > 4) continue;
+					if (_popcnt32(R3) > 4) continue;
 					for (int ir4 = ir3 + 1; ir4 < nr; ir4++){
 						int r4 = tr[ir4];
 						int R4 = R3 | rows[r4];
-						if (__popcnt(R4) > 4) continue;
+						if (_popcnt32(R4) > 4) continue;
 						unsigned long c1, c2, c3, c4;
 						_BitScanForward(&c1, R3);	_BitScanReverse(&c2, R3);
 						int w = R3 ^ ((1 << c1) | (1 << c2));//last bit
@@ -1708,7 +1708,7 @@ int ZHOU::Rate52_JellyFish(){
 		nr = 0;
 		int cw = cfree & ~cx2;
 		for (int icol = 0; icol < 9; icol++)
-			if (cw & (1 << icol))if (__popcnt(cols[icol]) <5)tr[nr++] = icol;
+			if (cw & (1 << icol))if (_popcnt32(cols[icol]) <5)tr[nr++] = icol;
 		if (pm_go.opprint2 & 2) cout << "Jelly fish columns nr=" <<nr
         << endl;
 
@@ -1720,15 +1720,15 @@ int ZHOU::Rate52_JellyFish(){
 			for (int ic2 = ic1 + 1; ic2 < nr - 2; ic2++){
 				int c2 = tr[ic2];
 				int R2 = R1 | cols[c2];
-				if (__popcnt(R2) > 4) continue;
+				if (_popcnt32(R2) > 4) continue;
 				for (int ic3 = ic2 + 1; ic3 < nr-1; ic3++){
 					int c3 = tr[ic3];
 					int R3 = R2 | cols[c3];
-					if (__popcnt(R3) > 4) continue;
+					if (_popcnt32(R3) > 4) continue;
 					for (int ic4 = ic3 + 1; ic4 < nr; ic4++){
 						int c4 = tr[ic4];
 						int R4 = R3 | cols[c4];
-						if (__popcnt(R4) > 4) continue;
+						if (_popcnt32(R4) > 4) continue;
 						unsigned long r1, r2, r3, r4;
 						_BitScanForward(&r1, R3);	_BitScanReverse(&r2, R3);
 						int w = R3 ^ ((1 << r1) | (1 << r2));//last bit
@@ -1770,16 +1770,16 @@ int ZHOU::Rate54_HiddenQuad(){// no naked quad in fact coded as naked 5
 			int c1=cig[i1],dig1 = zh_g.dig_cells[c1];
 			for (int i2 = i1 + 1; i2 < 6; i2++){
 				int c2 = cig[i2], dig2 = zh_g.dig_cells[c2] | dig1;
-				if (__popcnt(dig2) > 5)continue;
+				if (_popcnt32(dig2) > 5)continue;
 				for (int i3 = i2 + 1; i3 <7; i3++){
 					int c3 = cig[i3], dig3 = zh_g.dig_cells[c3] | dig2;
-					if (__popcnt(dig3) > 5)continue;
+					if (_popcnt32(dig3) > 5)continue;
 					for (int i4 = i3 + 1; i4 < 8; i4++){
 						int c4 = cig[i4], dig4 = zh_g.dig_cells[c4]  | dig3;
-						if (__popcnt(dig4) > 5)continue;
+						if (_popcnt32(dig4) > 5)continue;
 						for (int i5 = i4 + 1; i5 <9; i5++){
 							int c5 = cig[i5], dig5 = zh_g.dig_cells[c5] | dig4;
-							if (__popcnt(dig5) != 5)continue;
+							if (_popcnt32(dig5) != 5)continue;
 							BF128 ww = wu; ww.Clear_c(c1); ww.Clear_c(c2);
 							ww.Clear_c(c3); ww.Clear_c(c4); ww.Clear_c(c5);
 							for (int idig = 0; idig < 9; idig++)if (dig5 & (1 << idig)){

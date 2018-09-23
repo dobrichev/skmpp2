@@ -221,7 +221,7 @@ public:
 	void Astr(const char * x);
 	void Aunit(int x);
 	//	inline void Arating(int x){if(lim-p)(*p++)=(char)(x/10+'0');(*p++)=(char)(x%10+'0');}
-	void Aint(int x){ char buf[20]; _itoa_s(x, buf, 20, 10); Astr(buf); }
+	//void Aint(int x){ char buf[20]; _itoa_s(x, buf, 20, 10); Astr(buf); } //MD 23.9.2018 commented out
 	inline void Aendl(){ if (lim - p) (*p++) = 0; } // put end string end of line
 	inline void Aspace(){ if (lim - p)(*p++) = ' '; }
 	void AScand(SCAND x);
@@ -257,7 +257,7 @@ struct TWO_DIGITS{// one of 36 possible 2 digits
 
 struct PM_DATA{ // keep it open for dynamic expansion process
 
-	/* à l'étude
+	/* ï¿½ l'ï¿½tude
 	PMBF pm,pm_diag;
 	int free_unit_per_digit [9]; // 9 27 bits fields
 	int unknown_count_per_unit [27];
@@ -394,7 +394,7 @@ public:
 		void NewExpand(SCAND x); // start a new on/off to expand
 
 		int DynLiveAdd(SCAND sc);
-		void DynLiveAddBiv(SCAND sc,SCAND xor);
+		void DynLiveAddBiv(SCAND sc,SCAND xorr);
 
 		void XYexpandDynamicStart(UCAND cand1,PM_DATA & myd);
 		void DynLastInSet();
@@ -511,7 +511,8 @@ public:
 		void Canonical();
 		void ClearPair(USHORT d1,USHORT d2);
 		int FindEliminations();
-		void DynPrepare(PM_DATA & myd,PM_GO::XYSEARCH & xys,WDYN_EXO & wdex);
+		//void DynPrepare(PM_DATA & myd,PM_GO::XYSEARCH & xys,WDYN_EXO & wdex); //MD 23.9.2018: seel next line
+		void DynPrepare(PM_DATA & myd,XYSEARCH & xys,WDYN_EXO & wdex);
 	};
 	struct EXO8: public EXOCET{
 	};

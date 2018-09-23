@@ -72,9 +72,9 @@ void ZHOU::ImageCandidats() {// only active digits ??
 	int i, j, l, lcol[9], tcol = 0,ncand=0;
 	cout <<"PM map "<<endl<<endl;
 	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
-		lcol[i] = 2;    // 2  mini tous chiffres imposés
+		lcol[i] = 2;    // 2  mini tous chiffres imposï¿½s
 		for(j = 0; j < 9; j++) {
-			l = __popcnt(dig_cells[9 * j + i]);
+			l = _popcnt32(dig_cells[9 * j + i]);
 			if(l > lcol[i])       lcol[i] = l;
 		}
 		tcol += lcol[i];
@@ -91,7 +91,7 @@ void ZHOU::ImageCandidats() {// only active digits ??
 		}
 		for(j = 0; j < 9; j++) {
 			if ((j == 3) || (j == 6))cout << "|";
-			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = __popcnt(digs);
+			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = _popcnt32(digs);
 			ncand += ndigs;
 			for (int id = 0; id < 9; id++)if (digs & (1 << id))
 				cout << id + 1;
@@ -108,9 +108,9 @@ void ZHOU::ImageCandidats_b3() {// only active digits ??
 	int i, j, l, lcol[9], tcol = 0,ncand=0;
 	cout <<"PM map bande 3"<<endl<<endl;
 	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
-		lcol[i] = 2;    // 2  mini tous chiffres imposés
+		lcol[i] = 2;    // 2  mini tous chiffres imposï¿½s
 		for(j = 6; j < 9; j++) {
-			l = __popcnt(dig_cells[9 * j + i]);
+			l = _popcnt32(dig_cells[9 * j + i]);
 			if(l > lcol[i])       lcol[i] = l;
 		}
 		tcol += lcol[i];
@@ -123,7 +123,7 @@ void ZHOU::ImageCandidats_b3() {// only active digits ??
 	for (i = 6; i < 9; i++) { // maintenant indice ligne
 		for (j = 0; j < 9; j++) {
 			if ((j == 3) || (j == 6))cout << "|";
-			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = __popcnt(digs);
+			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = _popcnt32(digs);
 			ncand += ndigs;
 			for (int id = 0; id < 9; id++)if (digs & (1 << id))
 				cout << id + 1;

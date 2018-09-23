@@ -339,5 +339,5 @@ void BF81::Store(USHORT * tstore){
 	for (int i = 0; i<8; i++) tstore[i] = (USHORT)bf.u16[i];
 }
 void BF81::Re_Load(USHORT * tstore){
-	for (int i = 0; i<8; i++)  bf.u16[i] = (unsigned __int16)tstore[i];
+	for (int i = 0; i<8; i++)  bf.u16[i] = (uint16_t)tstore[i];
 }
