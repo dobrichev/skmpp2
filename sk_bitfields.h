@@ -1,3 +1,60 @@
+/*In line small functions to put bits in table
+ in many cases,  the bit fields have a small number of bits set to 1
+ in the program it appeared easier to first create the table of such bits index 
+ the bitscan family of intrinsic instructions is a good way to do this
+
+ here below some small inline functions to do it
+ The calling program parameters are
+ int * t the pointer to the  index table
+ int & nt the number of index already occupied (0 at the start)
+ value the value 32 bits or 64 bits ot scan
+
+ v0 is the relative index for the first bit in the value
+    eg: v0 shoul be set to 27 if value is the second band 
+	for a bitfields of 81 cells split in 3 bands
+
+ */
+
+inline void BitsInTable64(int * t, int & nt, uint64_t v, int v0=0) {
+	register uint64_t R = v;
+	unsigned long register res, R0 = v0;
+	while (R) {
+		_BitScanForward64(&res, R);
+		t[nt++] = res + R0;
+		register uint64_t bit = 1; bit <<= res;
+		R ^= bit;
+	}
+}
+inline void BitsInTable32(int * t, int & nt, uint32_t v, int v0=0) {
+	register uint32_t R = v;
+	unsigned long register res, R0 = v0;
+	while (R) {
+		_BitScanForward(&res, R);
+		t[nt++] = res + R0;
+		R ^= 1 << res;
+	}
+}
+inline void BitsInTable64Reverse(int * t, int & nt, uint64_t v, int v0 = 0) {
+	register uint64_t R = v;
+	unsigned long register res, R0 = v0;
+	while (R) {
+		_BitScanReverse64(&res, R);
+		t[nt++] = res + R0;
+		register uint64_t bit = 1; bit <<= res;
+		R ^= bit;
+	}
+}
+inline void BitsInTable32Reverse(int * t, int & nt, uint32_t v, int v0 = 0) {
+	register uint32_t R = v;
+	unsigned long register res, R0 = v0;
+	while (R) {
+		_BitScanReverse(&res, R);
+		t[nt++] = res + R0;
+		R ^= 1 << res;
+	}
+}
+
+
 /* that file contains classes managing bit fields in the program and a specific class,
 BF_CONVERT doing specific operations on bit fields to improve the overall performance.
 
@@ -8,8 +65,13 @@ BF16 a bit field of size 16 bits mainly used as a 9 bits field.
 BF32 a bit field of size 32 bits used  as a27 bit field for regions
 BF64 a bit field of size 64 bits  
 BF128 a bit field of size 128 bits used  to work with 128 bits registers
-==========================================================================
-BF81 a bit field to describe some "cell" properties in the 81 cells context
+      mostly used as 3x32   bit fields for a sudoku 81 bits field
+RBF27 9 BF32, one per digit for the 27 sets per region/unit
+PM3X is done of 9 BF128, one per digit
+==============
+
+===============obsoletes
+BF81 old mode, 81 first bits of a BF128 for 81 cells
 
 BFCAND a bit field sized to a maximum of 320 bits but worked at the used dimension
 that bit field is used to describe candidates properties.
@@ -19,8 +81,6 @@ BFSETS a bit field of 324 bits one bit per set
 a set can be a cell (bits 0 80) of a (digit,region) (9 * 27 )
 mainly used to build rank 0 logic, storing sets and link sets
 
-BFTAG  a bit field sized to a maximum equal to (BITCAND size * 2)
-that bitfield describe the tags properties
 */
 
 struct BF8 {
@@ -77,17 +137,10 @@ struct BF16 {
 	inline void operator |=(BF16 & e) { f |= e.f; }
 	inline void operator ^=(BF16 & e) { f ^= e.f; }
 	inline void operator -=(BF16 & e) { f ^= (f & e.f); }
-	inline int First0_8(){
-		register unsigned long res;
-		if (_BitScanForward(&res, f))	return  res;
-		return 0;
-	} // must be one bit
-	inline USHORT bitCount() { return _popcnt32(f); }
 	inline int paire() { return (_popcnt32(f) == 2); }
 
 	USHORT CountEtString(char *s);
 	char * String(char * ws, int lettre = 0);
-	USHORT String(USHORT * rr);
 
 }; // BF16
 /* BIT32 is used mainly in that program as a 27 region bit field
@@ -105,12 +158,9 @@ struct BF32 {
 		BF32 w;	w.f = f ^ (e.f & f); return w;
 	}
 	inline void operator -=(BF32 & e) { f ^= (f & e.f); }
-
-	USHORT String(USHORT * r);
+	int Table (int * r); 
 	USHORT String(USHORT * r, int i1, int i2);
 };
-
-//#include "sk_bitfieldsw.h"
 
 struct BF64 {
 	GINT64 bf;
@@ -154,10 +204,9 @@ struct BF64 {
 	inline uint64_t isNotEmpty() const { return bf.u64; }
 	inline bool isEmpty() const { return (!bf.u64); }
 	inline int Count() { return (int)_popcnt64(bf.u64); }
-	inline int GetFirstBit(unsigned long & res){ return  _BitScanForward64(&res, bf.u64); }
 	uint64_t Convert_to_54(){ uint64_t w = bf.u32[1]; w <<= 27; w |= bf.u32[0]; return w; }// 2x27 to 54
-};
 
+};
 
 class BF128 {
 public:
@@ -282,72 +331,85 @@ public:
 		bf.u32[2] = R0 & BIT_SET_27;
 		bf.u32[3] = 0;
 	}
-
-	inline int GetBande3_out_of_81(){
-		int w = (bf.u32[2] << 10) | (bf.u32[1] >> 22);
-		return w;
-	}
+	
 	inline int mask8() const { return _mm_movemask_epi8(bf.u128); }
 	inline int getFirst96() const {
 		unsigned long res;
-		if (_BitScanForward64(&res, bf.u64[0]))	return res;
-		if (_BitScanForward(&res, bf.u32[2]))	return 64 + res;
+		if (bf.u64[0]) {
+			_BitScanForward64(&res, bf.u64[0]);
+			return res;
+		}
+		if (bf.u32[2]) {
+			_BitScanForward(&res, bf.u32[2]);
+			return 64 + res;
+		}
 		return -1;
 	}
 	inline int getLast96() const {
 		unsigned long res;
-		if (_BitScanReverse(&res, bf.u32[2]))	return 64 + res;
-		if (_BitScanReverse64(&res, bf.u64[0]))	return res;
+		if (bf.u32[2]) {
+			_BitScanReverse(&res, bf.u32[2]);
+			return 64 + res;
+		}
+		if (bf.u64[0]) {
+			_BitScanReverse64(&res, bf.u64[0]);
+			return res;
+		}
 		return -1;
 	}
 	inline int getFirst128() const {
 		unsigned long res;
-		if (_BitScanForward64(&res, bf.u64[0]))	return res;
-		if (_BitScanForward64(&res, bf.u64[1]))	return 64 + res;
+		if (bf.u64[0]) {
+			_BitScanForward64(&res, bf.u64[0]);
+			return res;
+		}
+		if (bf.u64[1]) {
+			_BitScanForward64(&res, bf.u64[1]);
+			return res+64;
+		}
 		return -1;
 	}
 	inline int getFirsCell() const {
 		unsigned long res;
-		if (_BitScanForward(&res, bf.u32[0]))	return res;
-		if (_BitScanForward64(&res, bf.u32[1]))	return 27 + res;
-		if (_BitScanForward64(&res, bf.u32[2]))	return 54 + res;
+		if (bf.u32[0]) {
+			_BitScanForward(&res, bf.u32[0]);
+			return res;
+		}
+		if (bf.u32[1]) {
+			_BitScanForward(&res, bf.u32[1]);
+			return 27 + res;
+		}
+		if (bf.u32[2]) {
+			_BitScanForward(&res, bf.u32[2]);
+			return 54 + res;
+		}
 		return -1;
 	}
 	inline int getLast128() const {
 		unsigned long res;
-		if (_BitScanReverse64(&res, bf.u64[1]))	return 64 + res;
-		if (_BitScanReverse64(&res, bf.u64[0]))	return res;
-		return -1;
-	}
-	void GetDiagonal(int v, int ind){// Or in diagonal a 27 bits field 
-		int d = 27 * ind;
-		unsigned long res;
-		while (_BitScanForward(&res, v)){
-			v ^= 1 << res;
-			register int b = C_transpose_d[res + d];
-			Set_c(b);
+		if (bf.u64[1]) {
+			_BitScanReverse64(&res, bf.u64[1]);
+			return res + 64;
 		}
+		if (bf.u64[0]) {
+			_BitScanReverse64(&res, bf.u64[0]);
+			return res;
+		}
+		return -1;
 	}
 	void Diag3x27(BF128 & r);
 	inline void Store(USHORT * tstore){ memcpy(tstore, this, 16); }
 	inline void Re_Load(USHORT * tstore){ memcpy(this, tstore, 16); }
 
-	int String3X27_to_gint_c(GINT * t, int digit);
-	int String3X27(int * r);// cell 0_80 as output
-	int String81GP(int * t);
-	int StringGP(int * t, int bloc = 0);
+	int Table3X27(int * r);// cell 0_80 as output
+	int Table128(int * r);// cell 0_127 as output
+	int Table64_0(int * r);//  0_63 as output
+	int Table64_1(int * r);//  64_127 as output
+
+
 	char * String3X(char * ws);
 	char * String3X_Rev(char * ws);
-	char * String81(char * ws);
 	char * String128(char * ws);
-	inline static uint64_t FindLSBIndex64(const uint64_t Mask) {
-		unsigned long res;
-		_BitScanForward64(&res, Mask);
-		return res;
-	}
-	inline static uint64_t FindLSBIndex64MS(unsigned long &res, const uint64_t Mask) {
-		return _BitScanForward64(&res, Mask);
-	}
 
 };
 
@@ -377,7 +439,6 @@ public:
 	void Print(char * lib);
 };
 
-
 struct RBF27{
 	// 9 BF 32 for region sets
 	BF32 t[9];
@@ -401,21 +462,7 @@ public:
 
 	void PackRows(BF16 * rows);
 	void OrBand(int F, int iband);
-	void BackZhou(int * Fx);
-	void LoadZhou(int * Fx);
-	USHORT String(USHORT *r);
-	USHORT String(USHORT *r, USHORT digit);
-	USHORT StringUnit(int unit, USHORT *r);
-	USHORT StringUnit(int unit, USHORT *r, USHORT digit);
-	USHORT GetRegion(int unit);  // return BF16.f
-	BF16 GetBFRegion(int unit);
-	int GetCount(int unit, BF16 & rr);
-	void Image(BUILDSTRING & zs, int digit, char * lib = 0, int doinit = 1);
-	void Store(USHORT * tstore);
-	void Re_Load(USHORT * tstore);
 };
-
-
 class PMBF {
 	// 9*BF81 to have candidates in native mode when needed
 public:
@@ -451,7 +498,6 @@ public:
 	}
 	int Count();
 };
-
 class PMBFONOFF{// small class managing both status
 public:
 	PMBF bfon, bfoff;
@@ -505,9 +551,6 @@ public:
 	char * XsudoPrint(int mode, char * output);
 };
 
-
-
-
 class ONE_FLOOR{// find all eliminations inside one floor
 	class FL {
 		BF81 f_cand;
@@ -530,8 +573,6 @@ public:
 	BF81 f_or;
 	void Go_One_Floorx(PMBF & start);
 };
-
-
 struct ACTIVERCB{// look for active row col box in a given valid PM
 	struct ARCB {
 		// small class  designed to find eliminations within a set in recursive mode

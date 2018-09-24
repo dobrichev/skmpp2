@@ -228,21 +228,19 @@ void ZHOU::Setcell(int cell){
 }
 
 void ZHOU::CleanCellForDigits(int cell, int digits){
-	unsigned long digit;
-	while (_BitScanForward(&digit, digits)){
-		digits ^= 1 << digit;
-		ClearCandidate_c(digit, cell);
+	for (int i = 0, bit = 1; i < 9; i++, bit <<= 1) {
+		if(bit & digits)ClearCandidate_c(i, cell);
 	}
 }
 int ZHOU::CleanCellsForDigits(BF128 &  cells, int digits){
 	int iret = 0;
-	unsigned long digit;
-	while (_BitScanForward(&digit, digits)){
-		digits ^= 1 << digit;
-		BF128 clean = FD[digit][0] & cells;
-		if (clean.isNotEmpty()){
-			iret = 1;
-			FD[digit][0] -= clean;
+	for (int i = 0, bit = 1; i < 9; i++, bit <<= 1) {
+		if (bit & digits) {
+			BF128 clean = FD[i][0] & cells;
+			if (clean.isNotEmpty()) {
+				iret = 1;
+				FD[i][0] -= clean;
+			}
 		}
 	}
 	return iret;
@@ -523,10 +521,10 @@ int ZHOU::ApplySingleOrEmptyCells_Band3(){
 	R1 &= ~R2;	R1 &= cells_unsolved.bf.u32[2]; // forget solved seen as singles
 	if (R1) zh_g.single_applied = 1;
 	else{	zh_g.pairs.bf.u32[2] = R2& (~R3);	return 0;	}
-	unsigned long res;
-	while (_BitScanForward(&res, R1)){// usually a very small number of cells to assign
-		R2 = 1<< res; // switch to the bit value
-		R1 &= ~R2;  // clear the bit
+	int tp[30], np; 
+	BitsInTable32(tp, np,R1);
+	for(int i=0;i<np;i++){
+		register int res= tp[i],R2= 1<< res ;
 		if (R2 & FD[0][0].bf.u32[2]){ Assign(0, res + 54, res + 64); goto nextr1; }
 		if (R2 & FD[1][0].bf.u32[2]){ Assign(1, res + 54, res + 64); goto nextr1; }
 		if (R2 & FD[2][0].bf.u32[2]){ Assign(2, res + 54, res + 64); goto nextr1; }
@@ -551,21 +549,19 @@ int ZHOU::ApplySingleOrEmptyCells_B12(){
 	R1 &= ~R2;	R1 &= cells_unsolved.bf.u64[0]; // forget solved seen as singles
 	if (R1) zh_g.single_applied = 1;
 	else{		zh_g.pairs.bf.u64[0] = R2& (~R3);		return 0;	}
-	unsigned long res;
-	while (_BitScanForward64(&res, R1)){// usually a very small number of cells to assign
-		R2= 1; R2 <<= res; // switch to the bit value
-		R1 &= ~R2;  // clear the bit
-		R3 = From_128_To_81[res];
-		if (R2 & FD[0][0].bf.u64[0]){ Assign(0, (int)R3, res); goto nextr1; }
-		if (R2 & FD[1][0].bf.u64[0]){ Assign(1, (int)R3, res); goto nextr1; }
-		if (R2 & FD[2][0].bf.u64[0]){ Assign(2, (int)R3, res); goto nextr1; }
-		if (R2 & FD[3][0].bf.u64[0]){ Assign(3, (int)R3, res); goto nextr1; }
-		if (R2 & FD[4][0].bf.u64[0]){ Assign(4, (int)R3, res); goto nextr1; }
-		if (R2 & FD[5][0].bf.u64[0]){ Assign(5, (int)R3, res); goto nextr1; }
-		if (R2 & FD[6][0].bf.u64[0]){ Assign(6, (int)R3, res); goto nextr1; }
-		if (R2 & FD[7][0].bf.u64[0]){ Assign(7, (int)R3, res); goto nextr1; }
-		if (R2 & FD[8][0].bf.u64[0]){ Assign(8, (int)R3, res); goto nextr1; }
-
+	int tp[60], np;
+	BitsInTable64(tp, np, R1);
+	for (int i = 0; i < np; i++) {
+		register int res = tp[i], R2 = 1 << res,r3 = From_128_To_81[res];
+		if (R2 & FD[0][0].bf.u64[0]){ Assign(0, r3, res); goto nextr1; }
+		if (R2 & FD[1][0].bf.u64[0]){ Assign(1, r3, res); goto nextr1; }
+		if (R2 & FD[2][0].bf.u64[0]){ Assign(2, r3, res); goto nextr1; }
+		if (R2 & FD[3][0].bf.u64[0]){ Assign(3, r3, res); goto nextr1; }
+		if (R2 & FD[4][0].bf.u64[0]){ Assign(4, r3, res); goto nextr1; }
+		if (R2 & FD[5][0].bf.u64[0]){ Assign(5, r3, res); goto nextr1; }
+		if (R2 & FD[6][0].bf.u64[0]){ Assign(6, r3, res); goto nextr1; }
+		if (R2 & FD[7][0].bf.u64[0]){ Assign(7, r3, res); goto nextr1; }
+		if (R2 & FD[8][0].bf.u64[0]){ Assign(8, r3, res); goto nextr1; }
 		return 1; //conflict with a previous cell assugn
 	nextr1:;
 	}
@@ -578,18 +574,9 @@ int ZHOU::ApplySingleOrEmptyCells(){
 }
 
 inline void ZHOU::GuessBivalueInCell(BF128 & wc){// priority to highest digits
-	unsigned long res;
-	register uint64_t R3 = wc.bf.u64[0];
-	if (_BitScanForward64(&res, R3)){// first pair is ok to go
-		goto gopair;
-	}
-	R3 = wc.bf.u64[1];
-	if (_BitScanForward64(&res, R3)){
-		res += 64;
-		goto gopair;
-	}
-	return; // no bi value in cell  can not be
-gopair: // do digit update for the 2 digits
+	if (wc.isEmpty())return;// 
+	int res = wc.getFirst128();
+	// do digit update for the 2 digits
 	int cell = From_128_To_81[res],tdig[2],ndig=0;
 	for (int idig = 0; idig < 9; idig++) 
 		if (FD[idig][0].On(res))tdig[ndig++]=idig;
@@ -664,21 +651,19 @@ int ZHOU::GuessHiddenBivalue(){// look for a single or a hidden pair in row or b
 exitok:
 	unsigned long res;
 	_BitScanForward(&res, hidden);
-	hidden ^= 1 << res; //clear bit
 	ZHOU * mynext = this + 1; // start next guess
 	mynext->Copy(*this);
 	mynext->SetaCom(idig, res + dcell, res + dxcell);
 	mynext->Upd1(idig);
 	mynext->ComputeNext();
-	if (zh_g.diag)cout << "second digit biv last" << endl;
-	_BitScanForward(&res, hidden);
+	_BitScanReverse(&res, hidden);
 	SetaCom(idig, res + dcell, res + dxcell);
 	Upd1(idig);
 	ComputeNext();
 	return 1;
 }
-int ZHOU::GuessHiddenTriplet(){// look for a triplet in row or box
-	if (zh_g.diag)		cout << "guess hidden triplet" << endl;
+int ZHOU::GuessHiddenTriplet(){// look for a triplet in row or box in band 3
+	if (zh_g.diag)		cout << "guess hidden triplet in band 3" << endl;
 	register uint32_t hidden;
 	int idig;
 	for (idig= 0; idig <9; idig++){// priority to high digits
@@ -695,18 +680,17 @@ int ZHOU::GuessHiddenTriplet(){// look for a triplet in row or box
 	}
 	return 0;
 exitok:
-	int ndig = 3;
-	uint32_t w = hidden;
-	unsigned long res;
-	while (_BitScanForward(&res, w)){
-		w ^= 1 << res; //clear bit
-		if (--ndig){//not last cell
+	int tp[5], ntp;
+	BitsInTable32(tp, ntp, hidden);
+	for (int i = 0; i < ntp; i++) {
+		int res = tp[i];
+		if (i!=2) {//not last cell
 			ZHOU * mynext = this + 1; // start next guess
 			mynext->Copy(*this);
 			mynext->SetaCom(idig, res + 54, res + 64);
 			mynext->ComputeNext();
 		}
-		else{// this is the last do it in the same place
+		else {// this is the last do it in the same place
 			SetaCom(idig, res + 54, res + 64);
 			ComputeNext();
 			return 1;
@@ -922,8 +906,10 @@ void ZHOU::GuessFloor(){
 	if (ccmin == 10)return;// should never be
 	dcell = 27 * bmin;
 	dxcell = 32 * bmin;
-	while (_BitScanForward(&res, min)){// no bi value, use the smallest set
-		min ^= 1 << res;// clear the bit
+	int tp[10], ntp;
+	BitsInTable32(tp, ntp, min);
+	for (int i = 0; i < ntp; i++) {// no bi value, use the smallest set
+		int res = tp[i];
 		ZHOU * mynext = this + 1; // start next guess
 		mynext->Copy(*this);
 		mynext->SetaCom(0, res + dcell, res + dxcell);

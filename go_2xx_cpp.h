@@ -179,7 +179,8 @@ void GENSTEP::Gengo(int istart){
 	Find_free_minimal_change();
 next:
 	unsigned long iw;
-	while (_BitScanForward(&iw, tc[iclue].free)){
+	while ( tc[iclue].free){
+		_BitScanForward(&iw, tc[iclue].free);
 		//cout << "next iclue=" << iclue << " digit=" << iw+1 << endl;
 		Assign(1 << iw);
 		tclues[iclue].u8[1] = (uint8_t)iw;
@@ -227,7 +228,8 @@ nextindf:
 	tc[i1].level_dig = level;
 	tfree[i1] &= tleveldig[level + 1];
 nextf:
-	while (_BitScanForward(&digit, tfree[i1])){
+	while (tfree[i1]){
+		_BitScanForward(&digit, tfree[i1]);
 		tfree[i1] ^= 1 << digit;
 		iclue = i1;
 		tclues[i1].u8[1] = (uint8_t)digit;
@@ -281,7 +283,8 @@ nextind2:
 	}
 	} //end of int digits scope
 next2:
-	while (_BitScanForward(&digit, tfree[i])){
+	while ( tfree[i]){
+		_BitScanForward(&digit, tfree[i]);
 		//if (i == 1)cout << "loop1 0x" << hex << tfree[i]<<dec << endl;
 		tfree[i] ^= 1 << digit;
 		d2 = tcor[digit];
@@ -507,109 +510,6 @@ void Go_c202(){
 	}
 }
 
-/*
-
-
-
-void GO_PAT::Sym_R90(){
-
-	nclues = 0;
-	for (int i = 0; i<20; i++) {
-		USHORT * vv = sr90_20[i];
-		if (puzin.puz[vv[0]] - '.') {// un clue
-			for (int j = 1; j<3; j++)
-				if (puzin.puz[vv[j]] == '.')
-					return; // not the expected pattern
-			for (int j = 0; j<4; j++)
-				tclues[nclues++] = vv[j];
-		}
-		else for (int j = 1; j<3; j++)
-			if (puzin.puz[vv[j]] - '.')
-				return; // not the expected pattern
-	}
-	(*myout2) << "r90 start nclues= " << nclues << endl;
-
-	// now a loop on possible number of self image clues  1 3 5 7 9
-	game[0] = Tblgame;
-	GAME::glb.ptcor = sym_tcor[2];
-	game[0].Seta(0, 40);
-	//	game[0].Sym_R90(tclues,nclues,1);
-
-}
-
-void GO_PAT::Do_3x(){
-	// entry point for all search of symmetry
-	//process voluntarily limited to one pattern
-	if (!myin->GetPuzzle(puzin.puz)) return;
-	(*myout2) << puzin.puz << " go " << endl;
-
-	switch (optg->cop3){
-	case 1:	case 2:	case 3:	//main diagonal  second diagonal  stick  
-		Sym_36(optg->cop3 - 1); return;
-	case 4:	Sym_C(); return;	// central
-	case 5:	Sym_R90(); return;	// r90
-
-	}
-}
-
-
-void GAME::Sym_R90(USHORT * tc,USHORT ntc,int max_to_use){
-int cell=tc[0];
-word digs=GetFreeDigits( cell);
-if(!digs) return; // locked or assigned our puzzle  must be minimal
-GAME & mynext = glb.mytable[index+1]; // start next guess
-for(int i=0;i<=max_to_use;i++) if (digs & (1<<i))  {
-mynext=(*this);
-mynext.index++;
-mynext.Seta(i,cell);
-if(!mynext.DoUpdate() ) continue; // locked
-
-int cell2=tc[1];
-word digs2=mynext.GetFreeDigits( cell2);
-if(!digs2) return; // locked or assigned our puzzle  must be minimal
-int i2=glb.ptcor[i];
-if (!(digs2 &(1<<i2) ) ) 			continue;
-mynext.Seta(i2,cell2);
-if(mynext.DoUpdate()-2)  continue; // locked  or solved
-
-int cell3=tc[2];
-word digs3=mynext.GetFreeDigits( cell3);
-if(!digs3) return; // locked or assigned our puzzle  must be minimal
-int i3=glb.ptcor[i2];
-if (!(digs3 &(1<<i3) ) ) 			continue;
-mynext.Seta(i3,cell3);
-if(mynext.DoUpdate()-2)  continue; // locked  or solved
-
-
-int cell4=tc[3];
-word digs4=mynext.GetFreeDigits( cell4);
-if(!digs4) return; // locked or assigned our puzzle  must be minimal
-int i4=glb.ptcor[i3];
-if (!(digs4 &(1<<i4) ) ) 			continue;
-mynext.Seta(i4,cell4);
-int ir=mynext.DoUpdate();
-if(!ir) continue; // locked
-
-if(ir==1){ //solved
-if(ntc-2) continue; // can not be minimal if not last
-mynext.SetKnown (glb.zsol);
-mynext.PatFinal();
-}
-else if(ntc==4){ // it is the last step, not yet solved
-if(mynext.IsPatFinalOk()) {
-mynext.SetKnown (glb.zsol);
-mynext.PatFinal();
-}
-}
-else {
-mynext.Sym_R90(&tc[4],ntc-4,8);
-}
-}
-
-}
-
-
-*/
 
 // 210;211;212 seed on a pattern
 // 210 in once skip then one ever xx; one seed per 'n' first given
@@ -657,10 +557,10 @@ void Go_c210(){// create a seed file on a pattern
 			if (i)tmaxdig[i] = tmaxdig[i - 1];
 			tfree[i] = gscom.tc[i].free;
 		nextc:
-			while (_BitScanForward(&digit, tfree[i])){
+			while ( tfree[i]) {
+				_BitScanForward(&digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
-				//if (ze[gscom.tclues[i].u8[0]] != digit + '1') continue;//<<<<<<<<<<<<<<<<<< filtr pour test
 				gscom.tclues[i].u8[1] = (uint8_t)digit;
 				gscom.Assign(1 << digit);
 				if ((int)digit>tmaxdig[i])tmaxdig[i] = digit;
@@ -689,7 +589,10 @@ void Go_c210(){// create a seed file on a pattern
 				tfree[i] = gscom.tc[i].free;
 				if (!tfree[i]) goto back2; // locked
 			next2:
-				while (_BitScanForward(&digit, tfree[i])){
+				int tp2[10], ntp2;
+				BitsInTable32(tp2, ntp2, tfree[i]);
+				while (tfree[i]){
+					_BitScanForward(&digit, tfree[i]);
 					tfree[i] ^= 1 << digit;
 					gscom.iclue = i;
 					gscom.tclues[i].u8[1] = (uint8_t)digit;
@@ -787,7 +690,8 @@ void Go_c211(){// create a seed file on a pattern
 			if (i)tmaxdig[i] = tmaxdig[i - 1];
 			tfree[i] = gscom.tc[i].free;
 		nextc:
-			while (_BitScanForward(&digit, tfree[i])){
+			while ( tfree[i]){
+				_BitScanForward(&digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
 				gscom.tclues[i].u8[1] = (uint8_t)digit;
@@ -872,7 +776,8 @@ void Go_c212(){// create a seed file on a pattern based on primary status
 			tfree[i] = gscom.tc[i].free;
 			if (!tfree[i]) goto back2; // locked
 		next2:
-			while (_BitScanForward(&digit, tfree[i])){
+			while (tfree[i]){
+				_BitScanForward(&digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
 				gscom.tclues[i].u8[1] = (uint8_t)digit;

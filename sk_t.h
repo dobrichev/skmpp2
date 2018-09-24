@@ -145,7 +145,6 @@ typedef union p9x9 {
 	char puz[82];
 	char gr[9][9];
 } p9_9;
-
 //==============================tables and functions  in tab0 and tab0b
 
 extern char *  empty_puzzle;
