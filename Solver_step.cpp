@@ -1031,7 +1031,7 @@ int XSTATUS::Nishio1(){// this is for a given digit
 		cout << elims.String3X(ws) << " elims � voir" << endl;
 		zhou_solve.DebugDigit(digit);
 	}
-	int tp[80], ntp = elims.String3X27(tp);
+	int tp[80], ntp = elims.Table3X27(tp);
 	for (int icell = 0; icell < ntp; icell++){
 		int cell1 = tp[icell], irexpand = XexpandNishio(cell1);
 		if (irexpand == 2){// contradiction fast 
@@ -1060,11 +1060,11 @@ int XSTATUS::Nishio2(){// must also consider bi value multi chains seen as x->~a
 		if (diagloc) cout << "unit " << unit << endl;
 		BF128 wu = units3xBM[unit]; wu &= pm; // 2 cells in 3x27 mode
 		if ((wu&elims).isNotEmpty()) continue; // is direct
-		int tp[3], ntp = wu.String3X27(tp);// 2 cells in table
+		int tp[3], ntp = wu.Table3X27(tp);// 2 cells in table
 		XexpandNishio(tp[0]); // no elimination expected  in expand
 		BF128 offt = expoff&elims;
 		if (offt.isEmpty()) continue;
-		int tpe[50], ntpe = offt.String3X27(tpe);
+		int tpe[50], ntpe = offt.Table3X27(tpe);
 		if (ntpe>10) ntpe = 10; // safety measure to protect tables
 		for (int i = 0; i < ntpe; i++){// store path1 for elims
 			wd.u16 = tpe[i]+0x100;
@@ -1527,7 +1527,8 @@ void XYSEARCH::OffToOn_Dyn(int i){
 	else{// and now last in cell or empty cell
 		int nfree = 0, free;
 		int dig = zh_g.dig_cells[cell] ^ (1 << digit);
-		while (_BitScanForward(&d2, dig)){
+		while ( dig){
+			_BitScanForward(&d2, dig);
 			dig ^= 1 << d2;
 			if (used_on_digits.Off_c(d2, cell)){//not yet on
 				if (used_off_digits.Off_c(d2, cell)){//not yet off
@@ -1548,7 +1549,8 @@ void XYSEARCH::OffToOn_Dyn(int i){
 		}
 		else{// empty cell (no "on") set "on" all "off"  
 			int digs = zh_g.dig_cells[cell] ^ (1 << digit);;
-			while (_BitScanForward(&d2, digs)){
+			while ( digs){
+				_BitScanForward(&d2, digs);
 				digs ^= 1 << d2;
 				if (used_on_digits.Off_c(d2, cell)){
 					tex[d2][cell] = nt;// first
@@ -1618,7 +1620,8 @@ void XYSEARCH::OffToOn_Dyn(int i){
 void XYSEARCH::OnToOff(int i){
 	if (cells_all.On_c(cell)){//all cells with biv or pair
 		int digs = zh_g.dig_cells[cell] ^ (1 << digit);// can be more than one
-		while (_BitScanForward(&d2, digs)){
+		while ( digs){
+			_BitScanForward(&d2, digs);
 			digs ^= 1 << d2;
 			if (dbiv.pmdig[d2].Off_c(cell)) continue;
 			if (used_off_digits.On_c(d2, cell))continue;
@@ -1640,7 +1643,8 @@ void XYSEARCH::OnToOff(int i){
 }
 void XYSEARCH::OnToOff_Dyn(int i){// no bi value filter
 	int digs = zh_g.dig_cells[cell] ^ (1 << digit);// can be more than one
-	while (_BitScanForward(&d2, digs)){
+	while ( digs){
+		_BitScanForward(&d2, digs);
 		digs ^= 1 << d2;
 		if (used_off_digits.On_c(d2, cell))continue;
 		Addt(cell, d2, i);
@@ -2439,7 +2443,8 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 		int digs = zh_g.dig_cells[xcell], ndigs=_popcnt32(digs);
 		if (nmax < 8 && ndigs>3)continue;
 		welims.SetAll_1();
-		while (_BitScanForward(&d2, digs)){
+		while ( digs){
+			_BitScanForward(&d2, digs);
 			digs ^= 1 << d2;
 			int i1 = ind_pm[d2][xcell], coff = tcands[i1].u16[1];
 			welims &= off_status[coff];
@@ -2459,7 +2464,8 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 				target.u32 = elim_cell | (id << 16);
 				int length = 0, n = 0;
 				digs = zh_g.dig_cells[xcell];
-				while (_BitScanForward(&d2, digs)){
+				while (digs){
+					_BitScanForward(&d2, digs);
 					digs ^= 1 << d2;
 					p.u32 = xcell | (d2 << 16);
 					if (!ExpandDynamicToElim(p, target)) {// redo expansion should work
@@ -2497,7 +2503,7 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 			if (dig_bivsets[id1].On(iu))continue;
 			BF128 wu = units3xBM[iu]; wu &= zh_g.pm.pmdig[id1];
 			if (wu.isEmpty())continue;
-			int tcu[10], ntcu = wu.String3X27(tcu);
+			int tcu[10], ntcu = wu.Table3X27(tcu);
 			BF128 rwu = wu;
 			if (opprint)			cout << "unit " << iu << endl;
 			welims.SetAll_1();
@@ -2726,7 +2732,8 @@ int XYSEARCH::BackDynamic(GINT64 target, GINT64 * tb, int ntb) {
 		switch (x.u16[2] >> 12){
 		case 1:{// last in cell
 			int digs = zh_g.dig_cells[xcell] ^ (1 << xdig);
-			while (_BitScanForward(&d2, digs)){
+			while (digs){
+				_BitScanForward(&d2, digs);
 				digs ^= 1 << d2;
 				if (back_bf.On_c(d2, xcell))	continue;
 				back_bf.Set_c(d2, xcell);
@@ -4525,22 +4532,25 @@ int PM_GO::Rate75_ATE() {
 					z23or.Clear_c(i3);
 					BF128 z23f = cell_z3x[i3]; // exclusion sees the 3 base cells
 					z23f &= (zand&z23);// where to take exclusion cells
-					int texclude[81], nexclude = z23f.String3X27(texclude);
+					int texclude[81], nexclude = z23f.Table3X27(texclude);
 					see_1_3 = z1.On_c(i3); see_2_3 = z2.On_c(i3);
 					unsigned long d1, d2, d3; // digit of triplets to check
 					int cd1 = zh_g.dig_cells[i1], find1 = 0, find2 = 0, find3 = 0;
-					while (_BitScanForward(&d1, cd1)){
+					while ( cd1){
+						_BitScanForward(&d1, cd1);
 						int bit1 = 1 << d1;
 						cd1^=bit1;// erase the bit
 						int cd2 = zh_g.dig_cells[i2];
 						if (see_1_2) cd2 &= ~bit1;// bit1 dead if same region
-						while (_BitScanForward(&d2, cd2)){
+						while (cd2){
+							_BitScanForward(&d2, cd2);
 							int bit2 = 1 << d2;
 							cd2^=bit2;// erase the bit
 							int cd3 = zh_g.dig_cells[i3];
 							if (see_1_3) cd3 &= ~bit1;// bit1 dead if same region
 							if (see_2_3) cd3 &= ~bit2;// bit2 dead if same region
-							while (_BitScanForward(&d3, cd3)){// a possible triplet in base
+							while ( cd3){// a possible triplet in base
+								_BitScanForward(&d3, cd3);
 								int bit3 = 1 << d3;
 								cd3^=bit3;// erase the bit, now si if an excluding cell
 								int nbits = ~(bit1 | bit2 | bit3);

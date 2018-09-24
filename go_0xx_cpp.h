@@ -164,23 +164,23 @@ void ZH_GLOBAL::Pm_Status_End(ZHOU * z){// prepare boxes and cells status
 	}
 }
 void ZH_GLOBAL::AddSingle(int band,  int vband){
+	if (!vband) return;
 	unsigned long cell;
-	if (_BitScanForward(&cell, vband)){// should always be
-		int xcell = cell + 32 * band;
-		if (cells_assigned.On(xcell)) return;
-		tsingles[nsingles++] =  (int)cell + 27 * band;
-		cells_assigned.setBit(xcell);
-	}
+	_BitScanForward(&cell, vband);
+	int xcell = cell + 32 * band;
+	if (cells_assigned.On(xcell)) return;
+	tsingles[nsingles++] = (int)cell + 27 * band;
+	cells_assigned.setBit(xcell);
 }
 void ZH_GLOBAL::AddSingleDiag(int band, int vband){
+	if (!vband) return;
 	unsigned long celld;
-	if (_BitScanForward(&celld, vband)){// should always be
-		int cell = C_transpose_d[celld + 27 * band],
-			xcell = C_To128[cell];
-		if (cells_assigned.On(xcell)) return;
-		tsingles[nsingles++] = cell ;
-		cells_assigned.setBit(xcell);
-	}
+	_BitScanForward(&celld, vband);
+	int cell = C_transpose_d[celld + 27 * band],
+		xcell = C_To128[cell];
+	if (cells_assigned.On(xcell)) return;
+	tsingles[nsingles++] = cell;
+	cells_assigned.setBit(xcell);
 }
 void ZH_GLOBAL::Build_digits_cells_pair_bf(){
 	for (int i = 0; i < 9; i++)		digits_cells_pair_bf[i] = pairs & pm.pmdig[i];
@@ -1256,16 +1256,9 @@ int ZHOU::Rate34_HiddenPair(){
 
 int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int iband, int mode){
 	int iret = 0, t3[10], t3b[10], n3 = 0;
-	{// put in table the active cells
-		register int R = unit_triplet_cells;
-		unsigned long cell;
-		while (_BitScanForward(&cell, R)){
-			R ^= 1 << cell;
-			t3b[n3] = 1<<cell;
-			t3[n3++] = cell + 27 * iband;
-		}
-	}
+	BitsInTable32(t3, n3, unit_triplet_cells);
 	if (n3 < 3) return 0;
+	for (int i = 0; i < n3; i++)t3b[i] = 1 << t3[i];
 	for (int i1 = 0; i1 < n3 - 2; i1++){
 		int digs1 = zh_g.dig_cells[t3[i1]];
 		for (int i2 = i1+1; i2 < n3 - 1; i2++){
@@ -1294,22 +1287,18 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 					return Rate36_FindClean_NakedTriplet(unit_triplet_cells, unit, iband, mode);
 			}
 		}
-
 	}
 	return iret;
 }
 int ZHOU::Rate36_FindClean_NakedTripletCol(int unit_triplet_cells, int unit, int iband){
 	int iret = 0, t3[10], t3b[10], n3 = 0;
-	{// put in table the active cells
-		register int R = unit_triplet_cells;
-		unsigned long cell;
-		while (_BitScanForward(&cell, R)){
-			R ^= 1 << cell;
-			t3b[n3] = 1 << cell;
-			t3[n3++] = C_transpose_d[cell + 27 * iband];
-		}
-	}
+	BitsInTable32(t3, n3, unit_triplet_cells);
 	if (n3 < 3) return 0;
+	for (int i = 0; i < n3; i++) {
+		int cell = t3[i];
+		t3b[i] = 1 << cell;
+		t3[i]= C_transpose_d[cell + 27 * iband];;
+	}
 	for (int i1 = 0; i1 < n3 - 2; i1++){
 		int digs1 = zh_g.dig_cells[t3[i1]];
 		for (int i2 = i1 + 1; i2 < n3 - 1; i2++){
@@ -1573,7 +1562,7 @@ int ZHOU::Rate44_XYZWing(){
 		for (int ind = 0; ind < 3; ind++){// try each digit as "common to 3 cells"
 			BF128 zd1 = zh_g.digits_cells_pair_bf[dx[ind]] & wpw;
 			if (zd1.Count() < 2) continue; // must see 2 pairs or more
-			int tpz1[20], ntpz1 = zd1.String3X27(tpz1);// collect pairs seen by pivot
+			int tpz1[20], ntpz1 = zd1.Table3X27(tpz1);// collect pairs seen by pivot
 			for (int i1 = 0; i1 < ntpz1 - 1; i1++){
 				int cell1 = tpz1[i1], digs1 = zh_g.dig_cells[cell1];
 				if (digs1 & ~digits) continue; // not fitting XYZWing
