@@ -95,36 +95,36 @@ struct GENSTEP{
 		int free = row_free[c.er] & col_free[c.ec] & box_free[c.eb] & c.unlocked;
 		tc[iclue].free = free;
 		if (diag){
-			cout << "find free iclue=" << iclue << " er=" << c.er << "  ec=" << c.ec << " eb=" << c.eb
+			std::cout << "find free iclue=" << iclue << " er=" << c.er << "  ec=" << c.ec << " eb=" << c.eb
 			 << " cell=" << (int)tclues[iclue].u8[0] << " digit=" << (int)tclues[iclue].u8[1] + 1 
-			 <<"bfree=0"<<oct << free << dec << endl;
+			 <<"bfree=0"<<std::oct << free << std::dec << std::endl;
 		}
 		if ((int)_popcnt32(free) < lim) return 0;// locked or not minimal
 		return 1;
 	}
 	void Gengo(int istart);
 	void Debug(int n){
-		cout << "gscom status for istart=" << n << endl;
-		for (int i = 0; i < 9; i++) cout << oct << " 0" << row_free[i] << dec;
-		cout << " row status"<<endl;
-		for (int i = 0; i < 9; i++) cout << oct << " 0" << col_free[i] << dec;
-		cout << " col status" << endl;
-		for (int i = 0; i < 9; i++) cout << oct << " 0" << box_free[i] << dec;
-		cout << " box status" << endl;
+		std::cout << "gscom status for istart=" << n << std::endl;
+		for (int i = 0; i < 9; i++) std::cout << std::oct << " 0" << row_free[i] << std::dec;
+		std::cout << " row status"<<std::endl;
+		for (int i = 0; i < 9; i++) std::cout << std::oct << " 0" << col_free[i] << std::dec;
+		std::cout << " col status" << std::endl;
+		for (int i = 0; i < 9; i++) std::cout << std::oct << " 0" << box_free[i] << std::dec;
+		std::cout << " box status" << std::endl;
 	}
 	void PrintPartial(int n){
 		char zs[82];
 		strcpy(zs, empty_puzzle);
 		for (int i = 0; i <= n; i++)
 			zs[tclues[i].u8[0]] = tclues[i].u8[1] + '1';
-		cout << zs << " n= "<<n << endl;
+		std::cout << zs << " n= "<<n << std::endl;
 	}
 	void PrintClues(){
-		cout << "clues ";
+		std::cout << "clues ";
 		for (int i = 0; i < nclues; i++){
-			cout << cellsFixedData[tclues[i].u8[0]].pt << " ";
+			std::cout << cellsFixedData[tclues[i].u8[0]].pt << " ";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 	void GenSym36(int ntcf);
 	void GenSym_Loop2(int sym36=1);
@@ -147,10 +147,10 @@ int GENSTEP::PuzzleToTest(){
 	if (ir) {
 		fout1 << puz
 			<< ";" << pm_go.rat_er << ";" << pm_go.rat_ep << ";" << pm_go.rat_ed
-		<< endl; return 1;
+		<< std::endl; return 1;
 	}
-	if (pm_go.rat_ed>23){ fout3 << puz << ";" << nguess << endl; return 3; }
-	fout2 << puz << ";" << nguess << endl;
+	if (pm_go.rat_ed>23){ fout3 << puz << ";" << nguess << std::endl; return 3; }
+	fout2 << puz << ";" << nguess << std::endl;
 	return 2;
 	} //end of int nguess scope
 no:
@@ -158,7 +158,7 @@ no:
 		char puz[82];
 		strcpy(puz, empty_puzzle);
 		for (int i = 0; i < nclues; i++) puz[tclues[i].u8[0]] = tclues[i].u8[1] + '1';
-		fout4 << puz << "seed" << endl;
+		fout4 << puz << "seed" << std::endl;
 	}
 	return 0;
 }
@@ -170,8 +170,8 @@ void GENSTEP::PuzzleToSplit(){
 	if (zhou[0].InitSudoku(tclues, nclues))return;
 	if (zhou[0].Isvalid() != 1)return;
 	uint64_t nguess = zh_g.cpt[1];
-	if (!nguess) { fout1 << puz << ";" << nguess << endl; return; }
-	fout3 << puz << ";" << nguess << endl;
+	if (!nguess) { fout1 << puz << ";" << nguess << std::endl; return; }
+	fout3 << puz << ";" << nguess << std::endl;
 }
 
 void GENSTEP::Gengo(int istart){
@@ -179,7 +179,7 @@ void GENSTEP::Gengo(int istart){
 	iclue = istart;
 	Find_free_minimal_change();
 next:
-	unsigned long iw;
+	uint32_t iw;
 	while ( tc[iclue].free){
 		_BitScanForward(&iw, tc[iclue].free);
 		//cout << "next iclue=" << iclue << " digit=" << iw+1 << endl;
@@ -212,7 +212,7 @@ void GENSTEP::GenSym36(int lim1){
 		return;
 	}
 	int tleveldig[4] = { 1, 3, 7, 7 };
-	unsigned long digit;
+	uint32_t digit;
 	int  i1 = -1; // loop1 on fix clues
 	tc[0].unlocked = 1;// first cell only digit 1
 	tc[0].level_dig = 0;
@@ -255,7 +255,7 @@ void GENSTEP::GenSym_Loop2(int sym36){// loop on pairs of clues
 	// start with cell ntcf
 	cout << "entry loop2 sym36=" << sym36 << endl;
 	int tleveldig[6] = { 1,7, 0x1f, 0x7f, 0x1ff, 0x1ff };
-	unsigned long digit;
+	uint32_t digit;
 	int  i = ntcf - 2, d1, d2;
 	tc[0].level_dig = sym36;
 	if (ntcf)tc[ntcf-1].level_dig = sym36;
@@ -334,15 +334,15 @@ void Go_c200(){// just split the entry file
 	zh_g.diag = (int)sgo.vx[9];
 	if (!sgo.finput_name) return;
 	finput.open(sgo.finput_name);
-	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
+	if (!finput.is_open()){ std::cerr << "error open " << sgo.finput_name << std::endl; return; }
 	char ze[82]; ze[81] = 0;
 	while (finput.GetPuzzle(ze)){
-		if (zh_g.diag)cout << ze << "trait�" << endl;
+		if (zh_g.diag)std::cout << ze << "trait�" << std::endl;
 		zh_g.npuz++;
 		gscom.Init();
 		for (int i = 0; i < 81; i++)if (ze[i] != '.'){// catch given
 			int c = ze[i] - '1';
-			if (c < 0 || c>9){ cerr << "invalid file" << endl; return; }
+			if (c < 0 || c>9){ std::cerr << "invalid file" << std::endl; return; }
 			gscom.tclues[gscom.nclues++].u16 = (c << 8) | i;
 		}
 		gscom.PuzzleToSplit();
@@ -350,19 +350,19 @@ void Go_c200(){// just split the entry file
 		//if (zh_g.cptg[7]>20)break;
 		//if (zh_g.npuz>1000)break;
 	}
-	cout << "summary npuz=" << zh_g.npuz << endl;
+	std::cout << "summary npuz=" << zh_g.npuz << std::endl;
 	for (int i = 0; i < 10; i++) if (zh_g.cptg[i])
-		cout << zh_g_cpt[i] << "\t" << zh_g.cptg[i] << endl;
+		std::cout << zh_g_cpt[i] << "\t" << zh_g.cptg[i] << std::endl;
 }
 void Go_c201(){
 	if (!sgo.foutput_name){
-		cerr << "missing output name" << endl; return;
+		std::cerr << "missing output name" << std::endl; return;
 	}
 	int cpt = 0;
 	if (!sgo.finput_name) return;
-	cout << "c201 entry for input " << sgo.finput_name << " mode upto=" << sgo.vx[1] << endl;
+	std::cout << "c201 entry for input " << sgo.finput_name << " mode upto=" << sgo.vx[1] << std::endl;
 	finput.open(sgo.finput_name);
-	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
+	if (!finput.is_open()){ std::cerr << "error open " << sgo.finput_name << std::endl; return; }
 	char ze[82]; ze[81] = 0;
 	GINT16 myclues[40];
 	int myn;
@@ -370,16 +370,16 @@ void Go_c201(){
 	if (sgo.vx[1])idep = 1;
 
 	while (finput.GetPuzzle(ze)){
-		cout << ze << " to process" << endl;
+		std::cout << ze << " to process" << std::endl;
 		myn = 0;
 		gscom.Init();
 		for (int i = 0; i < 81; i++)if (ze[i] != '.'){// catch given
 			int c = ze[i] - '1';
-			if (c < 0 || c>9){ cerr << "invalid file" << endl; return; }
+			if (c < 0 || c>9){ std::cerr << "invalid file" << std::endl; return; }
 			myclues[myn++].u16 = (c << 8) | i;
 		}
 		if (myn <=(int) (change + nfix)){
-			cout << "cancelled due to nfix+change too high" << endl;
+			std::cout << "cancelled due to nfix+change too high" << std::endl;
 			return;
 		}
 
@@ -387,7 +387,7 @@ void Go_c201(){
 		COMBINE combi;
 		USHORT tclues[40], tclues_s[40];
 //		int istart = myn - change;
-		if (nfix)	cout << "start combi nfix=" << nfix << " change="<<change<< endl;
+		if (nfix)	std::cout << "start combi nfix=" << nfix << " change="<<change<< std::endl;
 		
 		// skip the fix clues here and load the nfix in gscom
 		for (int i = 0; i <(int) nfix; i++)gscom.tclues[i] = myclues[i];
@@ -415,7 +415,7 @@ void Go_c201(){
 						zs[gscom.tclues[i].u8[0]] = 'x';
 
 
-					cout <<zs<< "call gengo " << endl;
+					std::cout <<zs<< "call gengo " << std::endl;
 				}
 				gscom.Gengo(istart);
 				if (!combi.Next()) break;
@@ -531,7 +531,7 @@ void Go_c210(){// create a seed file on a pattern
 	int nclues, cclue = 0, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40], tmaxdig[40];
 
 	if (finput.GetPuzzle(ze)){
@@ -664,7 +664,7 @@ void Go_c211(){// create a seed file on a pattern
 	int nclues, cclue = 0, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40], tmaxdig[40];
 
 	if (finput.GetPuzzle(ze)){
@@ -738,7 +738,7 @@ void Go_c212(){// create a seed file on a pattern based on primary status
 		cout << n1 << " given clues not an accepted value" << endl;
 		return;
 	}
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40];
 
 	while (finput.GetPuzzle(ze)){

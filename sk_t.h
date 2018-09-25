@@ -72,7 +72,7 @@ typedef unsigned __int64  uint64_t;
        : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
 #define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
 #define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
-#define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)
+#define _bittest64(a, b) (((((uint64_t*)a)[b>>6]) >> (b & 63)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
@@ -101,7 +101,7 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned short int  USHORT;
 typedef unsigned int UINT;
-typedef unsigned long ULONG;
+typedef uint32_t ULONG;
 typedef unsigned char UCHAR;
 
 
@@ -147,8 +147,8 @@ typedef union p9x9 {
 } p9_9;
 //==============================tables and functions  in tab0 and tab0b
 
-extern char *  empty_puzzle;
-extern char *  puzstart;
+extern const char *  empty_puzzle;
+extern const char *  puzstart;
 
 // printing and debugging 
 extern char * Blancs(int n, int no);

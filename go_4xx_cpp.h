@@ -88,7 +88,7 @@ void Go_c440(){
 void Go_c445(){
 	cout << "Go_445 entry " << sgo.finput_name << " param=" << sgo.bfx[0] << endl;
 	if (_popcnt32(sgo.bfx[0]) != 1) return;//pointer to the  parameter to consider
-	unsigned long ipar; _BitScanForward(&ipar, sgo.bfx[0]);
+	uint32_t ipar; _BitScanForward(&ipar, sgo.bfx[0]);
 	cout << "split o, parameter rank=" << ipar << " file 1 <=" << sgo.vx[0] << endl;
 	int v = sgo.vx[0];
 	//ipar--;// switch to index;

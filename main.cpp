@@ -5,13 +5,13 @@
 
 
 // catching time as seconds+millis  (seconds since year 1970)
-long GetTimeMillis() {
+int32_t GetTimeMillis() {
 	struct _timeb tbuf;
 	_ftime64_s(&tbuf); 
-	return ((long)(1000 * tbuf.time) + tbuf.millitm);
+	return ((int32_t)(1000 * tbuf.time) + tbuf.millitm);
 }
 // builing an appropriate message depending on the elapsed time te-ts
-void PrintTime(long ts,long te){	 
+void PrintTime(int32_t ts,int32_t te){
 	UINT dt=te-ts,dtmil=dt%1000,dts=dt/1000,dth=dts/3600;   dth=dth%1000;
 	cerr << endl<<"total elapsed time "; 
     UINT dtm=dts/60; dts=dts%60 ,   dth=dtm/60, dtm=dtm%60;
@@ -22,7 +22,7 @@ void PrintTime(long ts,long te){
 	cerr <<dtmil<<"ms "<<endl;   return;
 }
 
-void PrintTimeCout(long ts, long te){
+void PrintTimeCout(int32_t ts, int32_t te){
 	UINT dt = te - ts, dtmil = dt % 1000, dts = dt / 1000, dth = dts / 3600;   dth = dth % 1000;
 	cout << endl << "total elapsed time ";
 	UINT dtm = dts / 60; dts = dts % 60, dth = dtm / 60, dtm = dtm % 60;
@@ -34,9 +34,9 @@ void PrintTimeCout(long ts, long te){
 }
 
 
-int Search_ccd(char * ww)
+int Search_ccd(const char * ww)
 {	// List of 2 char command, 9 commands
-	char * ccd[]={"-i" ,    // input name including extension
+	const char * ccd[]={"-i" ,    // input name including extension
 				  "-o" ,	//	output or second filename
 				  "-c",  // main command option + check boxes
 				  "-v" ,  // value   0 to 9 default 0
@@ -58,7 +58,7 @@ SGO sgo;
 extern void Go_0();
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
-	long tdeb=GetTimeMillis();
+	int32_t tdeb=GetTimeMillis();
 	char * finput_name=0,*foutput_name=0,* ww;
 	char * s_strings[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//optionnal 10 strings
 
@@ -117,7 +117,7 @@ int main(int narg, char *argv[]) {
 	Go_0();
 	cerr << " print cout time "  << endl;
 
-	long tfin=GetTimeMillis();
+	int32_t tfin=GetTimeMillis();
     PrintTimeCout(tdeb,tfin);
 	PrintTime(tdeb, tfin);
 	return 0;
@@ -125,7 +125,7 @@ int main(int narg, char *argv[]) {
 
 void SGO::ParseInt(char * ze, int  delimiter){
 // bfx[0] 1 to 8 parameters
-	__stosd((unsigned long *)tparse, 0, 8); nparse = 0;
+	__stosd((uint32_t *)tparse, 0, 8); nparse = 0;
 	if (!bfx[0]) return;
 	//cout << ze << "go parse  delimiter "<<(char) delimiter << endl;
 	char * w = ze,temp[20];

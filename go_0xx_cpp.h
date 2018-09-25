@@ -2,7 +2,7 @@ extern PM_GO pm_go;
 
 void Go_c0(){
 	if (!sgo.finput_name) return;
-	long long cptg[20];
+	int64_t cptg[20];
 	memset(cptg, 0, sizeof cptg);
 	cout << "Go_0 entry " << sgo.finput_name << " input" << endl;
 	// temporary code extract solution with a known 17 6 6 5
@@ -14,12 +14,12 @@ void Go_c0(){
 	char ze[82]; ze[81] = 0;
 	uint32_t npuz = 0;
 	int nn[3] = { 0, 0, 0 };
-	long ttdeb = GetTimeMillis();
+	int32_t ttdeb = GetTimeMillis();
 	while (finput.GetPuzzle(ze)){
 		npuz++;
 		if (npuz < sgo.vx[0]) continue;
 		if (sgo.vx[8])cout << ze << "to process npuz=" << npuz << endl;
-		long tdeb = GetTimeMillis();
+		int32_t tdeb = GetTimeMillis();
 #ifdef ZHOU_OLD
 		zhou[0].glb.diag = sgo.vx[9];
 		for (uint32_t i = 0; i< sgo.vx[2]; i++){
@@ -31,7 +31,7 @@ void Go_c0(){
 			cout << "loop sommaire nsol=" << zhou[0].glb.nsol << endl;
 			for (int i = 0; i < 10; i++) if (zhou[0].glb.cpt[i])
 				cout << zh_g_cpt[i] << "\t" << zhou[0].glb.cpt[i] << endl;
-			long tfin = GetTimeMillis();
+			int32_t tfin = GetTimeMillis();
 			cout << "puz loop t=" << tfin - tdeb << endl;
 
 		}
@@ -71,7 +71,7 @@ void Go_c0(){
 			cout << "loop sommaire nsol=" << zh_g.nsol << endl;
 			for (int i = 0; i < 10; i++) if (zh_g.cpt[i])
 				cout << zh_g_cpt[i] << "\t" << zh_g.cpt[i] << endl;
-			long tfin = GetTimeMillis();
+			int32_t tfin = GetTimeMillis();
 			cout << "puz loop t=" << tfin - tdeb << endl;
 
 		}
@@ -84,7 +84,7 @@ void Go_c0(){
 	if (1) {
 		cout << "compte nsol 0;1;2 \t"
 			<< nn[0] << "\t" << nn[1] << "\t" << nn[2] << endl;
-		long ttfin = GetTimeMillis();
+		int32_t ttfin = GetTimeMillis();
 		cout << "t=" << ttfin - ttdeb << endl;
 		for (int i = 0; i < 10; i++) if (cptg[i])
 			cout << zh_g_cpt[i] << "\t" << cptg[i] << endl;
@@ -135,8 +135,8 @@ void ZH_GLOBAL::Pm_Status(ZHOU * z){
 	}
 }
 void ZH_GLOBAL::Pm_Status_End(ZHOU * z){// prepare boxes and cells status
-	__stosd((unsigned long *)dig_cells, 0, 81);
-	__stosd((unsigned long *)cells_count, 0, 81);
+	__stosd((uint32_t *)dig_cells, 0, 81);
+	__stosd((uint32_t *)cells_count, 0, 81);
 	for (int idig = 0; idig < 9; idig++){
 		BF128 w = z->FD[idig][0];
 		int box = 0;
@@ -165,7 +165,7 @@ void ZH_GLOBAL::Pm_Status_End(ZHOU * z){// prepare boxes and cells status
 }
 void ZH_GLOBAL::AddSingle(int band,  int vband){
 	if (!vband) return;
-	unsigned long cell;
+	uint32_t cell;
 	_BitScanForward(&cell, vband);
 	int xcell = cell + 32 * band;
 	if (cells_assigned.On(xcell)) return;
@@ -174,7 +174,7 @@ void ZH_GLOBAL::AddSingle(int band,  int vband){
 }
 void ZH_GLOBAL::AddSingleDiag(int band, int vband){
 	if (!vband) return;
-	unsigned long celld;
+	uint32_t celld;
 	_BitScanForward(&celld, vband);
 	int cell = C_transpose_d[celld + 27 * band],
 		xcell = C_To128[cell];
@@ -200,7 +200,7 @@ void ZHOU::AssignSolver(int rating){
 
 }
 void ZHOU::Naked_Pairs_Seen(){
-	__stosq((unsigned long long *)zh_g.locked_nacked_brc_seen[0].bf.u64, 0, 6);
+	__stosq((uint64_t *)zh_g.locked_nacked_brc_seen[0].bf.u64, 0, 6);
 	BF128 & pa = zh_g.pairs, fd[9];
 	if (pa.Count() < 2) return;
 	int td[9], nd = 0;
@@ -404,7 +404,7 @@ int ZHOU::Rate17_lockedBox_Assign(){
 				// this is a minirow locked in box
 				//cout << "17 row dig=" << idig + 1 << " band=" << iband + 1
 				//	<< " rrow=" << irow1+1 << endl;
-				unsigned long rbox;// relative box
+				uint32_t rbox;// relative box
 				_BitScanForward(&rbox, x);
 				if (_popcnt32(shrink & tboxskrink[rbox]) == 1)continue;
 				int nbox = ~tband_box[rbox];
@@ -430,7 +430,7 @@ int ZHOU::Rate17_lockedBox_Assign(){
 				//cout << "17 col dig=" << idig + 1 << " band=" << p[0]+1 << " box=" << ibox + 1 << endl;
 				// can be 1 or 2 columns ?? test the 2 bands only one per band can come
 				int singleb2 = b2&single23box;
-				unsigned long icol;
+				uint32_t icol;
 				if (singleb2){
 					_BitScanForward(&icol, singleb2);
 					int colmask = 01001001 << icol;
@@ -908,7 +908,7 @@ int ZHOU::Rate26_lockedBox(){
 			for (int ibox = 0; ibox < 3; ibox++,shrink>>=1){
 				register int x = shrink & 0111;
 				if (_popcnt32(x) - 1)continue;// not locked in row
-				unsigned long irow;	_BitScanForward(&irow, x);// catch the row
+				uint32_t irow;	_BitScanForward(&irow, x);// catch the row
 				irow /= 3;
 				int to_clean = tband_row[irow] & (~tband_box[ibox]) & band;
 				if (to_clean){
@@ -927,7 +927,7 @@ int ZHOU::Rate26_lockedBox(){
 			for (int ibox = 0; ibox < 3; ibox++){
 				int mask = 7 << (3 * ibox), bm = colband&mask;
 				if (_popcnt32(bm) -1) continue; // solved or cleaned
-				unsigned long icol;
+				uint32_t icol;
 				_BitScanForward(&icol, bm);// column to clean
 				int to_clean = Zhoucol << icol, *p = tperm3[iband];
 				if (to_clean){
@@ -1151,7 +1151,7 @@ int ZHOU::Rate32_XWing(){
 			for (int ir2 = ir1 + 1; ir2 < nr; ir2++){
 				int r2 = tr[ir2];
 				if (R != rows[r2]) continue;
-				unsigned long c1, c2;
+				uint32_t c1, c2;
 				_BitScanForward(&c1, R);	_BitScanReverse(&c2, R);
 				int mask = (1 << r1) | (1 << r2);
 				rx2 |= mask; 
@@ -1184,7 +1184,7 @@ int ZHOU::Rate32_XWing(){
 				if (locdiag) cout << "c1;c2=" <<c1<<c2 << endl;
 
 				if (R != cols[c2]) continue;
-				unsigned long r1, r2;
+				uint32_t r1, r2;
 				_BitScanForward(&r1, R);	_BitScanReverse(&r2, R);
 				if (locdiag) cout << "r1;r2=" << r1 << r2 << endl;
 				int mask = (1 << c1) | (1 << c2);
@@ -1434,7 +1434,7 @@ int ZHOU::Rate38_SwordFish(){
 					int r3 = tr[ir3];
 					int R3 = R2 | rows[r3];
 					if (_popcnt32(R3) > 3) continue;
-					unsigned long c1, c2, c3;
+					uint32_t c1, c2, c3;
 					_BitScanForward(&c1, R3);	_BitScanReverse(&c2, R3);
 					int w =R3 ^ ((1 << c1) | (1 <<c2));//last bit
 					_BitScanForward(&c3, w);
@@ -1472,7 +1472,7 @@ int ZHOU::Rate38_SwordFish(){
 					int c3 = tr[ic3];
 					int R3 = R2 | cols[c3];
 					if (_popcnt32(R3) > 3) continue;
-					unsigned long r1, r2, r3;
+					uint32_t r1, r2, r3;
 					_BitScanForward(&r1, R3);	_BitScanReverse(&r2, R3);
 					int w = R3 ^ ((1 << r1) | (1 << r2));//last bit
 					_BitScanForward(&r3, w);
@@ -1673,7 +1673,7 @@ int ZHOU::Rate52_JellyFish(){
 						int r4 = tr[ir4];
 						int R4 = R3 | rows[r4];
 						if (_popcnt32(R4) > 4) continue;
-						unsigned long c1, c2, c3, c4;
+						uint32_t c1, c2, c3, c4;
 						_BitScanForward(&c1, R3);	_BitScanReverse(&c2, R3);
 						int w = R3 ^ ((1 << c1) | (1 << c2));//last bit
 						_BitScanForward(&c3, w); _BitScanReverse(&c4, w);
@@ -1722,7 +1722,7 @@ int ZHOU::Rate52_JellyFish(){
 						int c4 = tr[ic4];
 						int R4 = R3 | cols[c4];
 						if (_popcnt32(R4) > 4) continue;
-						unsigned long r1, r2, r3, r4;
+						uint32_t r1, r2, r3, r4;
 						_BitScanForward(&r1, R3);	_BitScanReverse(&r2, R3);
 						int w = R3 ^ ((1 << r1) | (1 << r2));//last bit
 						_BitScanForward(&r3, w); _BitScanReverse(&r4, w);

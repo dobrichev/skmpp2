@@ -17,7 +17,8 @@
 
 inline void BitsInTable64(int * t, int & nt, uint64_t v, int v0=0) {
 	register uint64_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t res;
+	uint32_t register R0 = v0;
 	while (R) {
 		_BitScanForward64(&res, R);
 		t[nt++] = res + R0;
@@ -27,7 +28,8 @@ inline void BitsInTable64(int * t, int & nt, uint64_t v, int v0=0) {
 }
 inline void BitsInTable32(int * t, int & nt, uint32_t v, int v0=0) {
 	register uint32_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t res;
+	uint32_t register R0 = v0;
 	while (R) {
 		_BitScanForward(&res, R);
 		t[nt++] = res + R0;
@@ -36,7 +38,8 @@ inline void BitsInTable32(int * t, int & nt, uint32_t v, int v0=0) {
 }
 inline void BitsInTable64Reverse(int * t, int & nt, uint64_t v, int v0 = 0) {
 	register uint64_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t res;
+	uint32_t register R0 = v0;
 	while (R) {
 		_BitScanReverse64(&res, R);
 		t[nt++] = res + R0;
@@ -46,7 +49,8 @@ inline void BitsInTable64Reverse(int * t, int & nt, uint64_t v, int v0 = 0) {
 }
 inline void BitsInTable32Reverse(int * t, int & nt, uint32_t v, int v0 = 0) {
 	register uint32_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t res;
+	uint32_t register R0 = v0;
 	while (R) {
 		_BitScanReverse(&res, R);
 		t[nt++] = res + R0;
@@ -90,8 +94,8 @@ struct BF8 {
 	
  	inline int On(int ch) const {return ((f & (1 << ch)));	}		
 	inline int Off(int ch) const {	return (!(f & (1 << ch)));	}	
-	inline void Set(USHORT ch) {f |= (1 << ch);	}	
-	inline void Clear(USHORT ch) {	f &= ~(1 << ch);}
+	inline void Set(USHORT ch) {f |= (UCHAR)(1 << ch);	}
+	inline void Clear(USHORT ch) {	f &= (UCHAR)~(1 << ch);}
 	inline BF8 operator &(BF8 & e) const {BF8 w;w.f = f & e.f;	return w;	}
 	inline BF8 operator |(BF8 & e) {BF8 w;	w.f = f | e.f;	return w;}
 	inline BF8 operator ^(BF8 & e) {BF8 w;	w.f = f ^ e.f;	return w;}
@@ -114,11 +118,11 @@ struct BF16 {
 	USHORT f;
 	// constructors
 	BF16() { f = 0; }
-	BF16(int i1) { f = 1 << i1; }
-	BF16(int i1, int i2) { f = (1 << i1) | (1 << i2); }
-	BF16(int i1, int i2, int i3) { f = (1 << i1) | (1 << i2) | (1 << i3); }
-	BF16(int i1, int i2, int i3, int i4) { f = (1 << i1) | (1 << i2) | (1 << i3) | (1 << i4); }
-	BF16(int i1, int i2, int i3, int i4, int i5) { f = (1 << i1) | (1 << i2) | (1 << i3) | (1 << i4) | (1 << i5); }
+	BF16(int i1) { f = (USHORT)(1 << i1); }
+	BF16(int i1, int i2) { f = (USHORT)((1 << i1) | (1 << i2)); }
+	BF16(int i1, int i2, int i3) { f = (USHORT)((1 << i1) | (1 << i2) | (1 << i3)); }
+	BF16(int i1, int i2, int i3, int i4) { f = (USHORT)((1 << i1) | (1 << i2) | (1 << i3) | (1 << i4)); }
+	BF16(int i1, int i2, int i3, int i4, int i5) { f = (USHORT)((1 << i1) | (1 << i2) | (1 << i3) | (1 << i4) | (1 << i5)); }
 
 	inline void SetAll_0() { f = 0; }
 	inline void SetAll_1() { f = 0x1ff; }
@@ -126,8 +130,8 @@ struct BF16 {
 	inline int isNotEmpty() const { return f; }
 	inline int On(int ch) const { return ((f & (1 << ch))); }
 	inline int Off(int ch) const { return (!(f & (1 << ch))); }
-	inline void Set(USHORT ch) { f |= (1 << ch); }
-	inline void Clear(USHORT ch) { f &= ~(1 << ch); }
+	inline void Set(USHORT ch) { f |= (USHORT)(1 << ch); }
+	inline void Clear(USHORT ch) { f &= (USHORT)(~(1 << ch)); }
 	inline BF16 operator &(BF16 & e) const { BF16 w;	w.f = f & e.f;	return w; }
 	inline BF16 operator |(BF16 & e) const { BF16 w;	w.f = f | e.f;	return w; }
 	inline BF16 operator ^(BF16 & e) const { BF16 w;	w.f = f ^ e.f;	return w; }
@@ -195,11 +199,11 @@ struct BF64 {
 	inline void operator<<= (const int bits) { bf.u64 <<= bits; };
 	inline void operator>>= (const int bits) { bf.u64 >>= bits; };
 
-	inline unsigned char On(const int theBit) const { return    _bittest64((long long*)&bf.u64, theBit); }
-	inline unsigned char Off(const int theBit) const { return    (!_bittest64((long long*)&bf.u64, theBit)); }
-	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64, theBit); }
-	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64, theBit); }
-	inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64, theBit); }
+	inline unsigned char On(const int theBit) const { return    _bittest64((int64_t*)&bf.u64, theBit); }
+	inline unsigned char Off(const int theBit) const { return    (!_bittest64((int64_t*)&bf.u64, theBit)); }
+	inline void Set(const int theBit) { _bittestandset64((int64_t*)&bf.u64, theBit); }
+	inline void SetToBit(const int theBit) { clear(); _bittestandset64((int64_t*)&bf.u64, theBit); }
+	inline void Clear(const int theBit) { _bittestandreset64((int64_t*)&bf.u64, theBit); }
 
 	inline uint64_t isNotEmpty() const { return bf.u64; }
 	inline bool isEmpty() const { return (!bf.u64); }
@@ -247,9 +251,9 @@ public:
 	inline bool operator== (const BF128& r) const { return(bf.u64[0] == r.bf.u64[0] && bf.u64[1] == r.bf.u64[1]); }
 	inline bool operator!= (const BF128 &r) const { return(bf.u64[0] != r.bf.u64[0] || bf.u64[1] != r.bf.u64[1]); };
 
-	inline void setBit(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
-	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
-	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64[0], theBit); }
+	inline void setBit(const int theBit) { _bittestandset64((int64_t*)&bf.u64[0], theBit); }
+	inline void Set(const int theBit) { _bittestandset64((int64_t*)&bf.u64[0], theBit); }
+	inline void SetToBit(const int theBit) { clear(); _bittestandset64((int64_t*)&bf.u64[0], theBit); }
 	inline void MaskToBit(const int theBit) { 
 		register int R = theBit;		if (R >= 128)SetAll_1();
 		else if (R <= 0)SetAll_0();
@@ -264,12 +268,12 @@ public:
 	}
 	inline void Mask(const int theBit){ BF128 w; w.MaskToBit(theBit); *this &=  w; }
 
-	inline unsigned char isBitSet(const int theBit) const { return  _bittest64((long long*)&bf.u64[0], theBit); }
-	inline unsigned char On(const int theBit) const { return  _bittest64((long long*)&bf.u64[0], theBit); }
-	inline int Off(const int theBit) const { return (!_bittest64((long long*)&bf.u64[0], theBit)); }
+	inline unsigned char isBitSet(const int theBit) const { return  _bittest64((int64_t*)&bf.u64[0], theBit); }
+	inline unsigned char On(const int theBit) const { return  _bittest64((int64_t*)&bf.u64[0], theBit); }
+	inline int Off(const int theBit) const { return (!_bittest64((int64_t*)&bf.u64[0], theBit)); }
 
-	inline void clearBit(const int theBit) { _bittestandreset64((long long*)&bf.u64[0], theBit); }
-	inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64[0], theBit); }
+	inline void clearBit(const int theBit) { _bittestandreset64((int64_t*)&bf.u64[0], theBit); }
+	inline void Clear(const int theBit) { _bittestandreset64((int64_t*)&bf.u64[0], theBit); }
 
 	//  code to use in a 3 bands pattern calling using a cell 0-80
 	inline int On_c(const int cell) const { return On(C_To128[cell]); }
@@ -334,7 +338,7 @@ public:
 	
 	inline int mask8() const { return _mm_movemask_epi8(bf.u128); }
 	inline int getFirst96() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[0]) {
 			_BitScanForward64(&res, bf.u64[0]);
 			return res;
@@ -346,7 +350,7 @@ public:
 		return -1;
 	}
 	inline int getLast96() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u32[2]) {
 			_BitScanReverse(&res, bf.u32[2]);
 			return 64 + res;
@@ -358,7 +362,7 @@ public:
 		return -1;
 	}
 	inline int getFirst128() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[0]) {
 			_BitScanForward64(&res, bf.u64[0]);
 			return res;
@@ -370,7 +374,7 @@ public:
 		return -1;
 	}
 	inline int getFirsCell() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u32[0]) {
 			_BitScanForward(&res, bf.u32[0]);
 			return res;
@@ -386,7 +390,7 @@ public:
 		return -1;
 	}
 	inline int getLast128() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[1]) {
 			_BitScanReverse64(&res, bf.u64[1]);
 			return res + 64;
@@ -417,8 +421,8 @@ class PM3X {
 	// 9*BF128 to have candidates in native mode when needed
 public:
 	BF128 pmdig[9];
-	inline void SetAll_0(){ __stosq((unsigned long long *)pmdig[0].bf.u64,0,18); }
-	inline void SetAll_1() { __stosq((unsigned long long *)pmdig[0].bf.u64, BIT_SET_64, 18); }
+	inline void SetAll_0(){ __stosq((uint64_t *)pmdig[0].bf.u64,0,18); }
+	inline void SetAll_1() { __stosq((uint64_t *)pmdig[0].bf.u64, BIT_SET_64, 18); }
 	inline void Set(int dig, int cell){ pmdig[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ pmdig[dig].Set_c(cell); }
 	inline void Clear(int dig, int cell){ pmdig[dig].Clear(cell); }
@@ -436,7 +440,7 @@ public:
 	USHORT String(UCAND * t);
 	int IsEmpty();
 	int Count();
-	void Print(char * lib);
+	void Print(const char * lib);
 };
 
 struct RBF27{
@@ -467,8 +471,8 @@ class PMBF {
 	// 9*BF81 to have candidates in native mode when needed
 public:
 	BF81 bfc[9];
-	inline void SetAll_0() { __stosq((unsigned long long *)bfc[0].bf.u64, 0, 18); }
-	inline void SetAll_1() { __stosq((unsigned long long *)bfc[0].bf.u64, 0xffffffffffffffff, 18); }
+	inline void SetAll_0() { __stosq((uint64_t *)bfc[0].bf.u64, 0, 18); }
+	inline void SetAll_1() { __stosq((uint64_t *)bfc[0].bf.u64, 0xffffffffffffffff, 18); }
 	inline void Set(int dig, int cell){ bfc[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ bfc[dig].Set_c(cell); }
 	inline void SetU(UCAND c){ bfc[c >> 7].Set(c & 127); }

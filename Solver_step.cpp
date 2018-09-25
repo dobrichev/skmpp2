@@ -39,7 +39,7 @@ int GINTBUF::Get(int n){
 int GINTBUF::Store(GINT * t){
 	int n = t[0].u16[0];
 	if (ncur + n > n32) return -1;
-	__movsd((unsigned long *)&buf[ncur].u32, (unsigned long *)&t[0].u32, n);
+	__movsd((uint32_t *)&buf[ncur].u32, (uint32_t *)&t[0].u32, n);
 	int nret = ncur;
 	ncur += n;
 	return nret;
@@ -49,7 +49,7 @@ int GINTBUF::GetBack(GINT * d){
 	GINT * t = &buf[nback];
 	int n = t[0].u16[0];
 	nback += n;
-	__movsd((unsigned long *)&d[0].u32, (unsigned long *)&t[0].u32, n);
+	__movsd((uint32_t *)&d[0].u32, (uint32_t *)&t[0].u32, n);
 	return 1;
 }
 void GINTBUF::EraseOlds(int nkeep){
@@ -58,7 +58,7 @@ void GINTBUF::EraseOlds(int nkeep){
 	for (i = nkeep; i < ncur; i++) buf[n++] = buf[i];
 	ncur = i;
 }
-void STORE_UL::Print(char * lib){
+void STORE_UL::Print(const char * lib){
 	cout << lib << " action on UL" << endl;
 	char ws[82];
 	cout << cells.String3X(ws) << "ul pattern type=" << type << endl;
@@ -1185,7 +1185,7 @@ int YLSEARCH::Expand(){//search start idig;xcell1;xcell2 end
 	if (locdiag&2)		cout << "yl expand dig="<<idig+1<<" " << cellsFixedData[c1].pt
 		<< " " << cellsFixedData[c2].pt << endl;
 	ncells = 1;// start with 
-	unsigned long d2;
+	uint32_t d2;
 	BF128 used_cells;	used_cells.SetAll_0();	
 	used_cells.Set(xcell1); used_cells.Set(xcell2);
 	GINT64 t[160];// cell,digit on,digit off,source
@@ -1234,7 +1234,7 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 	struct SPOT{
 		BF128 used_cells,wcells;
 		int mycell,cell,digit,ispot;
-		unsigned long d2;
+		uint32_t d2;
 		inline void Init(int ca, int cb,int idig){
 			ispot = 0;
 			used_cells.SetAll_0();
@@ -1758,7 +1758,7 @@ void XYSEARCH::PrintTback(){
 	cout << " found xy loop/chain mode=" << mode << endl;
 	PrintBackCom("path ", tback, nsteps + 1, 0);
 }
-void  XYSEARCH::PrintBackCom(char * lib, GINT64 * ptback, int nback, int pmode){
+void  XYSEARCH::PrintBackCom(const char * lib, GINT64 * ptback, int nback, int pmode){
 	cout << lib << " ";
 	for (int i = 0; i < nback; i++){
 		GINT64 w = ptback[i];
@@ -1795,8 +1795,8 @@ void XYSEARCH::Init(){//Collect bi values
 	cells_all.SetAll_0(); cells_biv_all.SetAll_0();
 	dbiv.SetAll_0();
 	cells_biv_true = pairs;
-	__stosd((unsigned long *)&dig_bivsets[0].f, 0, 9);
-	__stosd((unsigned long *)&dig_sets3[0].f, 0, 9);
+	__stosd((uint32_t *)&dig_bivsets[0].f, 0, 9);
+	__stosd((uint32_t *)&dig_sets3[0].f, 0, 9);
 	for (int idig = 0; idig < 9; idig++){
 		int * wds = dig_sets[idig];
 		memcpy(wds, zh_g.dig_rows[idig], 36);
@@ -2064,7 +2064,7 @@ int XYSEARCH::MultiUnit(int udigit, int unit){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			__movsq((unsigned long long *)&wp.t[0].u64, (unsigned long long *)&t[0].u64, nt);
+			__movsq((uint64_t *)&wp.t[0].u64, (uint64_t *)&t[0].u64, nt);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
 			if (diagloc > 1)cout << "go direct cell " << cellsFixedData[wp.cell].pt << endl;
@@ -2087,7 +2087,8 @@ int XYSEARCH::MultiCell(int c0){
 	if (diagloc>1)cout << "start Multicell for " << cellsFixedData[c0].pt << endl;
 	cleang = zh_g.pm;
 	if (diagloc>1)	cleang.Print("cleang at start");
-	int digs = zh_g.dig_cells[c0], ndigits = _popcnt32(digs);
+	int digs = zh_g.dig_cells[c0];
+	//int ndigits = _popcnt32(digs); //MD 25.9.2018: unused
 	npaths = 0;
 	for (int idig = 0, bit = 1; idig < 9; idig++, bit <<= 1){
 		if (!(digs & bit))continue;
@@ -2113,7 +2114,7 @@ int XYSEARCH::MultiCell(int c0){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			__movsq((unsigned long long *)&wp.t[0].u64,	(unsigned long long *)&t[0].u64, nt);
+			__movsq((uint64_t *)&wp.t[0].u64,	(uint64_t *)&t[0].u64, nt);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
 			cleang &= cleanstart;
@@ -2389,7 +2390,7 @@ void XYSEARCH::SearchDynPass(int nmax){	// try a  pass limited to nmax steps
 	if (opprint)cout << "try cells bi values" << endl;
 	// try all bi values in mode x->~a and y->~a adding one in length
 	BF128 wp = pairs;
-	unsigned long  dc1,dc2;
+	uint32_t  dc1,dc2;
 	while ((cell = wp.getFirsCell()) >= 0){
 		if (opprint){
 			cout << "cells "<<cellsFixedData[cell].pt << endl;
@@ -2479,8 +2480,8 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 						PrintBackCom("locdiag on path ", tback, nx, 1);
 					}
 					length += nx;
-					__movsq((unsigned long long *)&tbn[n++][0].u64,
-						(unsigned long long *)&tback[0].u64, nx);// store way back
+					__movsq((uint64_t *)&tbn[n++][0].u64,
+						(uint64_t *)&tback[0].u64, nx);// store way back
 
 				}
 				int rating = pm_go.hint.ChainLengthAdjusted(85, length);
@@ -2542,8 +2543,8 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 							PrintBackCom("locdiag on path ", tback, nx, 1);
 						}
 						length += nx;
-						__movsq((unsigned long long *)&tbn[n++][0].u64,
-							(unsigned long long *)&tback[0].u64, nx);// store way back
+						__movsq((uint64_t *)&tbn[n++][0].u64,
+							(uint64_t *)&tback[0].u64, nx);// store way back
 
 					}
 					int rating = pm_go.hint.ChainLengthAdjusted(85, length);
@@ -2622,8 +2623,8 @@ void XYSEARCH::DynamicSolveContradiction(GINT cand,PM3X cont){// find path and e
 			}
 			int n1 = BackDynamic(target_on, t, nt);
 			GINT64 t1b[200];
-			__movsq((unsigned long long *)&t1b[0].u64,
-				(unsigned long long *)&tback[0].u64, n1);// store way back
+			__movsq((uint64_t *)&t1b[0].u64,
+				(uint64_t *)&tback[0].u64, n1);// store way back
 			int n2 = BackDynamic(target_off, t, nt);
 			int rating = pm_go.hint.ChainLengthAdjusted(85, n1 + n2);
 			//cout << "rating " << rating<<endl<<endl;
@@ -2675,8 +2676,8 @@ void XYSEARCH::DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell
 			}
 			if (!n1) continue; // should never be
 			GINT64 t1b[200];
-			__movsq((unsigned long long *)&t1b[0].u64,
-				(unsigned long long *)&tback[0].u64, n1);// store way back
+			__movsq((uint64_t *)&t1b[0].u64,
+				(uint64_t *)&tback[0].u64, n1);// store way back
 			if (!ExpandDynamicToElim(p2, target)) continue;// redo expansion should work
 			int n2 = BackDynamicOff(target);
 			if (locdiag){
@@ -3706,7 +3707,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								}
 								if (zh_g.triplets.On_c(c1)&& (digc1==digc2)){// one extra digit 
 									int extra_dig = digc1^digs;
-									unsigned long exd; _BitScanForward(&exd, extra_dig);
+									uint32_t exd; _BitScanForward(&exd, extra_dig);
 									BF128 clean = cell_z3x[c1]; clean &= cell_z3x[c2];
 									clean &= zh_g.pm.pmdig[exd];
 									if (clean.isNotEmpty()){
@@ -3743,7 +3744,7 @@ int PM_GO::Rate2cellsGo(GINT64 & w){
 	int cell1 = w.u8[0], cell2 = w.u8[1], digs = w.u16[1];
 	CELL_FIX cf1 = cellsFixedData[cell1], cf2 = cellsFixedData[cell2];
 	// solve the bi-value case
-	unsigned long d1, d2;
+	uint32_t d1, d2;
 	_BitScanForward(&d1, digs); _BitScanReverse(&d2, digs);
 	//w.u8[6] = (uint8_t)d1; w.u8[6] = (uint8_t)d2;  why ?? don't do that
 	BF128 zcell = cell_z3x[cell1];		zcell &= cell_z3x[cell2];
@@ -4081,7 +4082,7 @@ int PM_GO::Rate46_Find_ULs(){
 			more_one = nplus = 0; 
 			parity[0] = cell_z3x[cell2];// can not reenter with even value of ispot
 			parity[1] = cell_z3x[cell1];// can not reenter with odd value of ispot
-			//__stosq((unsigned long long *)parity[0].bf.u64, 0, 4);
+			//__stosq((uint64_t *)parity[0].bf.u64, 0, 4);
 			pairs = wp; 
 			loop = wpu; 
 			loop.Set_c(cell1); 
@@ -4103,7 +4104,7 @@ int PM_GO::Rate46_Find_ULs(){
 				if (locdiag)cout << "search unit" << iu  << endl;
 				s = spots;
 				int cell1 = wpu.getFirsCell(), cell2;
-				unsigned long digit_one;
+				uint32_t digit_one;
 				wpu.Clear_c(cell1);
 				cell2 = wpu.getFirsCell();
 				s->Init(wpu, wp, cell1, cell2);
@@ -4300,7 +4301,7 @@ int PM_GO::Rate56BUG() {
 		return 1;
 	}
 	if (_popcnt32(bug.or_change) == 1){	//======================= bug type 2 same digit
-		unsigned long dig1; _BitScanForward(&dig1, bug.change_plus[0]);
+		uint32_t dig1; _BitScanForward(&dig1, bug.change_plus[0]);
 		if (opprint2 & 2)cout << "bug type 2 same digit=" << dig1 + 1 << endl;
 		if (0){
 			char ws[82];
@@ -4345,7 +4346,7 @@ int PM_GO::Rate56BUG() {
 				<< oct << locked_d<<dec << endl;
 			for (int i = 0; i < bug.ntplus; i++){// keep  locked plus change 
 				int digbf = bug.tplus_digits[i] ^ locked_d;
-				unsigned long digit; _BitScanForward(&digit, digbf);
+				uint32_t digit; _BitScanForward(&digit, digbf);
 				zhou_solve.ClearCandidate_c(digit, bug.tplus[i]);
 			}
 			hint.Done(57);
@@ -4539,7 +4540,7 @@ int PM_GO::Rate75_ATE() {
 					z23f &= (zand&z23);// where to take exclusion cells
 					int texclude[81], nexclude = z23f.Table3X27(texclude);
 					see_1_3 = z1.On_c(i3); see_2_3 = z2.On_c(i3);
-					unsigned long d1, d2, d3; // digit of triplets to check
+					uint32_t d1, d2, d3; // digit of triplets to check
 					int cd1 = zh_g.dig_cells[i1], find1 = 0, find2 = 0, find3 = 0;
 					while ( cd1){
 						_BitScanForward(&d1, cd1);

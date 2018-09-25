@@ -33,7 +33,7 @@ struct STORE_UL{
 	GINT64 ur2;// ur 2 cells equivalent (see UR)
 	int type,digit_one;// keep it nx128 bits
 
-	void Print(char * lib);
+	void Print(const char * lib);
 };
 struct BUG{// in wpaires, data for bug processing
 	int cell,  el_par_ch[27];    // parity of digits for pairs in units
@@ -54,12 +54,12 @@ struct WWUR2{// solving UR/UL 2 cells in a unit
     wcells_nserate,
     dfree,tfree[10],nfree;
 	int locdiag;
-	char * det_mess;
+	char const * det_mess;
 	BF128 wcells, cells_ur, cells_others_ur, cells_3
     ,w_b,// cells with extra digits no common digit
     w_c,// cells with only free digits 
     wnaked,wclean ;
-	inline void Set(GINT64 & t,char * lib){
+	inline void Set(GINT64 & t,const char * lib){
 		cell1 = t.u8[0], cell2 = t.u8[1], digs = t.u16[1], ul_plus = t.u8[4], nothers= t.u8[5],
 			digitsothers=t.u16[3],rbase = 45 + ul_plus;
 		det_mess = lib;
@@ -113,7 +113,7 @@ struct STORE_XLC{
 struct YLSEARCH{
 	int idig, xcell1, xcell2, maxpas, ncells, 
 		ncells1, mode, c0, c1, c2, locdiag, diag;
-	unsigned long d2;
+	uint32_t d2;
 	BF128 loop;
 	GINT64 tback[30];
 	int Search(int fast=0);
@@ -134,7 +134,7 @@ struct XYSEARCH{
 	int idig, digit, nt,ntd,ntp, cell, maxpas,maxrating, npaths,elim_done,
 		nsteps, c1, c2, locdiag, diag, mode,fastmode,opprint;
 	int dig_sets[9][27];
-	unsigned long d2;
+	uint32_t d2;
 	BF128 pairs, cells_biv_all, cells_all,cells_biv_true,  dig_b_true[9];
 	BF128 loop, wb;
 	BF32 dig_bivsets[9],dig_sets3[9];
@@ -202,7 +202,7 @@ struct XYSEARCH{
 	void DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell2, PM3X cont);
 	void PrintTback();
 	void PrintBackMulti(int elim_dig, int elim_cell);
-	void PrintBackCom(char * lib,GINT64 * ptback, int nback,int mode );
+	void PrintBackCom(const char * lib,GINT64 * ptback, int nback,int mode );
 	void DebugT();
 };
 

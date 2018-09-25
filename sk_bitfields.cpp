@@ -151,7 +151,7 @@ int PM3X::Count(){
 	return (int)n;
 }
 
-void PM3X::Print(char * lib){
+void PM3X::Print(const char * lib){
 	cout << "pm3x status for " << lib << endl;
 	for (int i = 0; i < 3;i++)	cout << ".........+++++++++---------";
 	cout << endl;

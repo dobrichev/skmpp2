@@ -20,25 +20,25 @@ NesttedLevel5=110
 extern PM_GO pm_go;
 void Go_c110(){// template serate mode
     if (!sgo.finput_name) return;
-	long long cptg[20];
+    int64_t cptg[20];
 	memset(cptg, 0, sizeof cptg);
-	cout << "Go_110 entry " << sgo.finput_name << " input" << endl;
+	std::cout << "Go_110 entry " << sgo.finput_name << " input" << std::endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){
-		cerr << "error open file " << sgo.finput_name << endl;
+		std::cerr << "error open file " << sgo.finput_name << std::endl;
 		return;
 	}
 	char ze[200]; ze[81] = 0;
 	uint32_t npuz = 0;
-	long ttdeb = GetTimeMillis();
+	int32_t ttdeb = GetTimeMillis();
 	while (finput.GetPuzzle(ze)){
 		npuz++;
 		if (npuz < sgo.vx[0]) continue;
-		if(pm_go.opprint2)cout << finput.ze << "to process npuz=" << npuz << endl;
+		if(pm_go.opprint2)std::cout << finput.ze << "to process npuz=" << npuz << std::endl;
 		zh_g.npuz = npuz;
-		long tdeb = GetTimeMillis();
+		int32_t tdeb = GetTimeMillis();
 		if (zh_g.Go_InitSolve(ze)) {
-			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
+			std::cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << std::endl;
 			continue;
 		}
 		pm_go.SolveSerate110();
@@ -49,12 +49,12 @@ void Go_c110(){// template serate mode
 //fout1=l45;  fout2 solved;   fout3 unsolved
 void Go_c111(){// fast serate mode 
 	if (!sgo.finput_name) return;
-	long long cptg[20];
+	int64_t cptg[20];
 	memset(cptg, 0, sizeof cptg);
-	cout << "Go_111 entry " << sgo.finput_name << " input" << endl;
+	std::cout << "Go_111 entry " << sgo.finput_name << " input" << std::endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){
-		cerr << "error open file " << sgo.finput_name << endl;
+		std::cerr << "error open file " << sgo.finput_name << std::endl;
 		return;
 	}
 	if (!sgo.foutput_name)return;
@@ -69,14 +69,14 @@ void Go_c111(){// fast serate mode
 
 	char ze[200]; ze[81] = 0;
 	uint32_t npuz = 0;
-	long ttdeb = GetTimeMillis();
+	int32_t ttdeb = GetTimeMillis();
 	while (finput.GetPuzzle(ze)){
 		npuz++;
-		if (0)cout << finput.ze << "to process npuz=" << npuz << endl;
+		if (0)std::cout << finput.ze << "to process npuz=" << npuz << std::endl;
 		zh_g.npuz = npuz;
-		long tdeb = GetTimeMillis();
+		int32_t tdeb = GetTimeMillis();
 		if (zh_g.Go_InitSolve(ze)) {
-			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
+			std::cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << std::endl;
 			continue;
 		}
 		pm_go.SolveSerate111();
@@ -87,10 +87,10 @@ void Go_c111(){// fast serate mode
 }
 void Go_c199(){// test on demand
 	if (!sgo.finput_name) return;
-	cout << "Go_199 entry " << sgo.finput_name << " input" << endl;
+	std::cout << "Go_199 entry " << sgo.finput_name << " input" << std::endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){
-		cerr << "error open file " << sgo.finput_name << endl;
+		std::cerr << "error open file " << sgo.finput_name << std::endl;
 		return;
 	}
 	char ze[200]; ze[81] = 0;
@@ -98,10 +98,10 @@ void Go_c199(){// test on demand
 	while (finput.GetPuzzle(ze)){
 		npuz++;
 		if (npuz < sgo.vx[0]) continue;
-		cout << finput.ze << "to process npuz=" << npuz << endl;
+		std::cout << finput.ze << "to process npuz=" << npuz << std::endl;
 		zh_g.npuz = npuz;
 		if (zh_g.Go_InitSolve(ze)) {
-			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
+			std::cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << std::endl;
 			continue;
 		}
 		pm_go.Solve199test();

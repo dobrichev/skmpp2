@@ -17,8 +17,8 @@ struct SGO{
 class FINPUT: public ifstream{
 	word 		endf; //! Indicate if end of file has been found 1=EOF, 0=not EOF
 public:	
-	char * namex, //Input file name (without file type). default "puzzles"
-	      ze[600]; // big buffer to avoid problems linked to getline
+	char const * namex; //Input file name (without file type). default "puzzles"
+	char      ze[600]; // big buffer to avoid problems linked to getline
 
 	FINPUT(){	endf = 0;	namex = "puzzles";	}
 	void SetName(char * nn){	namex = nn;	}
@@ -67,6 +67,6 @@ public:
 
 };
 
-extern long GetTimeMillis();
-extern  void PrintTime(long ts, long te);
-extern void PrintTimeCout(long ts, long te);
+extern int32_t GetTimeMillis();
+extern  void PrintTime(int32_t ts, int32_t te);
+extern void PrintTimeCout(int32_t ts, int32_t te);

@@ -50,7 +50,7 @@ void ZH_GLOBAL::NoMorph(){
 void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
 	char zdiag[81], *source;
 	int count[6], *sourcei, zei[81], *zdiagi = C_transpose_d;
-	__stosd((unsigned long*)count, 0, 6);
+	__stosd((uint32_t*)count, 0, 6);
 	for (int i = 0; i < 81; i++) {
 		if (ze[i] - '.'){
 			int band = i / 27, stack = C_stack[i] + 3;
@@ -64,7 +64,7 @@ void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
 	// morph the puzzle to the high band in band
 	if (imax > 2){
 		source = zdiag;		sourcei = zdiagi;
-		__movsd((unsigned long*)count, (unsigned long *) &count[3], 3);
+		__movsd((uint32_t*)count, (uint32_t *) &count[3], 3);
 	}
 	else { source = ze; sourcei = zei; }
 	int tsort[3], w;// sort bands increasing order of count
@@ -78,15 +78,15 @@ void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
 	memcpy(puz, &source[27 * ib1], 27);
 	memcpy(&puz[27], &source[27 * ib2], 27);
 	memcpy(&puz[54], &source[27 * ib3], 27);
-	__movsd((unsigned long*)x3_cmap, (unsigned long *)&sourcei[27 * ib1], 27);
-	__movsd((unsigned long*)&x3_cmap[27], (unsigned long *)&sourcei[27 * ib2], 27);
-	__movsd((unsigned long*)&x3_cmap[54], (unsigned long *)&sourcei[27 * ib3], 27);
+	__movsd((uint32_t*)x3_cmap, (uint32_t *)&sourcei[27 * ib1], 27);
+	__movsd((uint32_t*)&x3_cmap[27], (uint32_t *)&sourcei[27 * ib2], 27);
+	__movsd((uint32_t*)&x3_cmap[54], (uint32_t *)&sourcei[27 * ib3], 27);
 
 }
 //td is 8bits cell + 8 bits digits
 void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
 	ngiven = 0;
-	unsigned long count[9]; __stosd(count, 0, 9);
+	uint32_t count[9]; __stosd(count, 0, 9);
 	for (int i = 0; i < 81; i++){
 		register int c = puz[i];
 		if (c<'1' || c>'9') continue;
@@ -114,7 +114,7 @@ void ZH_GLOBAL::Map_Morph_digits(GINT16 * td, int nc){//applying x3_cmap to the 
 }
 void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the morphed pattern
 	ngiven = 0;
-	unsigned long count[9]; __stosd(count, 0, 9);
+	uint32_t count[9]; __stosd(count, 0, 9);
 	for (int it = 0; it < nc; it++){
 		register int cell = td[it].u8[0], dig = td[it].u8[1];
 		count[dig]++;
@@ -177,8 +177,8 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
 	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
-	__stosq((unsigned long long *)locked_nacked_brc_done[0].bf.u64, 0, 6);
-	__stosd((unsigned long *)row_col_x2[0], 0, 18);
+	__stosq((uint64_t *)locked_nacked_brc_done[0].bf.u64, 0, 6);
+	__stosd((uint32_t *)row_col_x2[0], 0, 18);
 
 	return 0;
 }
@@ -198,8 +198,8 @@ int ZH_GLOBAL::Go_InitSolve(GINT16 * td, int nc){
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
 	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
-	__stosq((unsigned long long *)locked_nacked_brc_done[0].bf.u64, 0, 6);
-	__stosd((unsigned long *)row_col_x2[0], 0, 18);
+	__stosq((uint64_t *)locked_nacked_brc_done[0].bf.u64, 0, 6);
+	__stosd((uint32_t *)row_col_x2[0], 0, 18);
 
 	return 0;
 }
@@ -370,7 +370,7 @@ char * ZHOU::SetKnown(char * zs){
 			unsigned int band = fd.bf.u32[ib];
 			for (int j = 0; j<3; j++) if (!(arows & (1 << j))) {
 				int row = (band >> TblMult9[j]) & 0x1ff;
-				unsigned long  irow;
+				uint32_t  irow;
 				_BitScanForward(&irow, row);
 				int	cell = Tblstartblock[ib] + TblMult9[j] + irow;
 				zs[cell] = digit + '1';
@@ -649,7 +649,7 @@ int ZHOU::GuessHiddenBivalue(){// look for a single or a hidden pair in row or b
 	}
 	return 0;
 exitok:
-	unsigned long res;
+	uint32_t res;
 	_BitScanForward(&res, hidden);
 	ZHOU * mynext = this + 1; // start next guess
 	mynext->Copy(*this);
@@ -889,7 +889,7 @@ void ZHOU::GuessFloor(){
 		return;
 	}
 	int hidden, rows = fd.bf.u32[3], dcell = 0, dxcell = 0, bfree = 7, ccmin = 10, min,bmin;
-	unsigned long res;
+	uint32_t res;
 	for (int iband = 0; iband < 3; iband++,dcell+=27,dxcell+=32,bfree<<=3){
 		if (!(rows&bfree)) continue; // solved band
 		int  band = fd.bf.u32[iband];
