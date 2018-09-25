@@ -132,6 +132,8 @@ struct GENSTEP{
 
 
 int GENSTEP::PuzzleToTest(){
+	PrintPartial(nclues);
+
 	int digits = 0;
 	for (int i = 0; i < nclues; i++) digits |= 1<<tclues[i].u8[1];
 	if (_popcnt32(digits) < 8) return 0;// minimum 8 digits given to have a sudoku
@@ -252,6 +254,7 @@ nextf:
 void GENSTEP::GenSym_Loop2(int sym36){// loop on pairs of clues
 	//if (1) return;
 	// start with cell ntcf
+	cout << "entry loop2 sym36=" << sym36 << endl;
 	int tleveldig[6] = { 1,7, 0x1f, 0x7f, 0x1ff, 0x1ff };
 	unsigned long digit;
 	int  i = ntcf - 2, d1, d2;
@@ -282,17 +285,17 @@ nextind2:
 		tfree[i] &= 0x180;
 	}
 	} //end of int digits scope
+	if (i < 25)cout << "nextind2 i=" << i << " free 0"<<oct<<tfree[i]<<dec<< endl;
 next2:
 	while ( tfree[i]){
 		_BitScanForward(&digit, tfree[i]);
-		//if (i == 1)cout << "loop1 0x" << hex << tfree[i]<<dec << endl;
+		if (i >20)cout<<"\ti="<<i << " loop1 0" << oct << tfree[i]<<dec << endl;
 		tfree[i] ^= 1 << digit;
 		d2 = tcor[digit];
 		d1 = digit;
 		tfree[i] &=~( 1 << d2);// erase also pair digit
 
 		if ((tc[i].free &(1 << d1)) && (tc[i+1].free &(1 << d2))){
-			//cout << "go1 i="
 			Assign2(i, d1, d2);
 			if (i < (nclues - 2)) goto nextind2;
 			else PuzzleToTest();
@@ -589,7 +592,7 @@ void Go_c210(){// create a seed file on a pattern
 				tfree[i] = gscom.tc[i].free;
 				if (!tfree[i]) goto back2; // locked
 			next2:
-				int tp2[10], ntp2;
+				int tp2[10], ntp2=0;
 				BitsInTable32(tp2, ntp2, tfree[i]);
 				while (tfree[i]){
 					_BitScanForward(&digit, tfree[i]);

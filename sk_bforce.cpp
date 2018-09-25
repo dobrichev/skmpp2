@@ -28,7 +28,9 @@ void Go_c10() { // extract valid puzzles from entry
 		return;
 	}
 	char ze[200]; ze[81] = 0;
+	zh_g.diag = sgo.vx[8];
 	while (finput.GetPuzzle(ze)) {
+		if(zh_g.diag) cout <<ze<<"<<<<<<<<<<<<<< new puzzle"<<endl;
 		if (zhou[0].CheckValidityQuick(ze)==1)		fout1 << ze << endl;
 	}
 
