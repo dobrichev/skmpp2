@@ -132,8 +132,7 @@ struct GENSTEP{
 
 
 int GENSTEP::PuzzleToTest(){
-	PrintPartial(nclues);
-
+	//PrintPartial(nclues-1);
 	int digits = 0;
 	for (int i = 0; i < nclues; i++) digits |= 1<<tclues[i].u8[1];
 	if (_popcnt32(digits) < 8) return 0;// minimum 8 digits given to have a sudoku
@@ -285,11 +284,9 @@ nextind2:
 		tfree[i] &= 0x180;
 	}
 	} //end of int digits scope
-	if (i < 25)cout << "nextind2 i=" << i << " free 0"<<oct<<tfree[i]<<dec<< endl;
 next2:
 	while ( tfree[i]){
 		_BitScanForward(&digit, tfree[i]);
-		if (i >20)cout<<"\ti="<<i << " loop1 0" << oct << tfree[i]<<dec << endl;
 		tfree[i] ^= 1 << digit;
 		d2 = tcor[digit];
 		d1 = digit;

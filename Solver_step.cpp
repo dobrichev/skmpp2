@@ -3016,6 +3016,11 @@ void PM_GO::SolveSerate110() {
 				<< " rating=" << rat_er
 				<< " unsolved=" << zhou_solve.cells_unsolved.Count() << " assigned=" << assigned << endl;
 			zhou_solve.ImageCandidats();
+			if (zhou_solve.CheckStatus()) {
+				cerr << "fatal error" << endl;
+				cout << "fatal error" << endl;
+				return;
+			}
 		}
 		zh_g.Init_Assign();
 		if (rat_er < 28){ if (Next10_28()) continue; }
