@@ -42,9 +42,8 @@ void Go_c110(){// template serate mode
 			continue;
 		}
 		pm_go.SolveSerate110();
-		if (npuz >= sgo.vx[1]) break;
+		if (sgo.vx[1] && npuz >= sgo.vx[1]) break;
 	}
-
 }
 //fout_diam, fout_pearl, fout_l45, fout_l65, fout_solved, fout_unsolved;
 //fout1=l45;  fout2 solved;   fout3 unsolved

@@ -1258,7 +1258,10 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 	int iret = 0, t3[10], t3b[10], n3 = 0;
 	BitsInTable32(t3, n3, unit_triplet_cells);
 	if (n3 < 3) return 0;
-	for (int i = 0; i < n3; i++)t3b[i] = 1 << t3[i];
+	for (int i = 0; i < n3; i++) {
+		t3b[i] = 1 << t3[i];
+		t3[i] += 27 * iband;
+	}
 	for (int i1 = 0; i1 < n3 - 2; i1++){
 		int digs1 = zh_g.dig_cells[t3[i1]];
 		for (int i2 = i1+1; i2 < n3 - 1; i2++){
@@ -1290,6 +1293,7 @@ int ZHOU::Rate36_FindClean_NakedTriplet(int unit_triplet_cells, int unit, int ib
 	}
 	return iret;
 }
+
 int ZHOU::Rate36_FindClean_NakedTripletCol(int unit_triplet_cells, int unit, int iband){
 	int iret = 0, t3[10], t3b[10], n3 = 0;
 	BitsInTable32(t3, n3, unit_triplet_cells);

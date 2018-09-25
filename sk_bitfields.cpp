@@ -38,7 +38,7 @@ USHORT BF32::String(USHORT * r, int i1, int i2){
 
 void  BF128::ClearDiag(int band, int stack) {
 	// stack appears here as a band
-	int tp[32], ntp;
+	int tp[32], ntp=0;
 	BitsInTable32(tp, ntp, band);
 	for (int i = 0; i < ntp; i++) {
 		int cell=tp[i], celld = C_transpose_d[cell + 27 * stack];

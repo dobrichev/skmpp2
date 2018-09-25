@@ -402,14 +402,12 @@ int ZHOU::CheckValidityQuick(char *puzzle){
 	if (zh_g.Go_InitSudoku_NoMorph(puzzle)) return 0;
 	//if (zh_g.Go_InitSudoku(puzzle)) return 0;;
 	//if (ApplySingleOrEmptyCells())	return 0; // pas bon
-	if (0){
+	if (zh_g.diag ) {
+		cout << "opening situation after init"  << endl;
 		Debug(1);
 		ImageCandidats();
-		cout << "call computenext() unsolved digits= 0"<<oct
-			<< unsolved_digits<<dec << endl;
-		//return 0;
+		if (zh_g.diag>2) return 0;
 	}
-
 	ComputeNext();
 	return zh_g.nsol;
 }
@@ -449,7 +447,8 @@ int ZHOU::FullUpdate(){
 		if (!Unsolved_Count()) return 2;
 		if (zh_g.diag>1)	{
 			cout << "look for singles in cells zh_g.cpt[5]=" << zh_g.cpt[5] << endl;
-			//ImageCandidats();
+			Debug(1);
+			ImageCandidats();
 		}
 
 		if (ApplySingleOrEmptyCells())	return 0; // locked empty cell or conflict singles in cells
@@ -521,7 +520,7 @@ int ZHOU::ApplySingleOrEmptyCells_Band3(){
 	R1 &= ~R2;	R1 &= cells_unsolved.bf.u32[2]; // forget solved seen as singles
 	if (R1) zh_g.single_applied = 1;
 	else{	zh_g.pairs.bf.u32[2] = R2& (~R3);	return 0;	}
-	int tp[30], np; 
+	int tp[30], np = 0;
 	BitsInTable32(tp, np,R1);
 	for(int i=0;i<np;i++){
 		register int res= tp[i],R2= 1<< res ;
@@ -549,10 +548,11 @@ int ZHOU::ApplySingleOrEmptyCells_B12(){
 	R1 &= ~R2;	R1 &= cells_unsolved.bf.u64[0]; // forget solved seen as singles
 	if (R1) zh_g.single_applied = 1;
 	else{		zh_g.pairs.bf.u64[0] = R2& (~R3);		return 0;	}
-	int tp[60], np;
+	int tp[60], np=0;
 	BitsInTable64(tp, np, R1);
 	for (int i = 0; i < np; i++) {
-		register int res = tp[i], R2 = 1 << res,r3 = From_128_To_81[res];
+		register int res = tp[i], r3 = From_128_To_81[res];
+		register uint64_t R2 = 1; R2 <<= res;
 		if (R2 & FD[0][0].bf.u64[0]){ Assign(0, r3, res); goto nextr1; }
 		if (R2 & FD[1][0].bf.u64[0]){ Assign(1, r3, res); goto nextr1; }
 		if (R2 & FD[2][0].bf.u64[0]){ Assign(2, r3, res); goto nextr1; }
@@ -680,7 +680,7 @@ int ZHOU::GuessHiddenTriplet(){// look for a triplet in row or box in band 3
 	}
 	return 0;
 exitok:
-	int tp[5], ntp;
+	int tp[5], ntp=0;
 	BitsInTable32(tp, ntp, hidden);
 	for (int i = 0; i < ntp; i++) {
 		int res = tp[i];
@@ -906,7 +906,7 @@ void ZHOU::GuessFloor(){
 	if (ccmin == 10)return;// should never be
 	dcell = 27 * bmin;
 	dxcell = 32 * bmin;
-	int tp[10], ntp;
+	int tp[10], ntp=0;
 	BitsInTable32(tp, ntp, min);
 	for (int i = 0; i < ntp; i++) {// no bi value, use the smallest set
 		int res = tp[i];
