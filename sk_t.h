@@ -70,8 +70,8 @@ typedef unsigned __int64  uint64_t;
    __asm__ __volatile__( \
        "rep stosq %%rax, (%%rdi)\n\t" \
        : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
-#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
-#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
+#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1ull << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1ull << (offset - 64)))
+#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= ~((uint64_t)1ull << offset) : ((uint64_t*)dest)[1] &= ~((uint64_t)1ull << (offset - 64)))
 #define _bittest64(a, b) (((((uint64_t*)a)[b>>6]) >> (b & 63)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))

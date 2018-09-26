@@ -906,6 +906,7 @@ void ZHOU::GuessFloor(){
 	if (ccmin == 10)return;// should never be
 	dcell = 27 * bmin;
 	dxcell = 32 * bmin;
+	{
 	int tp[10], ntp=0;
 	BitsInTable32(tp, ntp, min);
 	for (int i = 0; i < ntp; i++) {// no bi value, use the smallest set
@@ -917,6 +918,7 @@ void ZHOU::GuessFloor(){
 		mynext->GuessFloor();
 	}
 	return;
+	} // end of int ntp scope
 
 exitok:
 	//cout << Char27out(hidden) << " guess band dcell=" << dcell << endl;
