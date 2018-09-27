@@ -56,6 +56,7 @@ int Search_ccd(char * ww)
 
 SGO sgo;
 extern void Go_0();
+extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
 	long tdeb=GetTimeMillis();
@@ -148,4 +149,124 @@ void SGO::ParseInt(char * ze, int  delimiter){
 		}
 	}
 	return;
+}
+void SGO::Parse_zin() {
+	strcpy(zinparsed, finput.ze);
+	nitems = 1; items[0] = zinparsed;
+	int ll = (int)strlen(zinparsed);
+	for (int i = 81; i < ll; i++) {
+		if (!zinparsed[i]) return;
+		if (zinparsed[i] == ';') {
+			items[nitems++] = &zinparsed[i + 1];
+			zinparsed[i] = 0;
+		}
+	}
+}
+
+int SGO::atoi_nodot(char * o) {// ignore dot in entry
+	//this is to convert serate a.b in integer 10a+b
+	int ll = (int)strlen(o), n = 0;
+	char zs[10];
+	if (ll > 8)ll = 8;
+	for (int i = 0; i < ll; i++) if (o[i] - '.') zs[n++] = o[i];
+	zs[n] = 0;
+	return atoi(zs);
+}
+int SGO::Canonical_serate(char  * d, char  * o) {// send back aa.b or a.b
+	int ctl = 0;
+	while (o[0] < '0' || o[0]>'9') {
+		o++; // kill leading not digit
+		if (++ctl > 3) return 0;
+	}
+
+	d[0] = o[0]; d[1] = o[1]; d[2] = o[2];
+	if (o[1] == '.') {//a.??
+		if (d[2]<'0' || d[2]>'9')d[2] = '0';
+		return 3;
+	}
+	else if (o[2] == '.') {//aa.
+		d[3] = o[3];
+		if (d[3]<'0' || d[3]>'9')d[3] = '0';
+		return 4;
+	}
+	else {
+		if (d[1]<'0' || d[1]>'9') {
+			d[1] = '.'; d[2] = '0';
+			return 3;
+		}
+		else {
+			d[2] = '.'; d[3] = '0';
+			return 4;
+		}
+	}
+
+}
+int SGO::Canonical_EREPED() {
+	strcpy(zinparsed, finput.ze);
+	strcpy(&zinparsed[81], " ED=");
+	int ll = (int)strlen(finput.ze);
+	for (int i = 81; i < ll - 9; i++) {// locate first ED=
+		if (finput.ze[i] - 'E') continue;
+		char * w = &finput.ze[i];
+		if (!strncpy(w, "ED=", 3)) return 0;
+		w += 3;
+		char * wd = &zinparsed[85];
+		int ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd++ = '/'; // ER done
+		while (w[0] != '/') {
+			if (!w[0])return 0;// missing ep ed
+			w++;
+		}
+		w++; //skip /
+		ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd++ = '/'; // EP done
+		while (w[0] != '/') {
+			if (!w[0])return 0;// missing ep ed
+			w++;
+		}
+		w++; //skip /
+		ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd = 0; // finished
+		return 1; // now zeparsed in canonical form
+
+	}
+	return 0; // failed to recognize
+}
+int SGO::Canonical_401_11() {
+	strcpy(zinparsed, finput.ze);
+	//	fout1 << zinparsed << "studied" << endl;
+	zinparsed[81] = ';';
+	int ll = (int)strlen(finput.ze);
+	for (int i = 81; i < ll - 9; i++) {// locate first ED=
+		if (finput.ze[i] - 'E') continue;
+		char * w = &finput.ze[i];
+		if (!strncpy(w, "ED=", 3)) return 0;
+		w += 3;
+		char * wd = &zinparsed[82];
+		int ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd++ = ';'; // ER done
+		while (w[0] != '/') {
+			if (!w[0])return 0;// missing ep ed
+			w++;
+		}
+		w++; //skip /
+		ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd++ = ';'; // EP done
+		while (w[0] != '/') {
+			if (!w[0])return 0;// missing ep ed
+			w++;
+		}
+		w++; //skip /
+		ir = Canonical_serate(wd, w);
+		if (!ir) return 0; //failed to recognize 
+		wd += ir;		*wd = 0; // finished
+		return 1; // now zeparsed in canonical form
+
+	}
+	return 0; // failed to recognize
 }
