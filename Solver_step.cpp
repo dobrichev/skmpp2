@@ -39,7 +39,7 @@ int GINTBUF::Get(int n){
 int GINTBUF::Store(GINT * t){
 	int n = t[0].u16[0];
 	if (ncur + n > n32) return -1;
-	__movsd((unsigned long *)&buf[ncur].u32, (unsigned long *)&t[0].u32, n);
+	memcpy(&buf[ncur], t, n * 4);
 	int nret = ncur;
 	ncur += n;
 	return nret;
@@ -49,7 +49,7 @@ int GINTBUF::GetBack(GINT * d){
 	GINT * t = &buf[nback];
 	int n = t[0].u16[0];
 	nback += n;
-	__movsd((unsigned long *)&d[0].u32, (unsigned long *)&t[0].u32, n);
+	memcpy(d, t, n * 4);
 	return 1;
 }
 void GINTBUF::EraseOlds(int nkeep){
@@ -1795,8 +1795,8 @@ void XYSEARCH::Init(){//Collect bi values
 	cells_all.SetAll_0(); cells_biv_all.SetAll_0();
 	dbiv.SetAll_0();
 	cells_biv_true = pairs;
-	__stosd((unsigned long *)&dig_bivsets[0].f, 0, 9);
-	__stosd((unsigned long *)&dig_sets3[0].f, 0, 9);
+	memset(dig_bivsets, 0, sizeof dig_bivsets);
+	memset(dig_sets3, 0, sizeof dig_sets3);
 	for (int idig = 0; idig < 9; idig++){
 		int * wds = dig_sets[idig];
 		memcpy(wds, zh_g.dig_rows[idig], 36);
@@ -2064,7 +2064,8 @@ int XYSEARCH::MultiUnit(int udigit, int unit){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			__movsq((unsigned long long *)&wp.t[0].u64, (unsigned long long *)&t[0].u64, nt);
+			//movsq((unsigned long long *)&wp.t[0].u64, (unsigned long long *)&t[0].u64, nt);
+			memcpy(wp.t, t, nt * 8);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
 			if (diagloc > 1)cout << "go direct cell " << cellsFixedData[wp.cell].pt << endl;
@@ -2113,7 +2114,8 @@ int XYSEARCH::MultiCell(int c0){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			__movsq((unsigned long long *)&wp.t[0].u64,	(unsigned long long *)&t[0].u64, nt);
+			//movsq((unsigned long long *)&wp.t[0].u64,	(unsigned long long *)&t[0].u64, nt);
+			memcpy(wp.t, t, nt * 8);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
 			cleang &= cleanstart;
@@ -2479,8 +2481,9 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 						PrintBackCom("locdiag on path ", tback, nx, 1);
 					}
 					length += nx;
-					__movsq((unsigned long long *)&tbn[n++][0].u64,
-						(unsigned long long *)&tback[0].u64, nx);// store way back
+					//movsq((unsigned long long *)&tbn[n++][0].u64,
+					//	(unsigned long long *)&tback[0].u64, nx);// store way back
+					memcpy(tbn[n++], tback, nx * 8);
 
 				}
 				int rating = pm_go.hint.ChainLengthAdjusted(85, length);
@@ -2542,8 +2545,9 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 							PrintBackCom("locdiag on path ", tback, nx, 1);
 						}
 						length += nx;
-						__movsq((unsigned long long *)&tbn[n++][0].u64,
-							(unsigned long long *)&tback[0].u64, nx);// store way back
+						//movsq((unsigned long long *)&tbn[n++][0].u64,
+						//	(unsigned long long *)&tback[0].u64, nx);// store way back
+						memcpy(tbn[n++], tback, nx * 8);
 
 					}
 					int rating = pm_go.hint.ChainLengthAdjusted(85, length);
@@ -2622,8 +2626,9 @@ void XYSEARCH::DynamicSolveContradiction(GINT cand,PM3X cont){// find path and e
 			}
 			int n1 = BackDynamic(target_on, t, nt);
 			GINT64 t1b[200];
-			__movsq((unsigned long long *)&t1b[0].u64,
-				(unsigned long long *)&tback[0].u64, n1);// store way back
+			//movsq((unsigned long long *)&t1b[0].u64,
+			//	(unsigned long long *)&tback[0].u64, n1);// store way back
+			memcpy(t1b, tback, n1 * 8);
 			int n2 = BackDynamic(target_off, t, nt);
 			int rating = pm_go.hint.ChainLengthAdjusted(85, n1 + n2);
 			//cout << "rating " << rating<<endl<<endl;
@@ -2675,8 +2680,9 @@ void XYSEARCH::DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell
 			}
 			if (!n1) continue; // should never be
 			GINT64 t1b[200];
-			__movsq((unsigned long long *)&t1b[0].u64,
-				(unsigned long long *)&tback[0].u64, n1);// store way back
+			//movsq((unsigned long long *)&t1b[0].u64,
+			//	(unsigned long long *)&tback[0].u64, n1);// store way back
+			memcpy(t1b, tback, n1 * 8);
 			if (!ExpandDynamicToElim(p2, target)) continue;// redo expansion should work
 			int n2 = BackDynamicOff(target);
 			if (locdiag){
@@ -4081,7 +4087,6 @@ int PM_GO::Rate46_Find_ULs(){
 			more_one = nplus = 0; 
 			parity[0] = cell_z3x[cell2];// can not reenter with even value of ispot
 			parity[1] = cell_z3x[cell1];// can not reenter with odd value of ispot
-			//__stosq((unsigned long long *)parity[0].bf.u64, 0, 4);
 			pairs = wp; 
 			loop = wpu; 
 			loop.Set_c(cell1); 

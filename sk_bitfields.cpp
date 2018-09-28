@@ -56,7 +56,7 @@ void BF128::ClearCol(int clear, int col) {
 	}
 }
 void BF128::Diag3x27(BF128 & r){
-	__stosq(bf.u64, 0, 2);
+	bf.u64[0] = bf.u64[1] = 0;
 	if (r.isEmpty()) return;
 	for (int iband = 0; iband < 3; iband++){// build diagonal sym
 		int tc[27], ntc=0;

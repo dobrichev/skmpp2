@@ -50,7 +50,7 @@ void ZH_GLOBAL::NoMorph(){
 void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
 	char zdiag[81], *source;
 	int count[6], *sourcei, zei[81], *zdiagi = C_transpose_d;
-	__stosd((unsigned long*)count, 0, 6);
+	memset(count, 0, sizeof count);
 	for (int i = 0; i < 81; i++) {
 		if (ze[i] - '.'){
 			int band = i / 27, stack = C_stack[i] + 3;
@@ -86,7 +86,8 @@ void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
 //td is 8bits cell + 8 bits digits
 void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
 	ngiven = 0;
-	unsigned long count[9]; __stosd(count, 0, 9);
+	unsigned long count[9]; 
+	memset(count,0,sizeof count);
 	for (int i = 0; i < 81; i++){
 		register int c = puz[i];
 		if (c<'1' || c>'9') continue;
@@ -114,7 +115,8 @@ void ZH_GLOBAL::Map_Morph_digits(GINT16 * td, int nc){//applying x3_cmap to the 
 }
 void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the morphed pattern
 	ngiven = 0;
-	unsigned long count[9]; __stosd(count, 0, 9);
+	unsigned long count[9]; 
+	memset(count, 0, sizeof count);
 	for (int it = 0; it < nc; it++){
 		register int cell = td[it].u8[0], dig = td[it].u8[1];
 		count[dig]++;
@@ -177,9 +179,8 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
 	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
-	__stosq((unsigned long long *)locked_nacked_brc_done[0].bf.u64, 0, 6);
-	__stosd((unsigned long *)row_col_x2[0], 0, 18);
-
+	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
+	memset(row_col_x2, 0, sizeof row_col_x2);
 	return 0;
 }
 
@@ -198,9 +199,8 @@ int ZH_GLOBAL::Go_InitSolve(GINT16 * td, int nc){
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
 	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
-	__stosq((unsigned long long *)locked_nacked_brc_done[0].bf.u64, 0, 6);
-	__stosd((unsigned long *)row_col_x2[0], 0, 18);
-
+	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
+	memset(row_col_x2, 0, sizeof row_col_x2);
 	return 0;
 }
 void ZH_GLOBAL::ValidPuzzle(ZHOU * z){
@@ -336,7 +336,7 @@ digitloop:
 }
 int ZHOU::InitSudoku(GINT16 * t, int n){// if morph, done before
 	BF128 Digit_cell_Assigned[9];
-	__stosq((uint64_t*)Digit_cell_Assigned, 0, 18);
+	memset(Digit_cell_Assigned, 0, sizeof Digit_cell_Assigned);
 	*this = zhou_i;
 	for (int ic = 0; ic < n; ic++)   {
 		int digit = t[ic].u8[1], cell = t[ic].u8[0], xcell = C_To128[cell];
@@ -701,8 +701,7 @@ exitok:
 
 
 int ZHOU::PartialInitSudoku(GINT16 * t, int n){// if morph, done before
-	//BF128 Digit_cell_Assigned[9];
-	__stosq((uint64_t*)zh_g.Digit_cell_Assigned, 0, 18);
+	memset(zh_g.Digit_cell_Assigned, 0, sizeof zh_g.Digit_cell_Assigned);
 	*this = zhou_i;
 	for (int ic = 0; ic < n; ic++)   {
 		int digit = t[ic].u8[1], cell = t[ic].u8[0], xcell = C_To128[cell];

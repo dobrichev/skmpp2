@@ -39,11 +39,6 @@ typedef unsigned __int64  uint64_t;
 #ifdef   _MSC_VER
 #define _popcnt64(a) __popcnt64(a)
 #define _popcnt32(a) __popcnt(a)
-//__movsb is builtin
-//__movsd is builtin
-//__movsq is builtin
-//__stosd is builtin
-//__stosq is builtin
 //_bittestandset64 is builtin
 //_bittestandreset64 is builtin
 //_bittest64 is builtin
@@ -58,18 +53,6 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
-#define __movsb(dst,src,count) memcpy(dst,src,count)
-#define __movsd(dst,src,count) memcpy(dst,src,count*4)
-#define __movsq(dst,src,count) memcpy(dst,src,count*8)
-#define __stosd(dst, c, N) \
-   __asm__ __volatile__( \
-       "rep stosl %%eax, (%%rdi)\n\t" \
-       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
-//#define __stosq(a,b,c) memset(a,b,c*8)
-#define __stosq(dst, c, N) \
-   __asm__ __volatile__( \
-       "rep stosq %%rax, (%%rdi)\n\t" \
-       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
 #define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
 #define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
 #define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)

@@ -3,7 +3,26 @@
 #include "main.h"
 #include "Zhn_cpp.h"
 
-
+void ASMtest() {
+	struct AT {
+		GINT64 t[5];
+	}at1,at2;
+	__stosq((unsigned long long *)&at2.t[0].u64, 0, 5);
+	for (int i = 0; i < 5; i++)
+		cout << "i=" << i << " " << at2.t[i].u64 << endl;
+	//memset(at2.t[0].u8, 0, 40);
+	memset(at1.t[0].u8, 5, 40);
+	for (int i = 0; i < 5; i++)
+		cout << "i=" << i << " " << at1.t[i].u64 << endl;
+	at2.t[0].u32[0] = 2;
+	cout<<hex  << at2.t[0].u64 <<" "<< at1.t[0].u64 <<dec<< endl;
+	at2 = at1;
+	for (int i = 0; i < 5; i++)
+		cout << "i=" << i << " " << at2.t[i].u64 << endl;
+	//__movsq((unsigned long long *)at2.t[0].u64,
+	//	(unsigned long long *)at1.t[0].u64, 10);
+	//memmove(at1.t, at2.t, sizeof at1.t);
+}
 // catching time as seconds+millis  (seconds since year 1970)
 long GetTimeMillis() {
 	struct _timeb tbuf;
@@ -59,6 +78,7 @@ extern void Go_0();
 extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
+	ASMtest();
 	long tdeb=GetTimeMillis();
 	char * finput_name=0,*foutput_name=0,* ww;
 	char * s_strings[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//optionnal 10 strings

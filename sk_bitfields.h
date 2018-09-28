@@ -417,8 +417,8 @@ class PM3X {
 	// 9*BF128 to have candidates in native mode when needed
 public:
 	BF128 pmdig[9];
-	inline void SetAll_0(){ __stosq((unsigned long long *)pmdig[0].bf.u64,0,18); }
-	inline void SetAll_1() { __stosq((unsigned long long *)pmdig[0].bf.u64, BIT_SET_64, 18); }
+	inline void SetAll_0(){	memset(pmdig, 0,sizeof pmdig);	}
+	inline void SetAll_1() {	memset(pmdig, 255, sizeof pmdig);	}
 	inline void Set(int dig, int cell){ pmdig[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ pmdig[dig].Set_c(cell); }
 	inline void Clear(int dig, int cell){ pmdig[dig].Clear(cell); }
@@ -467,41 +467,29 @@ class PMBF {
 	// 9*BF81 to have candidates in native mode when needed
 public:
 	BF81 bfc[9];
-	inline void SetAll_0() { __stosq((unsigned long long *)bfc[0].bf.u64, 0, 18); }
-	inline void SetAll_1() { __stosq((unsigned long long *)bfc[0].bf.u64, 0xffffffffffffffff, 18); }
 	inline void Set(int dig, int cell){ bfc[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ bfc[dig].Set_c(cell); }
 	inline void SetU(UCAND c){ bfc[c >> 7].Set(c & 127); }
-	void Set(BF16 & digs, int cell);
-	void SetRegion(int dig, int unit, BF16 & pdigs);
 	inline void Clear(int dig, int cell){ bfc[dig].Clear(cell); }
 	inline int SetIf(int dig, int cell){
 		if (bfc[dig].On(cell)) return 0;
 		bfc[dig].Set(cell);
 		return 1;
 	}
-	int operator ==(const PMBF & b) const;
-	void operator &= (const PMBF &z2);
-	void operator |= (const PMBF &z2);
-	void operator -= (const PMBF &z2);
-	void operator &= (const BF81 * bf81);
-	void Image(BUILDSTRING & zs);
 	inline int On(int dig, int cell){ return bfc[dig].On(cell); }
 	inline int On_c(int dig, int cell){ return bfc[dig].On_c(cell); }
 	inline int OnU(UCAND x){ return bfc[x >> 7].On(x & 0x7f); }
 	inline int OffU(UCAND x){ return bfc[x >> 7].Off(x & 0x7f); }
-	USHORT String(UCAND * t);
 	int IsEmpty(){
 		for (int i = 0; i<9; i++)
 			if (bfc[i].isNotEmpty()) return 0;
 		return 1;
 	}
-	int Count();
 };
 class PMBFONOFF{// small class managing both status
 public:
 	PMBF bfon, bfoff;
-	void SetAll_0(){ bfon.SetAll_0(); bfoff = bfon; }
+	//void SetAll_0(){ bfon.SetAll_0(); bfoff = bfon; }
 	inline void Set(SCAND x){
 		PMBF & mybf = (x & (1 << 11)) ? bfoff : bfon;
 		mybf.Set((x >> 7) & 15, x & 0x7f);
@@ -510,8 +498,6 @@ public:
 		PMBF & mybf = (x & (1 << 11)) ? bfoff : bfon;
 		return mybf.On((x >> 7) & 15, x & 0x7f);
 	}
-	USHORT Stringbits(UCAND * t);
-	USHORT String(UCAND * t);
 
 };
 
