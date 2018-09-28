@@ -844,7 +844,7 @@ int  ZHOU::UpdateFloor(){
 loop_upd:
 	loop = 0;
 	if (FD[0][0].bf.u64[0] != FD[0][1].bf.u64[0]
-		|| FD[0][0].bf.u32[2] != FD[9][1].bf.u32[2]){
+		|| FD[0][0].bf.u32[2] != FD[0][1].bf.u32[2]){
 		r_free = FD[0][0].bf.u32[3];
 		UPD_012(0, 0, 1, 2)	if ((r_free & 7) != S){
 			r_free &= 0770 | S;	loop = 1;	}	}

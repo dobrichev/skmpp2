@@ -195,11 +195,17 @@ struct BF64 {
 	inline void operator<<= (const int bits) { bf.u64 <<= bits; };
 	inline void operator>>= (const int bits) { bf.u64 >>= bits; };
 
-	inline unsigned char On(const int theBit) const { return    _bittest64((long long*)&bf.u64, theBit); }
-	inline unsigned char Off(const int theBit) const { return    (!_bittest64((long long*)&bf.u64, theBit)); }
-	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64, theBit); }
-	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64, theBit); }
-	inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64, theBit); }
+	inline int On(const int theBit) const { return  ( (uint64_t)bf.u64>>theBit) & 1; }
+	inline int Off(const int theBit) const { return  ( ((uint64_t)bf.u64 >> theBit) & 1)^1; }
+	inline void Set(const int theBit) { bf.u64|= (uint64_t)1<<theBit; }
+	inline void SetToBit(const int theBit) { bf.u64 = (uint64_t)1 << theBit; }
+	inline void Clear(const int theBit) { bf.u64 &= ~ ((uint64_t)1 << theBit); }
+
+	//inline unsigned char On(const int theBit) const { return    _bittest64((long long*)&bf.u64, theBit); }
+	//inline unsigned char Off(const int theBit) const { return    (!_bittest64((long long*)&bf.u64, theBit)); }
+	//inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64, theBit); }
+	//inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64, theBit); }
+	//inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64, theBit); }
 
 	inline uint64_t isNotEmpty() const { return bf.u64; }
 	inline bool isEmpty() const { return (!bf.u64); }

@@ -3,25 +3,19 @@
 #include "main.h"
 #include "Zhn_cpp.h"
 
+void ASMtestdet(int &x32, uint64_t &x64 ,int & r32,uint64_t & r64) {
+	r32 = 1 << x32;
+	r64 = (uint64_t)1 << x32;
+	x64 = 1;
+	x64 <<= x32;
+
+	cout << "0" << oct << r32 <<" 0"<<r64<<" 0"<<x64<< dec << endl;
+}
 void ASMtest() {
-	struct AT {
-		GINT64 t[5];
-	}at1,at2;
-	__stosq((unsigned long long *)&at2.t[0].u64, 0, 5);
-	for (int i = 0; i < 5; i++)
-		cout << "i=" << i << " " << at2.t[i].u64 << endl;
-	//memset(at2.t[0].u8, 0, 40);
-	memset(at1.t[0].u8, 5, 40);
-	for (int i = 0; i < 5; i++)
-		cout << "i=" << i << " " << at1.t[i].u64 << endl;
-	at2.t[0].u32[0] = 2;
-	cout<<hex  << at2.t[0].u64 <<" "<< at1.t[0].u64 <<dec<< endl;
-	at2 = at1;
-	for (int i = 0; i < 5; i++)
-		cout << "i=" << i << " " << at2.t[i].u64 << endl;
-	//__movsq((unsigned long long *)at2.t[0].u64,
-	//	(unsigned long long *)at1.t[0].u64, 10);
-	//memmove(at1.t, at2.t, sizeof at1.t);
+	int x32=40,r32;
+	uint64_t x64=42,r64;
+	ASMtestdet(x32, x64,r32,r64);
+	cout << r32 << r64 << endl;
 }
 // catching time as seconds+millis  (seconds since year 1970)
 long GetTimeMillis() {
@@ -78,7 +72,9 @@ extern void Go_0();
 extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
-	//ASMtest();
+	if (0) {
+		ASMtest(); return 0;
+	}
 	long tdeb=GetTimeMillis();
 	char * finput_name=0,*foutput_name=0,* ww;
 	char * s_strings[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//optionnal 10 strings
