@@ -78,7 +78,7 @@ extern void Go_0();
 extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
-	ASMtest();
+	//ASMtest();
 	long tdeb=GetTimeMillis();
 	char * finput_name=0,*foutput_name=0,* ww;
 	char * s_strings[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//optionnal 10 strings
