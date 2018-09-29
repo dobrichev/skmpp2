@@ -142,7 +142,6 @@ int main(int narg, char *argv[]) {
 
 void SGO::ParseInt(char * ze, int  delimiter){
 // bfx[0] 1 to 8 parameters
-	//__stosd((uint32_t *)tparse, 0, 8);
 	memset(tparse, 0, sizeof tparse);
 	nparse = 0;
 	if (!bfx[0]) return;

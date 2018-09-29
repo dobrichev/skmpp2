@@ -89,7 +89,7 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned short int  USHORT;
 //typedef unsigned int UINT;
-typedef uint32_t ULONG;
+typedef unsigned long ULONG;
 typedef unsigned char UCHAR;
 
 

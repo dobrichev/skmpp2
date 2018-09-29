@@ -2064,7 +2064,6 @@ int XYSEARCH::MultiUnit(int udigit, int unit){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			//movsq((unsigned long long *)&wp.t[0].u64, (unsigned long long *)&t[0].u64, nt);
 			memcpy(wp.t, t, nt * 8);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
@@ -2114,7 +2113,6 @@ int XYSEARCH::MultiCell(int c0){
 			}
 			if (cleang.IsEmpty())return 0;
 			wp.nt = nt;
-			//movsq((unsigned long long *)&wp.t[0].u64,	(unsigned long long *)&t[0].u64, nt);
 			memcpy(wp.t, t, nt * 8);
 		}
 		else { // cleaning must be seen by this digit (no cell cleaning)
@@ -2481,8 +2479,6 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 						PrintBackCom("locdiag on path ", tback, nx, 1);
 					}
 					length += nx;
-					//movsq((unsigned long long *)&tbn[n++][0].u64,
-					//	(unsigned long long *)&tback[0].u64, nx);// store way back
 					memcpy(tbn[n++], tback, nx * 8);
 
 				}
@@ -2545,8 +2541,6 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 							PrintBackCom("locdiag on path ", tback, nx, 1);
 						}
 						length += nx;
-						//movsq((unsigned long long *)&tbn[n++][0].u64,
-						//	(unsigned long long *)&tback[0].u64, nx);// store way back
 						memcpy(tbn[n++], tback, nx * 8);
 
 					}
@@ -2626,8 +2620,6 @@ void XYSEARCH::DynamicSolveContradiction(GINT cand,PM3X cont){// find path and e
 			}
 			int n1 = BackDynamic(target_on, t, nt);
 			GINT64 t1b[200];
-			//movsq((unsigned long long *)&t1b[0].u64,
-			//	(unsigned long long *)&tback[0].u64, n1);// store way back
 			memcpy(t1b, tback, n1 * 8);
 			int n2 = BackDynamic(target_off, t, nt);
 			int rating = pm_go.hint.ChainLengthAdjusted(85, n1 + n2);
@@ -2680,8 +2672,6 @@ void XYSEARCH::DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell
 			}
 			if (!n1) continue; // should never be
 			GINT64 t1b[200];
-			//movsq((unsigned long long *)&t1b[0].u64,
-			//	(unsigned long long *)&tback[0].u64, n1);// store way back
 			memcpy(t1b, tback, n1 * 8);
 			if (!ExpandDynamicToElim(p2, target)) continue;// redo expansion should work
 			int n2 = BackDynamicOff(target);
