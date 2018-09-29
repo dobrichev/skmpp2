@@ -39,9 +39,6 @@ typedef unsigned __int64  uint64_t;
 #ifdef   _MSC_VER
 #define _popcnt64(a) __popcnt64(a)
 #define _popcnt32(a) __popcnt(a)
-//_bittestandset64 is builtin
-//_bittestandreset64 is builtin
-//_bittest64 is builtin
 //_BitScanForward64 is builtin
 //_BitScanForward is builtin
 //_BitScanReverse64 is builtin
@@ -53,9 +50,6 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
-#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
-#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
-#define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))

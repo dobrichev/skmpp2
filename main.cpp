@@ -142,7 +142,8 @@ int main(int narg, char *argv[]) {
 
 void SGO::ParseInt(char * ze, int  delimiter){
 // bfx[0] 1 to 8 parameters
-	__stosd((unsigned long *)tparse, 0, 8); nparse = 0;
+	memset(tparse, 0, sizeof tparse);
+	nparse = 0;
 	if (!bfx[0]) return;
 	//cout << ze << "go parse  delimiter "<<(char) delimiter << endl;
 	char * w = ze,temp[20];
