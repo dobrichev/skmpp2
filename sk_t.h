@@ -56,11 +56,11 @@ typedef unsigned __int64  uint64_t;
 #define __movsb(dst,src,count) memcpy(dst,src,count)
 #define __movsd(dst,src,count) memcpy(dst,src,count*4)
 #define __movsq(dst,src,count) memcpy(dst,src,count*8)
-#define _bittestandset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] |= ((uint64_t)1 << ((offset) & 63)))
-//void inline _bittestandset64(int64_t* dest, uint32_t offset) {dest[offset / 64] |= (1ull << (offset & 63));}
-#define _bittestandreset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] &= ~(((uint64_t)1 << ((offset) & 63))))
-//void inline _bittestandreset64(int64_t* dest, uint32_t offset) {dest[offset / 64] &= ~(1ull << (offset & 63));}
-#define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
+//#define _bittestandset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] |= ((uint64_t)1 << ((offset) & 63)))
+////void inline _bittestandset64(int64_t* dest, uint32_t offset) {dest[offset / 64] |= (1ull << (offset & 63));}
+//#define _bittestandreset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] &= ~(((uint64_t)1 << ((offset) & 63))))
+////void inline _bittestandreset64(int64_t* dest, uint32_t offset) {dest[offset / 64] &= ~(1ull << (offset & 63));}
+//#define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
@@ -89,7 +89,7 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned short int  USHORT;
 //typedef unsigned int UINT;
-typedef unsigned long ULONG;
+//typedef unsigned long ULONG;
 typedef unsigned char UCHAR;
 
 

@@ -3723,7 +3723,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								ws.u8[1] = c2;
 								ws.u16[1] = digs;
 								ws.u16[3] = (digc1|digc2)^digs;
-								ws.u8[5] = _popcnt32(ws.u16[3]);
+								ws.u8[5] = (uint8_t)_popcnt32(ws.u16[3]);
 							}
 						}
 					}
