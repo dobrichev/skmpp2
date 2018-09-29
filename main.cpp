@@ -25,9 +25,9 @@ int32_t GetTimeMillis() {
 }
 // builing an appropriate message depending on the elapsed time te-ts
 void PrintTime(int32_t ts,int32_t te){
-	UINT dt=te-ts,dtmil=dt%1000,dts=dt/1000,dth=dts/3600;   dth=dth%1000;
+	uint32_t dt=te-ts,dtmil=dt%1000,dts=dt/1000,dth=dts/3600;   dth=dth%1000;
 	cerr << endl<<"total elapsed time "; 
-    UINT dtm=dts/60; dts=dts%60 ,   dth=dtm/60, dtm=dtm%60;
+    uint32_t dtm=dts/60; dts=dts%60 ,   dth=dtm/60, dtm=dtm%60;
     if(dth) cerr <<dth<<"h "; 
 	if(dth || dtm) cerr <<dtm<<"m "; 
 	cerr	<<dts <<"s ";
@@ -36,9 +36,9 @@ void PrintTime(int32_t ts,int32_t te){
 }
 
 void PrintTimeCout(int32_t ts, int32_t te){
-	UINT dt = te - ts, dtmil = dt % 1000, dts = dt / 1000, dth = dts / 3600;   dth = dth % 1000;
+	uint32_t dt = te - ts, dtmil = dt % 1000, dts = dt / 1000, dth = dts / 3600;   dth = dth % 1000;
 	cout << endl << "total elapsed time ";
-	UINT dtm = dts / 60; dts = dts % 60, dth = dtm / 60, dtm = dtm % 60;
+	uint32_t dtm = dts / 60; dts = dts % 60, dth = dtm / 60, dtm = dtm % 60;
 	if (dth) cout << dth << "h ";
 	if (dth || dtm) cout << dtm << "m ";
 	cout << dts << "s ";
@@ -72,14 +72,10 @@ extern void Go_0();
 extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
-<<<<<<< HEAD
-	int32_t tdeb=GetTimeMillis();
-=======
 	if (0) {
 		ASMtest(); return 0;
 	}
-	long tdeb=GetTimeMillis();
->>>>>>> refs/remotes/GPenet/skmpp2/master
+	int32_t tdeb=GetTimeMillis();
 	char * finput_name=0,*foutput_name=0,* ww;
 	char * s_strings[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };//optionnal 10 strings
 
@@ -146,7 +142,9 @@ int main(int narg, char *argv[]) {
 
 void SGO::ParseInt(char * ze, int  delimiter){
 // bfx[0] 1 to 8 parameters
-	__stosd((uint32_t *)tparse, 0, 8); nparse = 0;
+	//__stosd((uint32_t *)tparse, 0, 8);
+	memset(tparse, 0, sizeof tparse);
+	nparse = 0;
 	if (!bfx[0]) return;
 	//cout << ze << "go parse  delimiter "<<(char) delimiter << endl;
 	char * w = ze,temp[20];
@@ -170,8 +168,6 @@ void SGO::ParseInt(char * ze, int  delimiter){
 	}
 	return;
 }
-<<<<<<< HEAD
-=======
 void SGO::Parse_zin() {
 	strcpy(zinparsed, finput.ze);
 	nitems = 1; items[0] = zinparsed;
@@ -292,4 +288,3 @@ int SGO::Canonical_401_11() {
 	}
 	return 0; // failed to recognize
 }
->>>>>>> refs/remotes/GPenet/skmpp2/master

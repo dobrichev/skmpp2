@@ -489,7 +489,7 @@ void COMBINE::First(int ne, int pe, USHORT * d, USHORT * f)    {
 		p = 10;  // safety measure, not auhorised
 	lim = p - 1;
 	n = ne;
-	for (UINT i = 0, v = n - p; i<p; i++, v++)
+	for (uint32_t i = 0, v = n - p; i<p; i++, v++)
 		inds[i] = v;
 	Sort();
 }
@@ -503,7 +503,7 @@ int COMBINE::Next()  {
 	while (inds[i] == i)
 		i++; // lock for first that can go down
 	inds[i]--; // back one for that one
-	UINT v = inds[i];  // an restart below with no hole
+	uint32_t v = inds[i];  // an restart below with no hole
 	while (i--) inds[i] = --v;
 	Sort();
 	return 1;
@@ -515,8 +515,8 @@ inds is the list of "p" index selected
 */
 
 void COMBINE::Sort()   {
-	UINT is = 0, js = n - p, jns = 0;
-	for (UINT i = 0; i<n; i++) {
+	uint32_t is = 0, js = n - p, jns = 0;
+	for (uint32_t i = 0; i<n; i++) {
 		if (i - inds[is]){
 			output[jns++] = entry[i];
 			continue;

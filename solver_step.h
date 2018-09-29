@@ -590,7 +590,7 @@ public:
 	BF32	bits_tasks_done;
 	// data for kites
 	int nbiv,nempty;
-	UINT ratfound[17]; // set to 0 in the constructor
+	uint32_t ratfound[17]; // set to 0 in the constructor
 	char * det_mess;
 
 	GINT64 tur[20];	STORE_UL tul[10];	WWUR2 wwur2; BF128 lastul; int ntur, ntul;//==== UR UL handling

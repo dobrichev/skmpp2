@@ -135,8 +135,10 @@ void ZH_GLOBAL::Pm_Status(ZHOU * z){
 	}
 }
 void ZH_GLOBAL::Pm_Status_End(ZHOU * z){// prepare boxes and cells status
-	__stosd((uint32_t *)dig_cells, 0, 81);
-	__stosd((uint32_t *)cells_count, 0, 81);
+	//__stosd((uint32_t *)dig_cells, 0, 81);
+	//__stosd((uint32_t *)cells_count, 0, 81);
+	memset(dig_cells, 0, sizeof dig_cells);
+	memset(cells_count, 0, sizeof cells_count);
 	for (int idig = 0; idig < 9; idig++){
 		BF128 w = z->FD[idig][0];
 		int box = 0;
@@ -200,7 +202,8 @@ void ZHOU::AssignSolver(int rating){
 
 }
 void ZHOU::Naked_Pairs_Seen(){
-	__stosq((uint64_t *)zh_g.locked_nacked_brc_seen[0].bf.u64, 0, 6);
+	//__stosq((uint64_t *)zh_g.locked_nacked_brc_seen[0].bf.u64, 0, 6);
+	memset(zh_g.locked_nacked_brc_seen, 0, sizeof zh_g.locked_nacked_brc_seen);
 	BF128 & pa = zh_g.pairs, fd[9];
 	if (pa.Count() < 2) return;
 	int td[9], nd = 0;

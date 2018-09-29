@@ -53,30 +53,14 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
-<<<<<<< HEAD
 #define __movsb(dst,src,count) memcpy(dst,src,count)
 #define __movsd(dst,src,count) memcpy(dst,src,count*4)
 #define __movsq(dst,src,count) memcpy(dst,src,count*8)
-#define __stosd(dst, c, N) \
-   __asm__ __volatile__( \
-       "rep stosl %%eax, (%%rdi)\n\t" \
-       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
-//#define __stosq(a,b,c) memset(a,b,c*8)
-void inline __stosq(void* dst, c, N) {
-   __asm__ __volatile__(
-       "rep stosq %%rax, (%%rdi)\n\t"
-       : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
-}
 #define _bittestandset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] |= ((uint64_t)1 << ((offset) & 63)))
 //void inline _bittestandset64(int64_t* dest, uint32_t offset) {dest[offset / 64] |= (1ull << (offset & 63));}
 #define _bittestandreset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] &= ~(((uint64_t)1 << ((offset) & 63))))
 //void inline _bittestandreset64(int64_t* dest, uint32_t offset) {dest[offset / 64] &= ~(1ull << (offset & 63));}
 #define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
-=======
-#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
-#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
-#define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)
->>>>>>> refs/remotes/GPenet/skmpp2/master
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
@@ -104,7 +88,7 @@ void inline __stosq(void* dst, c, N) {
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned short int  USHORT;
-typedef unsigned int UINT;
+//typedef unsigned int UINT;
 typedef uint32_t ULONG;
 typedef unsigned char UCHAR;
 
@@ -250,7 +234,7 @@ the goal is to have a simpler code, not to improve the performance
 class COMBINE
 {
 public:
-	UINT inds[15],  // internal table size p
+	uint32_t inds[15],  // internal table size p
 		p,      // maxi 15
 		lim,    // set to p-1 final index at the end
 		n;      // numer of objects in the table
@@ -312,11 +296,11 @@ public: char v[10];
 		VV9(){ v[9] = 0; };
 		//   void base(){for(USHORT i=0;i<9;i++)v[i]=(char)i;}
 		void row(char * puz, USHORT r){
-			for (USHORT i = 0, ii = 9 * r; i<9; i++)
+		for (int i = 0, ii = 9 * r; i<9; i++)
 				v[i] = puz[ii++];
 		}
 		void col(char * puz, USHORT c) {
-			for (USHORT i = 0, ii = c; i<9; i++, ii += 9)
+			for (int i = 0, ii = c; i<9; i++, ii += 9)
 				v[i] = puz[ii];
 		}
 
