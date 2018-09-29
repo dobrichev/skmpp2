@@ -213,7 +213,6 @@ struct BF64 {
 	uint64_t Convert_to_54(){ uint64_t w = bf.u32[1]; w <<= 27; w |= bf.u32[0]; return w; }// 2x27 to 54
 
 };
-
 class BF128 {
 public:
 	T128 bf;
@@ -252,30 +251,64 @@ public:
 
 	inline bool operator== (const BF128& r) const { return(bf.u64[0] == r.bf.u64[0] && bf.u64[1] == r.bf.u64[1]); }
 	inline bool operator!= (const BF128 &r) const { return(bf.u64[0] != r.bf.u64[0] || bf.u64[1] != r.bf.u64[1]); };
-
-	inline void setBit(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
-	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
-	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64[0], theBit); }
-	inline void MaskToBit(const int theBit) { 
+	inline void MaskToBit(const int theBit) {
 		register int R = theBit;		if (R >= 128)SetAll_1();
 		else if (R <= 0)SetAll_0();
-		else if(R <64){
+		else if (R < 64) {
 			bf.u64[0] = 0;
-			bf.u64[0] = (1 << R)-1;
+			bf.u64[0] = (1 << R) - 1;
 		}
 		else {
 			bf.u64[0] = 1;
-			bf.u64[0] = (1 << (R-64)) - 1;
+			bf.u64[0] = (1 << (R - 64)) - 1;
 		}
 	}
-	inline void Mask(const int theBit){ BF128 w; w.MaskToBit(theBit); *this &=  w; }
+	inline void Mask(const int theBit) { BF128 w; w.MaskToBit(theBit); *this &= w; }
 
-	inline unsigned char isBitSet(const int theBit) const { return  _bittest64((long long*)&bf.u64[0], theBit); }
+#ifndef _MSC_VER
+	inline void Set(const int theBit) {
+		if (theBit < 64) {
+			bf.u64[0] |= (uint64_t)1 << theBit;
+		}
+		else {
+			bf.u64[1] |= (uint64_t)1 << (theBit - 64);
+		}
+	}
+	inline void SetToBit(const int theBit) { 
+		if (theBit < 64) {
+			(uint64_t)bf.u64[1] = 0;
+			bf.u64[0]=(uint64_t) 1<< theBit;
+		}
+		else {
+			(uint64_t)bf.u64[0] = 1;
+			bf.u64[1] = (uint64_t)1 << (theBit-64);
+		}
+	}
+	inline int On(const int theBit) const { 
+		if (theBit<64)	return  ((uint64_t)bf.u64[0] >> theBit) & 1;
+		else return  ((uint64_t)bf.u64[1] >> (theBit-64)) & 1;
+	}
+
+	inline void Clear(const int theBit) {
+		if (theBit < 64) {
+			bf.u64[0] &= ~((uint64_t)1 << theBit)	;
+		}
+		else {
+			bf.u64[1] &=~( (uint64_t)1 << (theBit - 64));
+		}
+	}
+#else
+	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
+	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64[0], theBit); }
 	inline unsigned char On(const int theBit) const { return  _bittest64((long long*)&bf.u64[0], theBit); }
-	inline int Off(const int theBit) const { return (!_bittest64((long long*)&bf.u64[0], theBit)); }
-
-	inline void clearBit(const int theBit) { _bittestandreset64((long long*)&bf.u64[0], theBit); }
 	inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64[0], theBit); }
+#endif
+
+
+	inline int Off(const int theBit) const { return !On(theBit); }
+	inline int isBitSet(const int theBit) const { return !On(theBit); }// double definition to clear
+	inline void setBit(const int theBit) { Set(theBit); }// double definition to clear
+	inline void clearBit(const int theBit) { Clear(theBit); }// double definition to clear
 
 	//  code to use in a 3 bands pattern calling using a cell 0-80
 	inline int On_c(const int cell) const { return On(C_To128[cell]); }
