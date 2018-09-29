@@ -9,9 +9,17 @@ struct SGO{
 	int command;
 	uint32_t * vx, *bfx;
 	char ** s_strings, *finput_name, *foutput_name;
-	int tparse[8], nparse;
+	char  zinparsed[600], // same size as finmut.ze to be safe
+		*items[50];
+
+	int tparse[8], nparse,nitems;
 
 	void ParseInt(char * ze, int  delimiter);
+	int atoi_nodot(char * o);
+	void Parse_zin();
+	int Canonical_EREPED();
+	int Canonical_401_11();
+	int Canonical_serate(char  * d, char  * o);
 };
 
 class FINPUT: public ifstream{
@@ -38,6 +46,7 @@ public:
 		if (endf) return 0;
 		if (eof() || (!getline(ze, 550))){ // assumed end of file
 			endf = 1;
+			ze[0] = ze[1] = -1; ze[2] = 0;
 			return 0;
 		}
 		ze[551] = 0;
