@@ -39,11 +39,6 @@ typedef unsigned __int64  uint64_t;
 #ifdef   _MSC_VER
 #define _popcnt64(a) __popcnt64(a)
 #define _popcnt32(a) __popcnt(a)
-//__movsb is builtin
-//__movsd is builtin
-//__movsq is builtin
-//__stosd is builtin
-//__stosq is builtin
 //_bittestandset64 is builtin
 //_bittestandreset64 is builtin
 //_bittest64 is builtin
@@ -58,6 +53,7 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
+<<<<<<< HEAD
 #define __movsb(dst,src,count) memcpy(dst,src,count)
 #define __movsd(dst,src,count) memcpy(dst,src,count*4)
 #define __movsq(dst,src,count) memcpy(dst,src,count*8)
@@ -76,6 +72,11 @@ void inline __stosq(void* dst, c, N) {
 #define _bittestandreset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] &= ~(((uint64_t)1 << ((offset) & 63))))
 //void inline _bittestandreset64(int64_t* dest, uint32_t offset) {dest[offset / 64] &= ~(1ull << (offset & 63));}
 #define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
+=======
+#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1 << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1 << (offset - 64)))
+#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= !((uint64_t)1 << offset) : ((uint64_t*)dest)[1] &= !((uint64_t)1 << (offset - 64)))
+#define _bittest64(a, b) (((*((uint64_t*)a)) >> (b)) & 1)
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))

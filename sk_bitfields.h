@@ -199,11 +199,25 @@ struct BF64 {
 	inline void operator<<= (const int bits) { bf.u64 <<= bits; };
 	inline void operator>>= (const int bits) { bf.u64 >>= bits; };
 
+<<<<<<< HEAD
 	inline unsigned char On(const int theBit) const { return    _bittest64((int64_t*)&bf.u64, theBit); }
 	inline unsigned char Off(const int theBit) const { return    (!_bittest64((int64_t*)&bf.u64, theBit)); }
 	inline void Set(const int theBit) { _bittestandset64((int64_t*)&bf.u64, theBit); }
 	inline void SetToBit(const int theBit) { clear(); _bittestandset64((int64_t*)&bf.u64, theBit); }
 	inline void Clear(const int theBit) { _bittestandreset64((int64_t*)&bf.u64, theBit); }
+=======
+	inline int On(const int theBit) const { return  ( (uint64_t)bf.u64>>theBit) & 1; }
+	inline int Off(const int theBit) const { return  ( ((uint64_t)bf.u64 >> theBit) & 1)^1; }
+	inline void Set(const int theBit) { bf.u64|= (uint64_t)1<<theBit; }
+	inline void SetToBit(const int theBit) { bf.u64 = (uint64_t)1 << theBit; }
+	inline void Clear(const int theBit) { bf.u64 &= ~ ((uint64_t)1 << theBit); }
+
+	//inline unsigned char On(const int theBit) const { return    _bittest64((long long*)&bf.u64, theBit); }
+	//inline unsigned char Off(const int theBit) const { return    (!_bittest64((long long*)&bf.u64, theBit)); }
+	//inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64, theBit); }
+	//inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64, theBit); }
+	//inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64, theBit); }
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 
 	inline uint64_t isNotEmpty() const { return bf.u64; }
 	inline bool isEmpty() const { return (!bf.u64); }
@@ -211,7 +225,6 @@ struct BF64 {
 	uint64_t Convert_to_54(){ uint64_t w = bf.u32[1]; w <<= 27; w |= bf.u32[0]; return w; }// 2x27 to 54
 
 };
-
 class BF128 {
 public:
 	T128 bf;
@@ -250,30 +263,81 @@ public:
 
 	inline bool operator== (const BF128& r) const { return(bf.u64[0] == r.bf.u64[0] && bf.u64[1] == r.bf.u64[1]); }
 	inline bool operator!= (const BF128 &r) const { return(bf.u64[0] != r.bf.u64[0] || bf.u64[1] != r.bf.u64[1]); };
+<<<<<<< HEAD
 
 	inline void setBit(const int theBit) { _bittestandset64((int64_t*)&bf.u64[0], theBit); }
 	inline void Set(const int theBit) { _bittestandset64((int64_t*)&bf.u64[0], theBit); }
 	inline void SetToBit(const int theBit) { clear(); _bittestandset64((int64_t*)&bf.u64[0], theBit); }
 	inline void MaskToBit(const int theBit) { 
+=======
+	inline void MaskToBit(const int theBit) {
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 		register int R = theBit;		if (R >= 128)SetAll_1();
 		else if (R <= 0)SetAll_0();
-		else if(R <64){
+		else if (R < 64) {
 			bf.u64[0] = 0;
-			bf.u64[0] = (1 << R)-1;
+			bf.u64[0] = (1 << R) - 1;
 		}
 		else {
 			bf.u64[0] = 1;
-			bf.u64[0] = (1 << (R-64)) - 1;
+			bf.u64[0] = (1 << (R - 64)) - 1;
 		}
 	}
-	inline void Mask(const int theBit){ BF128 w; w.MaskToBit(theBit); *this &=  w; }
+	inline void Mask(const int theBit) { BF128 w; w.MaskToBit(theBit); *this &= w; }
 
+<<<<<<< HEAD
 	inline unsigned char isBitSet(const int theBit) const { return  _bittest64((int64_t*)&bf.u64[0], theBit); }
 	inline unsigned char On(const int theBit) const { return  _bittest64((int64_t*)&bf.u64[0], theBit); }
 	inline int Off(const int theBit) const { return (!_bittest64((int64_t*)&bf.u64[0], theBit)); }
 
 	inline void clearBit(const int theBit) { _bittestandreset64((int64_t*)&bf.u64[0], theBit); }
 	inline void Clear(const int theBit) { _bittestandreset64((int64_t*)&bf.u64[0], theBit); }
+=======
+#ifndef _MSC_VER
+	inline void Set(const int theBit) {
+		if (theBit < 64) {
+			bf.u64[0] |= (uint64_t)1 << theBit;
+		}
+		else {
+			bf.u64[1] |= (uint64_t)1 << (theBit - 64);
+		}
+	}
+	inline void SetToBit(const int theBit) { 
+		if (theBit < 64) {
+			(uint64_t)bf.u64[1] = 0;
+			bf.u64[0]=(uint64_t) 1<< theBit;
+		}
+		else {
+			(uint64_t)bf.u64[0] = 1;
+			bf.u64[1] = (uint64_t)1 << (theBit-64);
+		}
+	}
+	inline int On(const int theBit) const { 
+		if (theBit<64)	return  ((uint64_t)bf.u64[0] >> theBit) & 1;
+		else return  ((uint64_t)bf.u64[1] >> (theBit-64)) & 1;
+	}
+
+	inline void Clear(const int theBit) {
+		if (theBit < 64) {
+			bf.u64[0] &= ~((uint64_t)1 << theBit)	;
+		}
+		else {
+			bf.u64[1] &=~( (uint64_t)1 << (theBit - 64));
+		}
+	}
+#else
+	inline void Set(const int theBit) { _bittestandset64((long long*)&bf.u64[0], theBit); }
+	inline void SetToBit(const int theBit) { clear(); _bittestandset64((long long*)&bf.u64[0], theBit); }
+	inline unsigned char On(const int theBit) const { return  _bittest64((long long*)&bf.u64[0], theBit); }
+	inline void Clear(const int theBit) { _bittestandreset64((long long*)&bf.u64[0], theBit); }
+#endif
+
+
+	inline int Off(const int theBit) const { return !On(theBit); }
+	inline int isBitSet(const int theBit) const { return !On(theBit); }// double definition to clear
+	inline void setBit(const int theBit) { Set(theBit); }// double definition to clear
+	inline void clearBit(const int theBit) { Clear(theBit); }// double definition to clear
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 
 	//  code to use in a 3 bands pattern calling using a cell 0-80
 	inline int On_c(const int cell) const { return On(C_To128[cell]); }
@@ -421,8 +485,13 @@ class PM3X {
 	// 9*BF128 to have candidates in native mode when needed
 public:
 	BF128 pmdig[9];
+<<<<<<< HEAD
 	inline void SetAll_0(){ __stosq((uint64_t *)pmdig[0].bf.u64,0,18); }
 	inline void SetAll_1() { __stosq((uint64_t *)pmdig[0].bf.u64, BIT_SET_64, 18); }
+=======
+	inline void SetAll_0(){	memset(pmdig, 0,sizeof pmdig);	}
+	inline void SetAll_1() {	memset(pmdig, 255, sizeof pmdig);	}
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 	inline void Set(int dig, int cell){ pmdig[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ pmdig[dig].Set_c(cell); }
 	inline void Clear(int dig, int cell){ pmdig[dig].Clear(cell); }
@@ -471,41 +540,34 @@ class PMBF {
 	// 9*BF81 to have candidates in native mode when needed
 public:
 	BF81 bfc[9];
+<<<<<<< HEAD
 	inline void SetAll_0() { __stosq((uint64_t *)bfc[0].bf.u64, 0, 18); }
 	inline void SetAll_1() { __stosq((uint64_t *)bfc[0].bf.u64, 0xffffffffffffffff, 18); }
+=======
+>>>>>>> refs/remotes/GPenet/skmpp2/master
 	inline void Set(int dig, int cell){ bfc[dig].Set(cell); }
 	inline void Set_c(int dig, int cell){ bfc[dig].Set_c(cell); }
 	inline void SetU(UCAND c){ bfc[c >> 7].Set(c & 127); }
-	void Set(BF16 & digs, int cell);
-	void SetRegion(int dig, int unit, BF16 & pdigs);
 	inline void Clear(int dig, int cell){ bfc[dig].Clear(cell); }
 	inline int SetIf(int dig, int cell){
 		if (bfc[dig].On(cell)) return 0;
 		bfc[dig].Set(cell);
 		return 1;
 	}
-	int operator ==(const PMBF & b) const;
-	void operator &= (const PMBF &z2);
-	void operator |= (const PMBF &z2);
-	void operator -= (const PMBF &z2);
-	void operator &= (const BF81 * bf81);
-	void Image(BUILDSTRING & zs);
 	inline int On(int dig, int cell){ return bfc[dig].On(cell); }
 	inline int On_c(int dig, int cell){ return bfc[dig].On_c(cell); }
 	inline int OnU(UCAND x){ return bfc[x >> 7].On(x & 0x7f); }
 	inline int OffU(UCAND x){ return bfc[x >> 7].Off(x & 0x7f); }
-	USHORT String(UCAND * t);
 	int IsEmpty(){
 		for (int i = 0; i<9; i++)
 			if (bfc[i].isNotEmpty()) return 0;
 		return 1;
 	}
-	int Count();
 };
 class PMBFONOFF{// small class managing both status
 public:
 	PMBF bfon, bfoff;
-	void SetAll_0(){ bfon.SetAll_0(); bfoff = bfon; }
+	//void SetAll_0(){ bfon.SetAll_0(); bfoff = bfon; }
 	inline void Set(SCAND x){
 		PMBF & mybf = (x & (1 << 11)) ? bfoff : bfon;
 		mybf.Set((x >> 7) & 15, x & 0x7f);
@@ -514,8 +576,6 @@ public:
 		PMBF & mybf = (x & (1 << 11)) ? bfoff : bfon;
 		return mybf.On((x >> 7) & 15, x & 0x7f);
 	}
-	USHORT Stringbits(UCAND * t);
-	USHORT String(UCAND * t);
 
 };
 
