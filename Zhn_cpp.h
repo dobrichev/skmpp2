@@ -335,13 +335,23 @@ digitloop:
 	return 1;
 }
 int ZHOU::InitSudoku(GINT16 * t, int n){// if morph, done before
-	BF128 Digit_cell_Assigned[9];
-	__stosq((uint64_t*)Digit_cell_Assigned, 0, 18);
+	BF128 Digit_cell_Assigned[9] = {};
+	//__stosq((uint64_t*)Digit_cell_Assigned, 0, 18);
 	*this = zhou_i;
 	for (int ic = 0; ic < n; ic++)   {
-		int digit = t[ic].u8[1], cell = t[ic].u8[0], xcell = C_To128[cell];
+		int digit = t[ic].u8[1];
+		int cell = t[ic].u8[0];
+		int xcell = C_To128[cell];
 		if (FD[digit][0].Off(xcell))  return 1;// check not valid entry
 		Assign(digit, cell, xcell);
+//		if (digit > 8 || xcell >= 128) {
+//			std::cerr << "too bad" << std::endl;
+//			return 1;
+//		}
+//		if((uint64_t)(&Digit_cell_Assigned[digit]) != (uint64_t)((int64_t*)&Digit_cell_Assigned[digit].bf.u64[0])) {
+//			std::cerr << "extremely bad" << std::endl;
+//			return 1;
+//		}
 		Digit_cell_Assigned[digit].Set(xcell);
 	}
 	BF128 w = cells_unsolved; w.bf.u32[3] = ~0;

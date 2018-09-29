@@ -66,13 +66,16 @@ typedef unsigned __int64  uint64_t;
        "rep stosl %%eax, (%%rdi)\n\t" \
        : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
 //#define __stosq(a,b,c) memset(a,b,c*8)
-#define __stosq(dst, c, N) \
-   __asm__ __volatile__( \
-       "rep stosq %%rax, (%%rdi)\n\t" \
+void inline __stosq(void* dst, c, N) {
+   __asm__ __volatile__(
+       "rep stosq %%rax, (%%rdi)\n\t"
        : : "D"((dst)), "a"((c)), "c"((N)) : "memory");
-#define _bittestandset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] |= ((uint64_t)1ull << offset) : ((uint64_t*)dest)[1] |= ((uint64_t)1ull << (offset - 64)))
-#define _bittestandreset64(dest,offset) (offset < 64 ? ((uint64_t*)dest)[0] &= ~((uint64_t)1ull << offset) : ((uint64_t*)dest)[1] &= ~((uint64_t)1ull << (offset - 64)))
-#define _bittest64(a, b) (((((uint64_t*)a)[b>>6]) >> (b & 63)) & 1)
+}
+#define _bittestandset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] |= ((uint64_t)1 << ((offset) & 63)))
+//void inline _bittestandset64(int64_t* dest, uint32_t offset) {dest[offset / 64] |= (1ull << (offset & 63));}
+#define _bittestandreset64(dest,offset) (((uint64_t*)dest)[(unsigned int)(offset) >> 6] &= ~(((uint64_t)1 << ((offset) & 63))))
+//void inline _bittestandreset64(int64_t* dest, uint32_t offset) {dest[offset / 64] &= ~(1ull << (offset & 63));}
+#define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
 #define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))

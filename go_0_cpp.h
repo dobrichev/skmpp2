@@ -1,7 +1,7 @@
 
 
 //========================================
-char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
+const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
 "fupd ", "hpair ", "htripl ", " ", " " };
 #include "go_0xx_cpp.h"
 #include "go_1xx_cpp.h"
