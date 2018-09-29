@@ -477,7 +477,7 @@ void Go_c202(){
 		//return;
 		//        diagonal or stick 9 self symmetric + 36 x 2
 		int boxes_with_fix[3][3] = { 0, 4, 8, 2, 4, 6, 3, 4, 5 };
-		char * ttyp[3] = { "diag1", "diag2", "stick" };
+		const char * ttyp[3] = { "diag1", "diag2", "stick" };
 		gscom.tcor = sym_tcor[1];
 		for (int itype = 0; itype < 3; itype++){// diagonal or stock
 			cout << " entry sym_36 type= " << itype << endl;
@@ -589,6 +589,7 @@ void Go_c210(){// create a seed file on a pattern
 				tfree[i] = gscom.tc[i].free;
 				if (!tfree[i]) goto back2; // locked
 			next2:
+				{
 				int tp2[10], ntp2=0;
 				BitsInTable32(tp2, ntp2, tfree[i]);
 				while (tfree[i]){
@@ -621,6 +622,7 @@ void Go_c210(){// create a seed file on a pattern
 					gscom.Restore();
 					if ((int)digit > tmaxdig[i - 1]) break;
 				}
+				} //end of int ntp2 scope
 			back2:
 				if (--i>n1){
 					gscom.iclue = i;
