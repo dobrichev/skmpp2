@@ -25,7 +25,7 @@ void Go_c400_40p(char *ze, int task) {// work on bitfields std puz
 	memset(d_units, 0, sizeof d_units);
 	memset(c_bands, 0, sizeof c_bands);
 	memset(c_units, 0, sizeof c_units);
-	char *const rcb  = "RCB";
+	const char* rcb  = "RCB";
 	for (int i = 0; i < 81; i++)if (ze[i] != '.') {
 		pattern.Set_c(i);
 		int d = ze[i] - '1',bit=1<<d;
