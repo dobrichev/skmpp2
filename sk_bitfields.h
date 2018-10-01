@@ -564,7 +564,7 @@ public:
 		ff[v >> 7].setBit(v & 127);
 	}
 
-	uint32_t GetSetsDigit(USHORT d){ int dd = d + 3, ffi = dd>2, ffv = dd & 3;	return ff[ffi].bf.u32[4]; }
+	uint32_t GetSetsDigit(USHORT d){ int dd = d + 3, ffi = dd>2/*, ffv = dd & 3*/;	return ff[ffi].bf.u32[4]; }
 	inline bool IsEmpty() const
 	{
 		return (ff[0].isZero() && ff[1].isZero() && ff[2].isZero());

@@ -59,6 +59,9 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
+#define __movsb(dst,src,count) memcpy(dst,src,count)
+#define __movsd(dst,src,count) memcpy(dst,src,count*4)
+#define __movsq(dst,src,count) memcpy(dst,src,count*8)
 #define bitscanforward64(res, src) (res = __builtin_ctzll(src))
 #define bitscanforward(res, src) (res = __builtin_ctz(src))
 #define bitscanreverse64(res, src) (res = __builtin_clzll(src) ^ 63)

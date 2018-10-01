@@ -170,7 +170,7 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 		if (c<'1' || c>'9') continue;
 		c -= '1';
 		digs |= 1 << c;
-		tgiven[ngiven++].u16 = i | (c << 8);
+		tgiven[ngiven++].u16 = (uint16_t)(i | (c << 8));
 	}
 	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
 	if( InitSudoku()) return 1;
@@ -372,7 +372,7 @@ char * ZHOU::SetKnown(char * zs){
 				uint32_t  irow;
 				bitscanforward(irow, row);
 				int	cell = Tblstartblock[ib] + TblMult9[j] + irow;
-				zs[cell] = digit + '1';
+				zs[cell] = (char)(digit + '1');
 			}
 		}
 	}
@@ -792,7 +792,7 @@ int ZHOU::SolveHiddenTriplet_Box_Row(){// look a hidden triplet in row or box
 	zh_g.pairs_naked.SetAll_0();
 	// process 9 boxes
 	for (int iband = 0, dband = 0, ibox = 0; iband < 3; iband++, dband += 27){
-		int bandpairs = zh_g.pairs.bf.u32[iband];
+		/*int bandpairs = zh_g.pairs.bf.u32[iband];*/
 		for (int iboxr = 0, mask = 07007007; iboxr < 3; iboxr++, ibox++, mask <<= 3){
 			if (box_hidden_pair & (1 << ibox)) continue;
 			if (_popcnt32(cells_unsolved.bf.u32[iband] & mask) < 5) continue;

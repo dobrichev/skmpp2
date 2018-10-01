@@ -16,7 +16,7 @@ ofstream  fout1,fout2;
 FINPUT finput;
 
 //========================================
-char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
+const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
 "fupd ", "hpair ", "htripl ", " ", " " };
 
 void Go_c10() { // extract valid puzzles from entry
@@ -68,9 +68,3 @@ void Go_0() {
 	}
 	cerr << "go_0 return" << endl;
 }
-
-n entry
-	}
-	cerr << "go_0 return" << endl;
-}
-

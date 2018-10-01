@@ -328,9 +328,9 @@ public:
 
 		USHORT rating,rating_done;
 
-		inline void Set_Target(int r){ rating = r; rating_done = 0; }
-		inline int IsToDo(int r){ return (r <= rating); }
-		inline void Done(int r){ if (r > rating_done) rating_done = r; }
+		inline void Set_Target(USHORT r){ rating = r; rating_done = 0; }
+		inline int IsToDo(USHORT r){ return (r <= rating); }
+		inline void Done(int r){ if (r > rating_done) rating_done = (USHORT)r; }
 
 
 		inline void Init() {rating=999;pmelims.SetAll_0();}
@@ -383,7 +383,7 @@ public:
 		Ex_End xend;
 
 		BUILDSTRING buildstring;
-		USHORT * texplain [2000],ntexplain,nttback[9];;
+		USHORT * texplain [2000],ntexplain,nttback[9];
 		EXPLAIN_BUFFER expbuf;
 
 		int ExplainRegion(int dest,int unit ,int dig);
