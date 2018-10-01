@@ -16,7 +16,7 @@ inline char * stpcpy(char * d, const char * o)
 #else
 //stpcpy is part of POSIX: http://pubs.opengroup.org/onlinepubs/9699919799/functions/stpcpy.html
 #endif
-
+/*
 #ifndef _MSC_VER
 //assume every compiler but MS is C99 compliant and has inttypes
 #include <inttypes.h>
@@ -27,6 +27,8 @@ typedef unsigned __int16  uint16_t;
 typedef unsigned __int32  uint32_t;
 typedef unsigned __int64  uint64_t;
 #endif
+*/
+#include <inttypes.h>
 
 
 #ifdef   _MSC_VER
@@ -39,6 +41,10 @@ typedef unsigned __int64  uint64_t;
 #ifdef   _MSC_VER
 #define _popcnt64(a) __popcnt64(a)
 #define _popcnt32(a) __popcnt(a)
+#define bitscanforward(A,B) _BitScanForward((unsigned long*)& A, B)
+#define bitscanforward64(A,B) _BitScanForward64((unsigned long*)& A, B)
+#define bitscanreverse(A,B) _BitScanReverse((unsigned long*)& A, B)
+#define bitscanreverse64(A,B) _BitScanReverse64((unsigned long*)& A, B)
 //_BitScanForward64 is builtin
 //_BitScanForward is builtin
 //_BitScanReverse64 is builtin
@@ -50,10 +56,14 @@ typedef unsigned __int64  uint64_t;
 #else
 #define _popcnt64(a) __builtin_popcountll(a)
 #define _popcnt32(a) __builtin_popcount(a)
-#define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
-#define _BitScanForward(res, src) (*res = __builtin_ctz(src))
-#define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
-#define _BitScanReverse(res, src) (*res = __builtin_ffs(src))
+//#define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
+//#define _BitScanForward(res, src) (*res = __builtin_ctz(src))
+//#define _BitScanReverse64(res, src) (*res = __builtin_clzll(src) ^ 63)
+//#define _BitScanReverse(res, src) (*res = __builtin_clz(src) ^ 31)
+#define bitscanforward64(res, src) (res = __builtin_ctzll(src))
+#define bitscanforward(res, src) (res = __builtin_ctz(src))
+#define bitscanreverse64(res, src) (res = __builtin_clzll(src) ^ 63)
+#define bitscanreverse(res, src) (res = __builtin_clz(src) ^ 31)
 //strcpy_s isn't implemented
 #define strcpy_s(dest, size, src) (strncpy(dest, src, size))
 //strncpy_s isn't implemented
@@ -137,7 +147,7 @@ extern char * Char54out(uint64_t v);
 extern char * Char64out(uint64_t v);
 extern char * Char2Xout(uint64_t v);
 extern char * CoutGintPuzzle(GINT * t, int n);
-extern char * CoutGint64Puzzle(GINT * t, int n);
+//extern char * CoutGint64Puzzle(GINT * t, int n);
 // general correspondance row column box band pattern 
 
 extern int TblMult3[9];  // 3*i

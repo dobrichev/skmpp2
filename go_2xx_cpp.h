@@ -16,7 +16,7 @@ struct GENSTEP{
 		tc[0].free = 0777;
 		for (int i = 0; i < 9; i++)row_free[i] = col_free[i] = box_free[i] = 0777;
 	}
-	void ReInit(int nfix){
+	void ReInit(){
 		for (int i = 0; i < 9; i++)row_free[i] = col_free[i] = box_free[i] = 0777;
 	}
 	void SetClues(int n){
@@ -38,7 +38,7 @@ struct GENSTEP{
 	}
 	void Addclue(int cell){
 		CLUE & c = tc[nclues];
-		tclues[nclues++].u16 = cell;
+		tclues[nclues++].u16 = (uint16_t)cell;
 		CELL_FIX &cfd = cellsFixedData[cell];
 		c.er = cfd.el;
 		c.ec = cfd.pl;
@@ -116,7 +116,7 @@ struct GENSTEP{
 		char zs[82];
 		strcpy(zs, empty_puzzle);
 		for (int i = 0; i <= n; i++)
-			zs[tclues[i].u8[0]] = tclues[i].u8[1] + '1';
+			zs[tclues[i].u8[0]] =(char)( tclues[i].u8[1] + '1');
 		cout << zs << " n= "<<n << endl;
 	}
 	void PrintClues(){
@@ -157,7 +157,7 @@ no:
 	if (sgo.command == 202)	{
 		char puz[82];
 		strcpy(puz, empty_puzzle);
-		for (int i = 0; i < nclues; i++) puz[tclues[i].u8[0]] = tclues[i].u8[1] + '1';
+		for (int i = 0; i < nclues; i++) puz[tclues[i].u8[0]] = (char)(tclues[i].u8[1] + '1');
 		fout4 << puz << "seed" << endl;
 	}
 	return 0;
@@ -179,9 +179,9 @@ void GENSTEP::Gengo(int istart){
 	iclue = istart;
 	Find_free_minimal_change();
 next:
-	unsigned long iw;
+	uint32_t iw;
 	while ( tc[iclue].free){
-		_BitScanForward(&iw, tc[iclue].free);
+		bitscanforward(iw, tc[iclue].free);
 		//cout << "next iclue=" << iclue << " digit=" << iw+1 << endl;
 		Assign(1 << iw);
 		tclues[iclue].u8[1] = (uint8_t)iw;
@@ -212,7 +212,7 @@ void GENSTEP::GenSym36(int lim1){
 		return;
 	}
 	int tleveldig[4] = { 1, 3, 7, 7 };
-	unsigned long digit;
+	uint32_t digit;
 	int  i1 = -1; // loop1 on fix clues
 	tc[0].unlocked = 1;// first cell only digit 1
 	tc[0].level_dig = 0;
@@ -230,7 +230,7 @@ nextindf:
 	tfree[i1] &= tleveldig[level + 1];
 nextf:
 	while (tfree[i1]){
-		_BitScanForward(&digit, tfree[i1]);
+		bitscanforward(digit, tfree[i1]);
 		tfree[i1] ^= 1 << digit;
 		iclue = i1;
 		tclues[i1].u8[1] = (uint8_t)digit;
@@ -255,7 +255,7 @@ void GENSTEP::GenSym_Loop2(int sym36){// loop on pairs of clues
 	// start with cell ntcf
 	cout << "entry loop2 sym36=" << sym36 << endl;
 	int tleveldig[6] = { 1,7, 0x1f, 0x7f, 0x1ff, 0x1ff };
-	unsigned long digit;
+	uint32_t digit;
 	int  i = ntcf - 2, d1, d2;
 	tc[0].level_dig = sym36;
 	if (ntcf)tc[ntcf-1].level_dig = sym36;
@@ -286,7 +286,7 @@ nextind2:
 	} //end of int digits scope
 next2:
 	while ( tfree[i]){
-		_BitScanForward(&digit, tfree[i]);
+		bitscanforward(digit, tfree[i]);
 		tfree[i] ^= 1 << digit;
 		d2 = tcor[digit];
 		d1 = digit;
@@ -399,7 +399,7 @@ void Go_c201(){
 				for (int i = nfix; i < myn; i++)
 					gscom.tclues[i] = myclues[tclues_s[i-nfix]+nfix];
 				//  process the 
-				if (nfix)gscom.ReInit(nfix);
+				if (nfix)gscom.ReInit();
 				gscom.SetClues(istart);
 				// lock known digit in cells to change
 				for (int i = istart; i < myn; i++){
@@ -531,7 +531,7 @@ void Go_c210(){// create a seed file on a pattern
 	int nclues, cclue = 0, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40], tmaxdig[40];
 
 	if (finput.GetPuzzle(ze)){
@@ -558,7 +558,7 @@ void Go_c210(){// create a seed file on a pattern
 			tfree[i] = gscom.tc[i].free;
 		nextc:
 			while ( tfree[i]) {
-				_BitScanForward(&digit, tfree[i]);
+				bitscanforward(digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
 				gscom.tclues[i].u8[1] = (uint8_t)digit;
@@ -592,7 +592,7 @@ void Go_c210(){// create a seed file on a pattern
 				int tp2[10], ntp2=0;
 				BitsInTable32(tp2, ntp2, tfree[i]);
 				while (tfree[i]){
-					_BitScanForward(&digit, tfree[i]);
+					bitscanforward(digit, tfree[i]);
 					tfree[i] ^= 1 << digit;
 					gscom.iclue = i;
 					gscom.tclues[i].u8[1] = (uint8_t)digit;
@@ -664,7 +664,7 @@ void Go_c211(){// create a seed file on a pattern
 	int nclues, cclue = 0, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40], tmaxdig[40];
 
 	if (finput.GetPuzzle(ze)){
@@ -691,7 +691,7 @@ void Go_c211(){// create a seed file on a pattern
 			tfree[i] = gscom.tc[i].free;
 		nextc:
 			while ( tfree[i]){
-				_BitScanForward(&digit, tfree[i]);
+				bitscanforward(digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
 				gscom.tclues[i].u8[1] = (uint8_t)digit;
@@ -738,7 +738,7 @@ void Go_c212(){// create a seed file on a pattern based on primary status
 		cout << n1 << " given clues not an accepted value" << endl;
 		return;
 	}
-	unsigned long digit;
+	uint32_t digit;
 	int tfree[40];
 
 	while (finput.GetPuzzle(ze)){
@@ -777,7 +777,7 @@ void Go_c212(){// create a seed file on a pattern based on primary status
 			if (!tfree[i]) goto back2; // locked
 		next2:
 			while (tfree[i]){
-				_BitScanForward(&digit, tfree[i]);
+				bitscanforward(digit, tfree[i]);
 				tfree[i] ^= 1 << digit;
 				gscom.iclue = i;
 				gscom.tclues[i].u8[1] = (uint8_t)digit;

@@ -12,10 +12,9 @@ void ASMtestdet(int &x32, uint64_t &x64 ,int & r32,uint64_t & r64) {
 	cout << "0" << oct << r32 <<" 0"<<r64<<" 0"<<x64<< dec << endl;
 }
 void ASMtest() {
-	int x32=40,r32;
-	uint64_t x64=42,r64;
-	ASMtestdet(x32, x64,r32,r64);
-	cout << r32 << r64 << endl;
+	//uint32_t res,res2;
+	//int x32=40,r32;
+	
 }
 // catching time as seconds+millis  (seconds since year 1970)
 long GetTimeMillis() {

@@ -39,24 +39,37 @@ void Go_gen_2xx(){
 void Go_can_3xx(){
 
 }
+/* subtask v0 for task 400
+0 add sequence
+1 add string0
+2 add nclues
+9 add stcd puz to entry
+10 '.' for empty cell
+11 erase '"' in entry
+12 cut entry to v1
+15 mantext in output
+16 mintext in output
+21 extract 81 character starting in v1
+22 first v1 puzzles in output 1 others output2
+23 sampling start v1 one every v2
+40 count digits
+41 count given per band
+42 count digits per band
+43 count given per unit
+44count digits per unit
+*/
+
 void Go_misc_4xx(){
 	cout << "command 4xx command=" << sgo.command << endl;
 	switch (sgo.command){
-		/*
-  	case 200: Go_c200(); break;// split the entry file in files 1;2;3
-	case 201: Go_c201(); break;// change n clues or 1 to n clues
-	case 203: Go_c201_old(); break;// change n clues or 1 to n clues
-	case 202: Go_c202(); break;// gen symmetry of given
-	case 210:  Go_c210(); break;// create a seed on a pattern
-	case 211:  Go_c211(); break;// create a seed gen interim file
-	case 212:  Go_c212(); break;// create a seed gen interim file
-	case 217:  Go_c217(); break;// restore part of a data base
-	case 218:  Go_c218(); break;// extract played seeds
-	case 219:  Go_c219(); break;// restore a data base
-      */
+	case 400: Go_c400(); break;// small tasks  see subtask v0
+	case 401: Go_c401(); break;// .dat to .txt  
+	case 402: Go_c402(); break;// morph rows cols diag  s1 s2 v1
 	case 440: Go_c440(); break;// parse game submissions  
 	case 445: Go_c445(); break;// split the entry file on int param 
 
+	case 480: Go_c480(); break;// add compressed clues to entry (game data base)
+	case 481: Go_c480(); break;// check/update game data base
 	}
 
 }
@@ -72,11 +85,6 @@ void Go_0( ){
 		zn[ll + 5] = '2'; fout2.open(zn);
 		zn[ll + 5] = '3'; fout3.open(zn);
 	}
-	/*
-	// open  outputs files 1;2;3 output +_filex.txt
-	zn[ll+5]='2';
-	if(output2.OpenFO(zn))
-	return 2; // 1 if error open	*/
 	switch (sgo.command / 100){
 	case 0: Go_0xx(); break;
 	case 1: Go_sol_1xx(); break;

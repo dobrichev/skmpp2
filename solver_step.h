@@ -19,7 +19,7 @@ struct EXPLAIN_BUFFER{// kind of stack to store data for back path in a chain
 	inline USHORT * GetBuf(){ return &t[n]; }
 	inline void Addn(int ne){ n += ne; }
 	void StoreChain(SCAND * tc, int ntc)	{
-		t[n++] = ntc;
+		t[n++] =(USHORT) ntc;
 		for (int i = 0; i<ntc; i++)
 			t[n++] = tc[i];
 	}
@@ -156,18 +156,18 @@ struct XYSEARCH{
 	}
 	inline void Addt(int cell, int di, int source){
 		GINT64 & tx = t[nt++];
-		tx.u16[0] = cell; tx.u16[1] = di; 
-		tx.u16[2] = source; tx.u16[3] = nsteps;
+		tx.u16[0] = (uint16_t)cell; tx.u16[1] = (uint16_t)di;
+		tx.u16[2] = (uint16_t)source; tx.u16[3] = (uint16_t)nsteps;
 	}
 	inline void AddLastInCell(int cell, int di){
 		GINT64 & tx = t[nt++];
-		tx.u16[0] = cell; tx.u16[1] = di;
-		tx.u16[2] = 0x1000|cell; tx.u16[3] = nsteps;
+		tx.u16[0] = (uint16_t)cell; tx.u16[1] = (uint16_t)di;
+		tx.u16[2] = (uint16_t)(0x1000|cell); tx.u16[3] = (uint16_t)nsteps;
 	}	
 	inline void AddLastInUnit(int cell, int di,int unit){
 		GINT64 & tx = t[nt++];
-		tx.u16[0] = cell; tx.u16[1] = di;
-		tx.u16[2] = 0x2000|unit; tx.u16[3] = nsteps;
+		tx.u16[0] = (uint16_t)cell; tx.u16[1] = (uint16_t)di;
+		tx.u16[2] = (uint16_t)(0x2000|unit); tx.u16[3] = (uint16_t)nsteps;
 	}
 	void AddUnit(int unit, int source);
 	void Init();
@@ -257,7 +257,7 @@ struct TWO_DIGITS{// one of 36 possible 2 digits
 
 struct PM_DATA{ // keep it open for dynamic expansion process
 
-	/* � l'�tude
+	/* 
 	PMBF pm,pm_diag;
 	int free_unit_per_digit [9]; // 9 27 bits fields
 	int unknown_count_per_unit [27];
@@ -316,7 +316,8 @@ struct PM_DATA{ // keep it open for dynamic expansion process
 
 class PM_GO{
 public:
-	struct REG_LIST{// list canonical form for a set, cell + digit
+
+	struct REG_LISTx{// list canonical form for a set, cell + digit
 		USHORT tc[10],td[10],n;
 		void LoadUnit(BF16 wp,int iu,int dig);
 		void LoadCell(BF16 wd,int cell);
@@ -351,6 +352,8 @@ public:
 		ex_Ntrip,ex_Htrip,ex_swr,ex_swc,ex_chains,ex_UR,ex_exo,
 		ex_symg,ex_aahs,ex_kite,ex_fish
 	};
+
+
 	class XYCOM{ // expansion common to base and nested levels
 	public:
 		PM_GO * parent;
@@ -407,6 +410,8 @@ public:
 		int DynBackSkfrCom(UCAND x,USHORT * tret,PM_DATA & myd);
 
 	};
+	
+/*
 	class  NESTED:public XYCOM{ // work area to search nested chains
 		//				chaines	" ~x et x"	multi	dynami
 		//95	level2		x			
@@ -552,21 +557,21 @@ public:
 		int TryUsingElims(BF16 floors,BF81 * elims_floors, BF81 & elims_cells);
 
 	}r0search;	
-
+*/
 	//          start of PM_GO data and functions
 	EXPLAIN_BUFFER expbuf;// locate the source in a path
 	USHORT * texplain[1000];// start of each "event"
-	PM_DATA zpmd[3], mydxx, *myd_at_start, dyndx;
-	char	* mybits;	//c = "....|...._....|...._....|....-....|
-	PMBF pmelims,pair_biv;
+	//PM_DATA zpmd[3], mydxx, *myd_at_start, dyndx;
+	//char	* mybits;	//c = "....|...._....|...._....|....-....|
+	//PMBF pmelims,pair_biv;
 	BF81 * c, 
 		yusedpaires;
 	BF16 active_floors,mfloors; 
 	ONE_FLOOR one_floor;
 	ACTIVERCB activercb;
-	EXOCET	texocet[30],	wexo; // 30 in open band mode
-	EXO8 texo8[5],wexo8;
-	PMBFONOFF pof_store[1000];  // use in vloop expansion
+//	EXOCET	texocet[30],	wexo; // 30 in open band mode
+//	EXO8 texo8[5],wexo8;
+//	PMBFONOFF pof_store[1000];  // use in vloop expansion
 
 	// settings for builstrings in xysearch and nested
     #define GINTBUFSIZE1 2000
@@ -609,17 +614,17 @@ public:
 	//========================
 	PM_GO();
 
-	int Assign(int digit,int cell,char * lib);
-	int Assign(int digit,BF81 &cells,char * lib);
+	//int Assign(int digit,int cell,char * lib);
+	//int Assign(int digit,BF81 &cells,char * lib);
 	int CleanOr(int d1, int c1, int d2, int c2);
-	void Start();
+	//void Start();
 
 	int SolveStartZhouSolverx(GG & gg);
-	int SolveCheckDoElims(PMBF & eli);
-	int Solve_All_Singles(char * ze);
-	int  SolveFinalFilter(char * puz);
+	//int SolveCheckDoElims(PMBF & eli);
+	//int Solve_All_Singles(char * ze);
+	//int  SolveFinalFilter(char * puz);
 
-	int Solve();
+	//int Solve();
 	int SolveGetLow61();// internal call valid puzzle 
 	int SolveGetLow44(int pack=0);// internal call valid puzzle 
 	void SolveSerate110();
@@ -636,7 +641,7 @@ public:
 	int Rate45_52();  int Rate45_52_Fast();
 	int Rate45Plus(GINT64 * t, int  nt, int plus);
 	int Rate45_el(GINT64 & t, int unit,int plus);// serate mode min 2 cells within unit
-	int Rate_wwur2_serate(int unit);
+	//int Rate_wwur2_serate(int unit);
 	int Rate2cellsGo(GINT64 & t);// 2 cells bivalues UR UL
 	int Rate45_2cells(GINT64 * t, int & nt);// serate mode min 2 cells bivalues, not diagonal
 	int Rate45_URs(GINT64 * t,int & nt);// serate mode min 2 cells bivalues, not diagonal
@@ -663,104 +668,104 @@ public:
 	int Next28();
 	int Next30_44();
 
-	int NextElim();
-	int NextSolve2();
-	int NextSolve3();
-	int NextSolve3Sym();
-	int NextSolve4();
-	int NextElimQuick90();
-	int NextElimQuick90fast();
-	int NextElim90Solve();
-	void Quick_Split(GG & gg);// called by sk_gsplit
+	//int NextElim();
+	//int NextSolve2();
+	//int NextSolve3();
+	//int NextSolve3Sym();
+	//int NextSolve4();
+	//int NextElimQuick90();
+	//int NextElimQuick90fast();
+	//int NextElim90Solve();
+	//void Quick_Split(GG & gg);// called by sk_gsplit
 
-	void PrepareSet();
-	void PrepareSetDyn(XYCOM * xyc);   // same for dynamic cycle set and fish
-	int DoActiveRCBx(PMBF * doit); // obsolete
-	int WWings();
+	//void PrepareSet();
+	//void PrepareSetDyn(XYCOM * xyc);   // same for dynamic cycle set and fish
+	//int DoActiveRCBx(PMBF * doit); // obsolete
+	//int WWings();
  
 
-	int Kites(int dynamic=0);
-	void KitesDynamicGo();
-	void FishDynamicOthers();
+	//int Kites(int dynamic=0);
+	//void KitesDynamicGo();
+	//void FishDynamicOthers();
 
-	void TraiteCheck();
-	void LookForBackdoors();
-	void AddSingles();
-	void TraiteCallFinalFilter();
-	void SolveFilter();
-	int CheckIfAssignedR1Logic(PMBF & fn);
-	void GoForRank1Logic(int print);
-	void UseRank1Logic();
+	//void TraiteCheck();
+	//void LookForBackdoors();
+	//void AddSingles();
+	//void TraiteCallFinalFilter();
+	//void SolveFilter();
+	//int CheckIfAssignedR1Logic(PMBF & fn);
+	//void GoForRank1Logic(int print);
+	//void UseRank1Logic();
 
-	void Traite_Find_Common();
-	void Traite_Find_Multi_Fish();
-	int FindMultiFish2();
-	void Traite_Find_SKLoop();
-	int Locate_VLoop();
-	int Is_VLoop();
-	int ReductVLoop();
-	void AddChainVirus(SCEN_VIRUS & scv);
-	int CombineStillValidScenario(char * lib);
-	void AAHS_Dynamic(AAHS_AC2 & aahs);
-	void AAHS_Dynamic(AAHS_AC2 & aahs,int ip,int id1,int id2);
-	void Traite_Find_Exocet();
-	void  FindAllJExocets();
-	void  FindAllJExocets2Cells(int option,int ic2);	
+	//void Traite_Find_Common();
+	//void Traite_Find_Multi_Fish();
+	//int FindMultiFish2();
+	//void Traite_Find_SKLoop();
+	//int Locate_VLoop();
+	//int Is_VLoop();
+	//int ReductVLoop();
+	//void AddChainVirus(SCEN_VIRUS & scv);
+	//int CombineStillValidScenario(char * lib);
+	//void AAHS_Dynamic(AAHS_AC2 & aahs);
+	//void AAHS_Dynamic(AAHS_AC2 & aahs,int ip,int id1,int id2);
+	//void Traite_Find_Exocet();
+	//void  FindAllJExocets();
+	//void  FindAllJExocets2Cells(int option,int ic2);	
 
-	void  FindBandExocets(int ic2);	
-	void  FindAllExocets(int ic2);	
-	int   BuildPairTable18(USHORT * tt,int cell);
-	void  FindExocets18(int ic2);
-	void  FindExocets183(int ic2);
-	int  Exocet18Det();
-//	void  Exocet183Det();
-	void FindExpandExocet();
-	void ExoAnalysis();
-	void Traite_Find_Conjugated();
-
-
-
-	void Traite_FindR0N();
-	int Traite_FindR0N_Go();
-	void R0Analysis();
-	int R0Cells();
-	int Apply_Rank0Direct();
+	//void  FindBandExocets(int ic2);	
+	//void  FindAllExocets(int ic2);	
+	//int   BuildPairTable18(USHORT * tt,int cell);
+	//void  FindExocets18(int ic2);
+	//void  FindExocets183(int ic2);
+	//int  Exocet18Det();
+	//	void  Exocet183Det();
+	//void FindExpandExocet();
+	//void ExoAnalysis();
+	//void Traite_Find_Conjugated();
 
 
 
-	char IsDoubleExocet(EXOCET & wi, EXOCET & wj);
+	//void Traite_FindR0N();
+	//int Traite_FindR0N_Go();
+	//void R0Analysis();
+	//int R0Cells();
+	//int Apply_Rank0Direct();
+
+
+
+	//char IsDoubleExocet(EXOCET & wi, EXOCET & wj);
 //	int Is_JExocet();
-	int Is_FullJExocet2Cells();
-	int Is_AbiLoop ();
-	int Is_AbiLoop(USHORT * abi_pairs);
-	int Expand_Exocet();
-	void Exocet_Dynamic(); // dynamic cycle exocet effect
+	//int Is_FullJExocet2Cells();
+	//int Is_AbiLoop ();
+	//int Is_AbiLoop(USHORT * abi_pairs);
+	//int Expand_Exocet();
+	//void Exocet_Dynamic(); // dynamic cycle exocet effect
 
-	int Do_Exo_multirank1D(BF81 &x,BF81 &y,USHORT ntruths,USHORT links0);
-	int Do_Exo_multirank1();
+	//int Do_Exo_multirank1D(BF81 &x,BF81 &y,USHORT ntruths,USHORT links0);
+	//int Do_Exo_multirank1();
  
 
 
-	USHORT IsConjugatedAAHS();
-	int IsConjugatedDigit(int dig);
-	int ClearFixGiven(int i);
-	int Do_First_Sym_Given();
-	void SymGiven_Dynamic(); // dynamic cycle sym given effect
-	void Given_DynamicPair(SCAND a,SCAND b);
-	void Dynam_One_Floor(PMBF & mypm);
+	//USHORT IsConjugatedAAHS();
+	//int IsConjugatedDigit(int dig);
+	//int ClearFixGiven(int i);
+	//int Do_First_Sym_Given();
+	//void SymGiven_Dynamic(); // dynamic cycle sym given effect
+	//void Given_DynamicPair(SCAND a,SCAND b);
+	//void Dynam_One_Floor(PMBF & mypm);
 
 	//============= debugging
-	void ImagePoints(BF81 & w);
-	void Image(PMBF & pm,char * lib);
-	void Image(PMBFONOFF & pof,char * lib);
-	void Image(UCAND * t,USHORT n, char * lib);
-	void ImagePaires(EXOCET & wexo);
-	void ImageExtended(EXOCET & wexo);
-	void Xdebug(UCAND x,char * lib);
-	void XYdebug(UCAND x,char * lib);
-	void ListImage(SCAND * t,int n);
-	void ListImageX(SCAND * t,int n);
-	inline void Candidats(PM_DATA & pmd){pmd.ImageCandidats();}
-	void ImagePuzzle(char * puz,char * lib);
-	void ImageSolution();
+	//void ImagePoints(BF81 & w);
+	//void Image(PMBF & pm,char * lib);
+	//void Image(PMBFONOFF & pof,char * lib);
+	//void Image(UCAND * t,USHORT n, char * lib);
+	//void ImagePaires(EXOCET & wexo);
+	//void ImageExtended(EXOCET & wexo);
+	//void Xdebug(UCAND x,char * lib);
+	//void XYdebug(UCAND x,char * lib);
+	//void ListImage(SCAND * t,int n);
+	//void ListImageX(SCAND * t,int n);
+	//inline void Candidats(PM_DATA & pmd){pmd.ImageCandidats();}
+	//void ImagePuzzle(char * puz,char * lib);
+	//void ImageSolution();
 	};

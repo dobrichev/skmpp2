@@ -7,7 +7,7 @@
 uint64_t p_cptg[40], p_cpt1g[20], p_cpt2g[20];
 
 
-extern ZHOU    zhou[50], zhou_i, zhou_solve;
+extern ZHOU    zhou[50];// , zhou_i, zhou_solve;
 extern ZH_GLOBAL zh_g;
 extern SGO sgo;
 

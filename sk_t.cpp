@@ -35,7 +35,7 @@ char * Char27out(int w){
 }
 char * Char9out(int w){
 	static char ws[10];
-	strncpy(ws, empty_puzzle, 27);
+	strncpy(ws, empty_puzzle, 9);
 	ws[9] = 0;
 	for (int j = 8; j >= 0; j--) if (w & (1 << j))			ws[j] = '1';
 	return ws;
@@ -83,7 +83,7 @@ char * CoutGintPuzzle(GINT * t,int n ){
 	if (n > 4) return 0;
 	for(int i=0;i<n;i++){
 		int dig=t[i].u8[1]+'1',cell=t[i].u8[0];
-		if(cell>=0 && cell<81) zout[cell]=dig;
+		if(cell>=0 && cell<81) zout[cell]=(char)dig;
 	}
 	return zout;
 }
@@ -93,7 +93,7 @@ char * CoutGin64tPuzzle(GINT64 * t, int n){
 	if (n > 8) return 0;
 	for (int i = 0; i<n; i++){
 		int dig = t[i].u8[1] + '1', cell = t[i].u8[0];
-		if (cell >= 0 && cell<81) zout[cell] = dig;
+		if (cell >= 0 && cell<81) zout[cell] = (char)dig;
 	}
 	return zout;
 }

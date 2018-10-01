@@ -30,13 +30,11 @@ void Go_c110(){// template serate mode
 	}
 	char ze[200]; ze[81] = 0;
 	uint32_t npuz = 0;
-	long ttdeb = GetTimeMillis();
 	while (finput.GetPuzzle(ze)){
 		npuz++;
 		if (npuz < sgo.vx[0]) continue;
 		if(pm_go.opprint2)cout << finput.ze << "to process npuz=" << npuz << endl;
 		zh_g.npuz = npuz;
-		long tdeb = GetTimeMillis();
 		if (zh_g.Go_InitSolve(ze)) {
 			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
 			continue;
@@ -49,7 +47,7 @@ void Go_c110(){// template serate mode
 //fout1=l45;  fout2 solved;   fout3 unsolved
 void Go_c111(){// fast serate mode 
 	if (!sgo.finput_name) return;
-	long long cptg[20];
+	uint64_t cptg[20];
 	memset(cptg, 0, sizeof cptg);
 	cout << "Go_111 entry " << sgo.finput_name << " input" << endl;
 	finput.open(sgo.finput_name);
@@ -69,12 +67,10 @@ void Go_c111(){// fast serate mode
 
 	char ze[200]; ze[81] = 0;
 	uint32_t npuz = 0;
-	long ttdeb = GetTimeMillis();
 	while (finput.GetPuzzle(ze)){
 		npuz++;
 		if (0)cout << finput.ze << "to process npuz=" << npuz << endl;
 		zh_g.npuz = npuz;
-		long tdeb = GetTimeMillis();
 		if (zh_g.Go_InitSolve(ze)) {
 			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
 			continue;

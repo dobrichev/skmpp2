@@ -17,38 +17,36 @@
 
 inline void BitsInTable64(int * t, int & nt, uint64_t v, int v0=0) {
 	register uint64_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t register res, R0 = v0;
 	while (R) {
-		_BitScanForward64(&res, R);
+		bitscanforward64(res, R);
 		t[nt++] = res + R0;
 		register uint64_t bit = 1; bit <<= res;
 		R ^= bit;
 	}
 }
 inline void BitsInTable32(int * t, int & nt, uint32_t v, int v0=0) {
-	register uint32_t R = v;
-	unsigned long register res, R0 = v0;
+	register uint32_t R = v, res, R0 = v0;
 	while (R) {
-		_BitScanForward(&res, R);
+		bitscanforward(res, R);
 		t[nt++] = res + R0;
 		R ^= 1 << res;
 	}
 }
 inline void BitsInTable64Reverse(int * t, int & nt, uint64_t v, int v0 = 0) {
 	register uint64_t R = v;
-	unsigned long register res, R0 = v0;
+	uint32_t register res, R0 = v0;
 	while (R) {
-		_BitScanReverse64(&res, R);
+		bitscanreverse64(res, R);
 		t[nt++] = res + R0;
 		register uint64_t bit = 1; bit <<= res;
 		R ^= bit;
 	}
 }
 inline void BitsInTable32Reverse(int * t, int & nt, uint32_t v, int v0 = 0) {
-	register uint32_t R = v;
-	unsigned long register res, R0 = v0;
+	register uint32_t R = v, res, R0 = v0;
 	while (R) {
-		_BitScanReverse(&res, R);
+		bitscanreverse(res, R);
 		t[nt++] = res + R0;
 		R ^= 1 << res;
 	}
@@ -373,65 +371,65 @@ public:
 	
 	inline int mask8() const { return _mm_movemask_epi8(bf.u128); }
 	inline int getFirst96() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[0]) {
-			_BitScanForward64(&res, bf.u64[0]);
+			bitscanforward64(res, bf.u64[0]);
 			return res;
 		}
 		if (bf.u32[2]) {
-			_BitScanForward(&res, bf.u32[2]);
+			bitscanforward(res, bf.u32[2]);
 			return 64 + res;
 		}
 		return -1;
 	}
 	inline int getLast96() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u32[2]) {
-			_BitScanReverse(&res, bf.u32[2]);
+			bitscanreverse(res, bf.u32[2]);
 			return 64 + res;
 		}
 		if (bf.u64[0]) {
-			_BitScanReverse64(&res, bf.u64[0]);
+			bitscanreverse64(res, bf.u64[0]);
 			return res;
 		}
 		return -1;
 	}
 	inline int getFirst128() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[0]) {
-			_BitScanForward64(&res, bf.u64[0]);
+			bitscanforward64(res, bf.u64[0]);
 			return res;
 		}
 		if (bf.u64[1]) {
-			_BitScanForward64(&res, bf.u64[1]);
+			bitscanforward64(res, bf.u64[1]);
 			return res+64;
 		}
 		return -1;
 	}
 	inline int getFirsCell() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u32[0]) {
-			_BitScanForward(&res, bf.u32[0]);
+			bitscanforward(res, bf.u32[0]);
 			return res;
 		}
 		if (bf.u32[1]) {
-			_BitScanForward(&res, bf.u32[1]);
+			bitscanforward(res, bf.u32[1]);
 			return 27 + res;
 		}
 		if (bf.u32[2]) {
-			_BitScanForward(&res, bf.u32[2]);
+			bitscanforward(res, bf.u32[2]);
 			return 54 + res;
 		}
 		return -1;
 	}
 	inline int getLast128() const {
-		unsigned long res;
+		uint32_t res;
 		if (bf.u64[1]) {
-			_BitScanReverse64(&res, bf.u64[1]);
+			bitscanreverse64(res, bf.u64[1]);
 			return res + 64;
 		}
 		if (bf.u64[0]) {
-			_BitScanReverse64(&res, bf.u64[0]);
+			bitscanreverse64(res, bf.u64[0]);
 			return res;
 		}
 		return -1;

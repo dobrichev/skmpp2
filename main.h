@@ -34,7 +34,7 @@ public:
 	int OpenFI(){
 		char zn[300];
 		strcpy(zn, namex);
-		int ll = (int)strlen(zn);
+		//int ll = (int)strlen(zn);
 		//	strcpy(&zn[ll],".txt"); // add file type
 		ifstream::open(zn);
 		if (is_open()) return 0;
