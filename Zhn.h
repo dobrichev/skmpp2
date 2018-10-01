@@ -86,7 +86,7 @@ struct ZH_GLOBAL { // global variables for the game table
 	void MorphPat(char * ze);
 	void Morph_digits(int morph);
 	void Morph_digits(GINT16 * td, int nc);
-	void Map_Morph_digits(GINT16 * td, int nc);
+	//void Map_Morph_digits(GINT16 * td, int nc);
 	void NoMorph();
 	int InitSudoku();
 	int Go_InitSudoku(char * ze);

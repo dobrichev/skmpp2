@@ -19,13 +19,13 @@
 */
 void Go_c400_40p(char *ze, int task) {// work on bitfields std puz
 	BF128 pattern; pattern.SetAll_0();
-	int d_bands[6], d_units[6],digits=0;
+	int d_bands[6], d_units[27],digits=0;
 	int c_bands[6], c_units[27];
 	memset(d_bands, 0, sizeof d_bands);
 	memset(d_units, 0, sizeof d_units);
 	memset(c_bands, 0, sizeof c_bands);
 	memset(c_units, 0, sizeof c_units);
-	char * rcb = "RCB";
+	char *const rcb  = "RCB";
 	for (int i = 0; i < 81; i++)if (ze[i] != '.') {
 		pattern.Set_c(i);
 		int d = ze[i] - '1',bit=1<<d;
@@ -52,13 +52,13 @@ void Go_c400_40p(char *ze, int task) {// work on bitfields std puz
 	case 43: // count given per unit
 		for (int i1 = 0, iu = 0; i1 < 3; i1++) {
 			fout1 << ";" << rcb[i1];
-			for (int i = 0; i < 9; i++,iu++) fout1 << ";" << c_units[i];
+			for (int i = 0; i < 9; i++,iu++) fout1 << ";" << c_units[iu];
 		}
 		break;
 	case 44: // count digits per unit
 		for (int i1 = 0, iu = 0; i1 < 3; i1++) {
 			fout1 << ";" << rcb[i1];
-			for (int i = 0; i < 9; i++, iu++) fout1 << ";" << _popcnt32(d_units[i]);
+			for (int i = 0; i < 9; i++, iu++) fout1 << ";" << _popcnt32(d_units[iu]);
 		}
 		break;
 	}
@@ -104,7 +104,8 @@ void Go_c400() {// small tasks on entry -v0- is the task
 					else zs[i] = '.';
 				}
 				fout1 << ze << ";" << zs << endl;
-			}
+				break;
+		}
 
 		//===================== replace 
 
@@ -152,7 +153,7 @@ void Go_c400() {// small tasks on entry -v0- is the task
 
 
 		//================= extract  
-		case 21:// extract 81 strat sgo.vx[1]
+		case 21:// extract 81 start sgo.vx[1]
 			if (ll >= (int)sgo.vx[1]) {
 				ze[sgo.vx[1] + 81] = 0;
 				fout1 << &ze [sgo.vx[1]] << endl;
@@ -168,11 +169,8 @@ void Go_c400() {// small tasks on entry -v0- is the task
 				if (!rn)fout1 << ze << endl;
 			}
 			break;
-
-
 		}
 	}
-
 }
 void Go_c401() {// .dat to .txt
 	cout << "Go_401 entry " << sgo.finput_name << "dat file to txt file" << endl;
@@ -304,7 +302,7 @@ void Go_c440(){
 void Go_c445(){
 	cout << "Go_445 entry " << sgo.finput_name << " param=" << sgo.bfx[0] << endl;
 	if (_popcnt32(sgo.bfx[0]) != 1) return;//pointer to the  parameter to consider
-	uint32_t ipar; _BitScanForward(&ipar, sgo.bfx[0]);
+	uint32_t ipar; bitscanforward(ipar, sgo.bfx[0]);
 	cout << "split o, parameter rank=" << ipar << " file 1 <=" << sgo.vx[0] << endl;
 	int v = sgo.vx[0];
 	//ipar--;// switch to index;
@@ -326,7 +324,7 @@ void Go_c445(){
 
 }
 
-void Go_480() {//base check -i ads  -o add root ass compressed to entry
+void Go_c480() {//add  compressed clues to entry
 	cout << "Go_481 entry " << sgo.finput_name << " base check" << endl;
 	if (!sgo.foutput_name) {
 		cerr << "missing output root" << endl;
@@ -363,7 +361,7 @@ void Go_480() {//base check -i ads  -o add root ass compressed to entry
 	}
 
 }
-void Go_481() {//base check -i ads -s1- base -o add root
+void Go_c481() {//base check -i ads -s1- base -o add root
 	FINPUT fin2;
 	cout << "Go_481 entry " << sgo.finput_name << " base check" << endl;
 	if (!sgo.foutput_name) {
@@ -431,6 +429,45 @@ void Go_481() {//base check -i ads -s1- base -o add root
 	}
 }
 
+
+void Go_c484() {
+	cout << "Go_484 entry " << sgo.finput_name << " data base to restore" << endl;
+	if (!sgo.s_strings[0]) {
+		cerr << "missing -s1- pattern " << endl;
+		return;
+	}
+	if (strlen(sgo.s_strings[0]) != 81) {
+		cerr << "-s1- not length 81 " << endl;
+		return;
+	}
+	finput.open(sgo.finput_name);
+	if (!finput.is_open()) {
+		cerr << "error open file " << sgo.finput_name << endl;
+		return;
+	}
+	char * ze = finput.ze;
+	char zout[82];
+	strcpy(zout, empty_puzzle);
+	int tclues[50], nclues = 0,puz_int[81];
+	memset(puz_int, 0, sizeof puz_int);
+	char *w = sgo.s_strings[0];
+	for (int i = 0; i < 81; i++)
+		if (w[i] >= '1' && w[i] <= '9')puz_int[i] = w[i];
+	for (int i = 0; i < 9; i++) if (puz_int[i]) zout[i] = puz_int[i];
+	for (int i = 9; i < 81; i++) 
+		if (puz_int[i]&& nclues<40) tclues[nclues++]=i;
+	if (nclues > 30) {
+		cerr << "-s1- too many clues cancel " << endl;
+		return;
+	}
+	uint64_t ne = 0,nd= sgo.vx[1],nf= sgo.vx[2];
+	while (finput.GetLigne()) {
+		if (++ne < nd)continue;
+		if (nf && ne >= nf)break;
+	}
+
+}
+
 /*
 
 
@@ -453,7 +490,7 @@ void GO_MISC::Do_70(){  // start a game from gremlin pattenr
 
 }
 
-void GO_MISC::Do_71(){  // restore game database for a pattern
+void Go_c484(){  // restore game database for a pattern
 	char * ze=myin->ze,zs[82];
 	zs[81]=0;
 	PUZ0 puzd;

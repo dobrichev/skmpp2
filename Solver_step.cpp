@@ -13,7 +13,7 @@ using namespace std;
 
 //extern BF_FIX bf_fix;
 //extern OPTIONS options;
-extern ofstream  fout1, fout2, fout3, fout4,
+extern ofstream  fout1, fout2, fout3, //fout4,
 fout_diam,fout_pearl,fout_l65;
 //extern FINPUT finput;
 
@@ -1200,7 +1200,7 @@ int YLSEARCH::Expand(){//search start idig;xcell1;xcell2 end
 			GINT64 &c = t[i];// source cell
 			int dc = zh_g.dig_cells[c.u16[0]];
 			dc ^= 1 << c.u16[1];// clear digit off
-			_BitScanForward(&d2, dc); // catch the second digit
+			bitscanforward(d2, dc); // catch the second digit
 			c.u16[2]=(uint16_t)d2;// store it for later use
 			BF128 w2 = zh_g.pm.pmdig[d2] & zh_g.pairs; 
 			w2 &= cell_z3x[c.u16[0]];// bi value cells same digit seen, no way back
@@ -1261,7 +1261,7 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 		void FindWcells(int diag = 0){
 			int dc = zh_g.dig_cells[mycell];
 			dc ^= 1 << digit;// clear digit off
-			_BitScanForward(&d2, dc); // catch the second digit
+			bitscanforward(d2, dc); // catch the second digit
 			wcells = zh_g.pm.pmdig[d2] & zh_g.pairs;
 			wcells &= cell_z3x[mycell];// bi value cells same digit seen, no way back
 			wcells -= used_cells;
@@ -1492,7 +1492,7 @@ void  XYSEARCH::AddUnit(int unit, int source){
 void XYSEARCH::OffToOn(int i){
 	if (pairs.On_c(cell)){
 		int dig = zh_g.dig_cells[cell] ^ (1 << digit);
-		_BitScanForward(&d2, dig);
+		bitscanforward(d2, dig);
 		if (used_on_digits.Off_c(d2, cell)){
 			Addt(cell, d2, i);
 			used_on_digits.Set_c(d2, cell);
@@ -1510,7 +1510,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 
 	if (pairs.On_c(cell)){
 		int dig = zh_g.dig_cells[cell] ^ (1 << digit);
-		_BitScanForward(&d2, dig);
+		bitscanforward(d2, dig);
 		if (used_on_digits.Off_c(d2, cell)){
 			tex[d2][cell] = nt;// priority to direct
 			Addt(cell, d2, i);
@@ -1528,7 +1528,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 		int nfree = 0, free;
 		int dig = zh_g.dig_cells[cell] ^ (1 << digit);
 		while ( dig){
-			_BitScanForward(&d2, dig);
+			bitscanforward(d2, dig);
 			dig ^= 1 << d2;
 			if (used_on_digits.Off_c(d2, cell)){//not yet on
 				if (used_off_digits.Off_c(d2, cell)){//not yet off
@@ -1550,7 +1550,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 		else{// empty cell (no "on") set "on" all "off"  
 			int digs = zh_g.dig_cells[cell] ^ (1 << digit);;
 			while ( digs){
-				_BitScanForward(&d2, digs);
+				bitscanforward(d2, digs);
 				digs ^= 1 << d2;
 				if (used_on_digits.Off_c(d2, cell)){
 					tex[d2][cell] = nt;// first
@@ -1621,7 +1621,7 @@ void XYSEARCH::OnToOff(int i){
 	if (cells_all.On_c(cell)){//all cells with biv or pair
 		int digs = zh_g.dig_cells[cell] ^ (1 << digit);// can be more than one
 		while ( digs){
-			_BitScanForward(&d2, digs);
+			bitscanforward(d2, digs);
 			digs ^= 1 << d2;
 			if (dbiv.pmdig[d2].Off_c(cell)) continue;
 			if (used_off_digits.On_c(d2, cell))continue;
@@ -1644,7 +1644,7 @@ void XYSEARCH::OnToOff(int i){
 void XYSEARCH::OnToOff_Dyn(int i){// no bi value filter
 	int digs = zh_g.dig_cells[cell] ^ (1 << digit);// can be more than one
 	while ( digs){
-		_BitScanForward(&d2, digs);
+		bitscanforward(d2, digs);
 		digs ^= 1 << d2;
 		if (used_off_digits.On_c(d2, cell))continue;
 		Addt(cell, d2, i);
@@ -2396,8 +2396,8 @@ void XYSEARCH::SearchDynPass(int nmax){	// try a  pass limited to nmax steps
 		}
 		wp.Clear_c(cell);
 		int digs = zh_g.dig_cells[cell];
-		_BitScanForward(&dc1, digs);
-		_BitScanReverse(&dc2, digs);
+		bitscanforward(dc1, digs);
+		bitscanreverse(dc2, digs);
 		int i1 = ind_pm[dc1][cell], i2 = ind_pm[dc2][cell];// pointers to tcands
 		GINT cand1 = tcands[i1], cand2 = tcands[i2];
 		PM3X welims = off_status[cand1.u16[1]]; welims &=off_status[cand2.u16[1]];
@@ -2444,7 +2444,7 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 		if (nmax < 8 && ndigs>3)continue;
 		welims.SetAll_1();
 		while ( digs){
-			_BitScanForward(&d2, digs);
+			bitscanforward(d2, digs);
 			digs ^= 1 << d2;
 			int i1 = ind_pm[d2][xcell], coff = tcands[i1].u16[1];
 			welims &= off_status[coff];
@@ -2465,7 +2465,7 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 				int length = 0, n = 0;
 				digs = zh_g.dig_cells[xcell];
 				while (digs){
-					_BitScanForward(&d2, digs);
+					bitscanforward(d2, digs);
 					digs ^= 1 << d2;
 					p.u32 = xcell | (d2 << 16);
 					if (!ExpandDynamicToElim(p, target)) {// redo expansion should work
@@ -2729,7 +2729,7 @@ int XYSEARCH::BackDynamic(GINT64 target, GINT64 * tb, int ntb) {
 		case 1:{// last in cell
 			int digs = zh_g.dig_cells[xcell] ^ (1 << xdig);
 			while (digs){
-				_BitScanForward(&d2, digs);
+				bitscanforward(d2, digs);
 				digs ^= 1 << d2;
 				if (back_bf.On_c(d2, xcell))	continue;
 				back_bf.Set_c(d2, xcell);
@@ -3702,7 +3702,7 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								}
 								if (zh_g.triplets.On_c(c1)&& (digc1==digc2)){// one extra digit 
 									int extra_dig = digc1^digs;
-									uint32_t exd; _BitScanForward(&exd, extra_dig);
+									uint32_t exd; bitscanforward(exd, extra_dig);
 									BF128 clean = cell_z3x[c1]; clean &= cell_z3x[c2];
 									clean &= zh_g.pm.pmdig[exd];
 									if (clean.isNotEmpty()){
@@ -3740,7 +3740,7 @@ int PM_GO::Rate2cellsGo(GINT64 & w){
 	CELL_FIX cf1 = cellsFixedData[cell1], cf2 = cellsFixedData[cell2];
 	// solve the bi-value case
 	uint32_t d1, d2;
-	_BitScanForward(&d1, digs); _BitScanReverse(&d2, digs);
+	bitscanforward(d1, digs); bitscanreverse(d2, digs);
 	//w.u8[6] = (uint8_t)d1; w.u8[6] = (uint8_t)d2;  why ?? don't do that
 	BF128 zcell = cell_z3x[cell1];		zcell &= cell_z3x[cell2];
 	if ((zhou_solve.FD[d1][0] & zcell).isEmpty()){// d1 is a bi value kill d2
@@ -4148,7 +4148,7 @@ int PM_GO::Rate46_Find_ULs(){
 							if (!s->more_one){// first cell init the digit pattern 
 								s->cellfirstplus = scell;
 								s->more_one = s->digst^spots[0].digst;
-								_BitScanForward(&digit_one, s->more_one);
+								bitscanforward(digit_one, s->more_one);
 								s->bf_one_digit = zh_g.pm.pmdig[digit_one];
 							}
 							s->cellsecondplus = scell;
@@ -4295,7 +4295,7 @@ int PM_GO::Rate56BUG() {
 		return 1;
 	}
 	if (_popcnt32(bug.or_change) == 1){	//======================= bug type 2 same digit
-		uint32_t dig1; _BitScanForward(&dig1, bug.change_plus[0]);
+		uint32_t dig1; bitscanforward(dig1, bug.change_plus[0]);
 		if (opprint2 & 2)cout << "bug type 2 same digit=" << dig1 + 1 << endl;
 		if (0){
 			char ws[82];
@@ -4340,7 +4340,7 @@ int PM_GO::Rate56BUG() {
 				<< oct << locked_d<<dec << endl;
 			for (int i = 0; i < bug.ntplus; i++){// keep  locked plus change 
 				int digbf = bug.tplus_digits[i] ^ locked_d;
-				uint32_t digit; _BitScanForward(&digit, digbf);
+				uint32_t digit; bitscanforward(digit, digbf);
 				zhou_solve.ClearCandidate_c(digit, bug.tplus[i]);
 			}
 			hint.Done(57);
@@ -4537,20 +4537,20 @@ int PM_GO::Rate75_ATE() {
 					uint32_t d1, d2, d3; // digit of triplets to check
 					int cd1 = zh_g.dig_cells[i1], find1 = 0, find2 = 0, find3 = 0;
 					while ( cd1){
-						_BitScanForward(&d1, cd1);
+						bitscanforward(d1, cd1);
 						int bit1 = 1 << d1;
 						cd1^=bit1;// erase the bit
 						int cd2 = zh_g.dig_cells[i2];
 						if (see_1_2) cd2 &= ~bit1;// bit1 dead if same region
 						while (cd2){
-							_BitScanForward(&d2, cd2);
+							bitscanforward(d2, cd2);
 							int bit2 = 1 << d2;
 							cd2^=bit2;// erase the bit
 							int cd3 = zh_g.dig_cells[i3];
 							if (see_1_3) cd3 &= ~bit1;// bit1 dead if same region
 							if (see_2_3) cd3 &= ~bit2;// bit2 dead if same region
 							while ( cd3){// a possible triplet in base
-								_BitScanForward(&d3, cd3);
+								bitscanforward(d3, cd3);
 								int bit3 = 1 << d3;
 								cd3^=bit3;// erase the bit, now si if an excluding cell
 								int nbits = ~(bit1 | bit2 | bit3);

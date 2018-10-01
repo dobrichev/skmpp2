@@ -29,7 +29,7 @@ int BF32::Table(int * r) {
 USHORT BF32::String(USHORT * r, int i1, int i2){
 	uint32_t  n = 0, x = 1 << i1;
 	for (int i = i1; i<i2; i++){
-		if (f&x) r[n++] = i;
+		if (f&x) r[n++] =(USHORT) i;
 		x = x << 1;
 	}
 	return n;

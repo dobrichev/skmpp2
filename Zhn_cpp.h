@@ -93,7 +93,7 @@ void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
 		if (c<'1' || c>'9') continue;
 		c -= '1';
 		count[c]++;
-		tgiven[ngiven++].u16 = i | (c << 8);
+		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
 	}
 	if (morph){// if morph asked, map digits on increasing count.
 		int tsort[9], w;// sort bands increasing order of count
@@ -107,18 +107,17 @@ void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
 		}
 		// map the given to new order
 		for (int ic = 0; ic < ngiven; ic++)
-			tgiven[ic].u8[1] = x3_dmap_inv[tgiven[ic].u8[1]];
+			tgiven[ic].u8[1] = (uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
 	}
 }
-void ZH_GLOBAL::Map_Morph_digits(GINT16 * td, int nc){//applying x3_cmap to the cells
-
-}
+//void ZH_GLOBAL::Map_Morph_digits(GINT16 * td, int nc){//applying x3_cmap to the cells
+//}
 void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the morphed pattern
 	ngiven = 0;
 	uint32_t count[9];
 	memset(count, 0, sizeof count);
 	for (int it = 0; it < nc; it++){
-		register int cell = td[it].u8[0], dig = td[it].u8[1];
+		register int  dig = td[it].u8[1];
 		count[dig]++;
 	}
 	int tsort[9], w;// sort bands increasing order of count
@@ -132,7 +131,7 @@ void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the mo
 	}
 	// map the given to new order
 	for (int ic = 0; ic < ngiven; ic++)
-		tgiven[ic].u8[1] = x3_dmap_inv[tgiven[ic].u8[1]];
+		tgiven[ic].u8[1] =(uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
 }
 int ZH_GLOBAL::InitSudoku(){ return zhou[0].InitSudoku(tgiven,ngiven); }
 int ZH_GLOBAL::Go_InitSudoku(char * ze){
@@ -153,7 +152,7 @@ int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
 		if (c<'1' || c>'9') continue;
 		c -= '1';
 		digs |= 1 << c;
-		tgiven[ngiven++].u16 = i | (c << 8);
+		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
 	}
 	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
 	return InitSudoku();
@@ -178,7 +177,7 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 	zhou_solve = zhou[0];
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
-	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
+	for (int i = 0; i < 81; i++)zerobased_sol[i] = (char)(stdfirstsol[i] - '1');
 	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
 	memset(row_col_x2, 0, sizeof row_col_x2);
 	return 0;
@@ -191,14 +190,14 @@ int ZH_GLOBAL::Go_InitSolve(GINT16 * td, int nc){
 	NoMorph();
 	ngiven = nc;
 	for (int i = 0; i < nc; i++){
-		puz[td[i].u8[0]] = td[i].u8[1] + '1';
+		puz[td[i].u8[0]] = (char)(td[i].u8[1] + '1');
 		tgiven[i] = td[i];
 	}
 	if (InitSudoku()) return 1;
 	zhou_solve = zhou[0];
 	zhou[0].ComputeNext();
 	if (nsol != 1) return 1;
-	for (int i = 0; i < 81; i++)zerobased_sol[i] = stdfirstsol[i] - '1';
+	for (int i = 0; i < 81; i++)zerobased_sol[i] =(char)( stdfirstsol[i] - '1');
 	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
 	memset(row_col_x2, 0, sizeof row_col_x2);
 	return 0;
@@ -371,7 +370,7 @@ char * ZHOU::SetKnown(char * zs){
 			for (int j = 0; j<3; j++) if (!(arows & (1 << j))) {
 				int row = (band >> TblMult9[j]) & 0x1ff;
 				uint32_t  irow;
-				_BitScanForward(&irow, row);
+				bitscanforward(irow, row);
 				int	cell = Tblstartblock[ib] + TblMult9[j] + irow;
 				zs[cell] = digit + '1';
 			}
@@ -650,13 +649,13 @@ int ZHOU::GuessHiddenBivalue(){// look for a single or a hidden pair in row or b
 	return 0;
 exitok:
 	uint32_t res;
-	_BitScanForward(&res, hidden);
+	bitscanforward(res, hidden);
 	ZHOU * mynext = this + 1; // start next guess
 	mynext->Copy(*this);
 	mynext->SetaCom(idig, res + dcell, res + dxcell);
 	mynext->Upd1(idig);
 	mynext->ComputeNext();
-	_BitScanReverse(&res, hidden);
+	bitscanreverse(res, hidden);
 	SetaCom(idig, res + dcell, res + dxcell);
 	Upd1(idig);
 	ComputeNext();
@@ -922,13 +921,13 @@ void ZHOU::GuessFloor(){
 exitok:
 	//cout << Char27out(hidden) << " guess band dcell=" << dcell << endl;
 
-	_BitScanForward(&res, hidden);
+	bitscanforward(res, hidden);
 	ZHOU * mynext = this + 1; // start next guess
 	mynext->Copy(*this);
 	mynext->SetaCom(0, res + dcell, res + dxcell);
 	mynext->Upd1(0);
 	mynext->GuessFloor();
-	_BitScanReverse(&res, hidden);
+	bitscanreverse(res, hidden);
 	//if (1)cout <<Char27out(1<<res)<< "second digit biv last dcell=" <<dcell<< endl;
 	SetaCom(0, res + dcell, res + dxcell);
 	Upd1(0);

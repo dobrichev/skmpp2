@@ -7,7 +7,7 @@
 uint64_t p_cptg[40], p_cpt1g[20], p_cpt2g[20];
 
 
-extern ZHOU    zhou[50], zhou_i, zhou_solve;
+extern ZHOU    zhou[50];// , zhou_i, zhou_solve;
 extern ZH_GLOBAL zh_g;
 extern SGO sgo;
 
@@ -16,7 +16,7 @@ ofstream  fout1,fout2;
 FINPUT finput;
 
 //========================================
-const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
+char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
 "fupd ", "hpair ", "htripl ", " ", " " };
 
 void Go_c10() { // extract valid puzzles from entry
@@ -65,6 +65,11 @@ void Go_0() {
 	switch (sgo.command) {
 	case 10: Go_c10(); break; // extract valid puzzles from entry		
 	case 11:Go_c11(); break; // count valid puzzles in entry
+	}
+	cerr << "go_0 return" << endl;
+}
+
+n entry
 	}
 	cerr << "go_0 return" << endl;
 }
