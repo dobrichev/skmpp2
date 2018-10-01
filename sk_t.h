@@ -63,8 +63,8 @@ typedef unsigned __int64  uint64_t;
 //#define _bittest64(a, b) (((((uint64_t*)a)[(unsigned int)(b) >> 6]) >> ((b) & 63)) & 1)
 #define _BitScanForward64(res, src) (*res = __builtin_ctzll(src))
 #define _BitScanForward(res, src) (*res = __builtin_ctz(src))
-#define _BitScanReverse64(res, src) (*res = __builtin_ffsll(src))
-#define _BitScanReverse(res, src) (*res = __builtin_ffs(src))
+#define _BitScanReverse64(res, src) (*res = __builtin_clzll(src) ^ 63)
+#define _BitScanReverse(res, src) (*res = __builtin_clz(src) ^ 31)
 //strcpy_s isn't implemented
 #define strcpy_s(dest, size, src) (strncpy(dest, src, size))
 //strncpy_s isn't implemented
