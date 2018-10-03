@@ -3826,7 +3826,7 @@ int PM_GO::Rate45_el(GINT64 & t, int unit,int degree){
 	int go_naked = wcells_nserate - 2 * degree;
 
 
-	int iret = 0, cell1 = t.u8[0], cell2 = t.u8[1], digs = t.u16[1], ul_plus = t.u8[4], ul_index = t.u8[5],
+	int iret = 0, cell1 = t.u8[0], cell2 = t.u8[1], digs = t.u16[1], ul_plus = t.u8[4]/*, ul_index = t.u8[5]*/,
 		rbase = 45 + ul_plus;
 
 	if (locdiag)	cout << " Rate45_el cells=" << cellsFixedData[cell1].pt << " " << cellsFixedData[cell2].pt << " unit=" << unit
