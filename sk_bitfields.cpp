@@ -32,7 +32,7 @@ USHORT BF32::String(USHORT * r, int i1, int i2){
 		if (f&x) r[n++] =(USHORT) i;
 		x = x << 1;
 	}
-	return n;
+	return (USHORT)n;
 }
 
 void  BF128::ClearDiag(int band, int stack) {

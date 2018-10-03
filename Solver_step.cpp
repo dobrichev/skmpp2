@@ -742,7 +742,7 @@ int XSTATUS::XChain(int fast){
 		int ce = From_128_To_81[xce];
 		BF128 wwce = cell_z3x[ce]; wwce &= pmbiv; //possible starts
 		if (wwce.Count() < 2) continue;
-		CELL_FIX &cf = cellsFixedData[ce];
+		//CELL_FIX &cf = cellsFixedData[ce];
 		//if (pm_go.opprint2 & 4)cout << "pour elim " << cf.pt << endl;
 		while (wwce.Count() > 1){// take any seen bi value as start
 			xce1 = wwce.getFirst128();// take and clear the first cell
@@ -817,13 +817,13 @@ struct XCOM{// data for x search one for all digits
 		seen_elims.Set_c(dig, cell);
 		if(opprint)cout << "store  "<<dig+1 << cellsFixedData[cell].pt << " rating=" << rr << endl;
 		Print();
-		telims[nelims++].u16 = cell | (dig << 8);
+		telims[nelims++].u16 = (uint16_t)(cell | (dig << 8));
 	}
 
 	void Store1( int c_elim, int c_contradiction, XSTATUS * xst){
 		int d_elim = xst->digit;
 		if (zhou_solve.IsOffCandidate_c(d_elim, c_elim))return;
-		GINT16 x; x.u16 = c_contradiction;
+		GINT16 x; x.u16 = (uint16_t)c_contradiction;
 		nret1 = XBackNishio(x, tret1, xst);
 		x.u8[1] = 1;
 		nret2 = XBackNishio(x, tret2, xst);
@@ -842,7 +842,7 @@ struct XCOM{// data for x search one for all digits
 		if (zhou_solve.IsOffCandidate_c(d_elim, c_elim))return;
 		nret1 = n1;
 		memcpy(tret1, t1, 2 * nret1);
-		GINT16 x; x.u16 = c_elim+0x100;// start path2 with elim in off mode
+		GINT16 x; x.u16 = (uint16_t)(c_elim+0x100);// start path2 with elim in off mode
 		nret2 = XBackNishio(x, tret2, xst);
 		int rr = pm_go.hint.ChainLengthAdjusted(75, nret1 + nret2 + 1);
 		if (rr <= old_rating){
@@ -898,7 +898,7 @@ int XCOM::XBackNishio(GINT16 x0, GINT16 * tretr,XSTATUS * xst){
 		while ((ucell = w.getFirsCell()) >= 0){
 			w.Clear_c(ucell);
 			if (back_bf.Off_c(ucell)) 
-				tretw[itret++].u16 =ucell+0x100;// add cell off
+				tretw[itret++].u16 =(uint16_t)(ucell+0x100);// add cell off
 			back_bf.Set_c(ucell);
 		}
 		itret1++;
@@ -926,14 +926,14 @@ int  XSTATUS::XexpandNishio(int cell1){
 	}
 	expon.SetAll_0();	expoff = expon;	expon.Set_c(cell1);
 	npas = 0;
-	xcom.tcand[0].u16 = cell1;// cell,digit,source,
+	xcom.tcand[0].u16 = (uint16_t)cell1;// cell,digit,source,
 	xcom.ntcand =  1;  
 	int   ntd = 0, ntp,wcell2,tu[3];
 	while (npas++ < 10){// safety, should never go so far
 		if (diagloc)cout << "npas= " << npas << endl;
 		ntp = ntd;
 		ntd = xcom.ntcand;
-		BF128 onold = expon, offold = expoff;
+		BF128 onold = expon/*, offold = expoff*/;
 		for (int i = ntp; i < ntd; i++){
 			GINT16 wc = xcom.tcand[i];
 			int wcell = wc.u8[0];
@@ -955,9 +955,9 @@ int  XSTATUS::XexpandNishio(int cell1){
 						if (expon.Off_c(wcell2)) {
 							expon.Set_c(wcell2);
 							if (diagloc>1)	cout<<"<add "<< cellsFixedData[wcell2].pt << endl;
-							xcom.tcand[xcom.ntcand++].u16 = wcell2;// on status
+							xcom.tcand[xcom.ntcand++].u16 = (uint16_t)wcell2;// on status
 							if (nn_start<3)	texon[wcell2] = wc;// direct 
-							else	texon[wcell2].u16 = unit + 0x200; //or refer to set  
+							else	texon[wcell2].u16 = (uint16_t)(unit + 0x200); //or refer to set
 							if (expoff.On_c(wcell2)){// contradiction reached
 								if (xcom.fast) return 2;
 								xcom.Store1( cell1,wcell2,this);
@@ -972,7 +972,7 @@ int  XSTATUS::XexpandNishio(int cell1){
 									<< ucount[texon[wcell2].u8[0]] << endl;
 							}
 							if (ucount[texon[wcell2].u8[0]]>nn_start)
-								texon[wcell2].u8[0] = unit;
+								texon[wcell2].u8[0] = (uint8_t)unit;
 							// could be in serate nn_start>2 ????
 						}
 						continue;
@@ -987,9 +987,9 @@ int  XSTATUS::XexpandNishio(int cell1){
 					wu.Clear_c(wcell);
 					while ((wcell2 = wu.getFirsCell()) >= 0){
 						wu.Clear_c(wcell2);
-						xcom.tcand[rncand].u16 = wcell2;// on status
+						xcom.tcand[rncand].u16 = (uint16_t)wcell2;// on status
 						if (nn_start<3)	texon[wcell2] = wc;// direct 
-						else texon[wcell2].u16 = unit + 0x200; //or refer to set 
+						else texon[wcell2].u16 = (uint16_t)(unit + 0x200); //or refer to set
 						if (diagloc)	cout << " try store1 " << cellsFixedData[wcell2].pt << endl;
 						xcom.Store1( cell1, wcell2, this);
 					}
@@ -1002,7 +1002,7 @@ int  XSTATUS::XexpandNishio(int cell1){
 				if (wzcont.isNotEmpty()){// contradiction
 					while ((wcell2 = wzcont.getFirsCell()) >= 0){
 						wzcont.Clear_c(wcell2);
-						xcom.tcand[xcom.ntcand++].u16 = wcell2 + 0x100;// off status
+						xcom.tcand[xcom.ntcand++].u16 = (uint16_t)(wcell2 + 0x100);// off status
 						texoff[wcell2] = wc;
 						xcom.Store1( cell1, wcell2, this);
 					}
@@ -1012,7 +1012,7 @@ int  XSTATUS::XexpandNishio(int cell1){
 				while ((wcell2 = wz.getFirsCell()) >= 0){
 					wz.Clear_c(wcell2);
 					texoff[wcell2] = wc;
-					xcom.tcand[xcom.ntcand++].u16 = wcell2 + 0x100;// off status
+					xcom.tcand[xcom.ntcand++].u16 = (uint16_t)(wcell2 + 0x100);// off status
 					expoff.Set_c(wcell2);
 				}
 			}//end on to off
@@ -1060,14 +1060,15 @@ int XSTATUS::Nishio2(){// must also consider bi value multi chains seen as x->~a
 		if (diagloc) cout << "unit " << unit << endl;
 		BF128 wu = units3xBM[unit]; wu &= pm; // 2 cells in 3x27 mode
 		if ((wu&elims).isNotEmpty()) continue; // is direct
-		int tp[3], ntp = wu.Table3X27(tp);// 2 cells in table
+		int tp[3]/*, ntp*/;// 2 cells in table
+		/*ntp = */wu.Table3X27(tp);
 		XexpandNishio(tp[0]); // no elimination expected  in expand
 		BF128 offt = expoff&elims;
 		if (offt.isEmpty()) continue;
 		int tpe[50], ntpe = offt.Table3X27(tpe);
 		if (ntpe>10) ntpe = 10; // safety measure to protect tables
 		for (int i = 0; i < ntpe; i++){// store path1 for elims
-			wd.u16 = tpe[i]+0x100;
+			wd.u16 = (uint16_t)(tpe[i]+0x100);
 			ntpath1[i] = xcom.XBackNishio(wd, tpath1[i], this);
 		}
 		XexpandNishio(tp[1]);  // no elimination expected in expand
@@ -1192,7 +1193,7 @@ int YLSEARCH::Expand(){//search start idig;xcell1;xcell2 end
 	int   nt = 2, ntd = 1, ntp, xcell;
 	t[0].u64 = c1;	// source to 0
 	t[1].u64 = c2 | (idig << 16);	// source to 0
-	t[0].u16[2] = idig;
+	t[0].u16[2] = (uint16_t)idig;
 	while (ncells++ < maxpas){ // safety, should never go so far
 		ntp = ntd;
 		ntd = nt;
@@ -1222,7 +1223,7 @@ int YLSEARCH::Expand(){//search start idig;xcell1;xcell2 end
 				GINT64 &tw = t[nt++];
 				tw.u64 = From_128_To_81[xcell];
 				tw.u16[1] = (uint16_t) d2;
-				tw.u16[3] = i;
+				tw.u16[3] = (uint16_t)i;
 			}
 		}
 		if (nt == ntd) return 0;
@@ -1276,9 +1277,9 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 			int n = 0;
 			while (sw <= this){
 				GINT64 &tw = t[n++];
-				tw.u16[0] = sw->mycell;
-				tw.u16[1] = sw->digit;
-				tw.u16[2] = (int) sw->d2;
+				tw.u16[0] = (uint16_t)sw->mycell;
+				tw.u16[1] = (uint16_t)sw->digit;
+				tw.u16[2] = (uint16_t)sw->d2;
 				sw++;
 			}
 			return n;
@@ -1306,7 +1307,7 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 			<< " c0,c1,c2 go yloopout maxpas=" << maxpas << endl;
 	}
 	ncells = 0;
-	int mp1 = (maxpas -3);
+	//int mp1 = (maxpas -3);
 	s = spots;	s->Init(c1, c0,idig);
 	slim = &spots[(maxpas - 3)];	slim2 = &spots[maxpas];
 	goto next;
@@ -1520,7 +1521,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 			int oldi = tex[d2][cell];
 			GINT64 w = t[oldi];
 			if( (w.u16[2] & 0x3000)&& oldi>= ntd){// old was not direct same step
-				t[oldi].u16[2] = i;
+				t[oldi].u16[2] = (uint16_t)i;
 			}
 		}
 	}
@@ -1584,7 +1585,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 					int oldi = tex[digit][wcell2];
 					GINT64 w = t[oldi];
 					if ((w.u16[2] & 0x3000) && oldi >= ntd){// old was not direct same step
-						t[oldi].u16[2] = i;
+						t[oldi].u16[2] = (uint16_t)i;
 					}
 				}
 			}
@@ -1598,7 +1599,7 @@ void XYSEARCH::OffToOn_Dyn(int i){
 					int oldi = tex[digit][wcell2];
 					GINT64 w = t[oldi];
 					if ((w.u16[2] & 0x2000) && oldi >= ntd){// old was not direct same step
-						t[oldi].u16[2] = 0x2000 | unit;
+						t[oldi].u16[2] = (uint16_t)(0x2000 | unit);
 					}
 				}
 			}
@@ -1630,7 +1631,7 @@ void XYSEARCH::OnToOff(int i){
 		}
 
 	}
-	CELL_FIX & cf = cellsFixedData[cell];
+	//CELL_FIX & cf = cellsFixedData[cell];
 	BF128 wb = cell_z3x[cell],
 		wb1 = (pairs & zh_g.pm.pmdig[digit] )| dbiv.pmdig[digit];
 	wb &= wb1;
@@ -1650,7 +1651,7 @@ void XYSEARCH::OnToOff_Dyn(int i){// no bi value filter
 		Addt(cell, d2, i);
 		used_off_digits.Set_c(d2, cell);
 	}
-	CELL_FIX & cf = cellsFixedData[cell];
+	//CELL_FIX & cf = cellsFixedData[cell];
 	BF128 wb = cell_z3x[cell];
 	wb &= zh_g.pm.pmdig[digit];
 	wb -= used_off_digits.pmdig[digit];
@@ -1852,7 +1853,7 @@ void XYSEARCH::InitCandidatesTable(){
 			wd.Clear_c(cell);
 			GINT w; w.u32 = cell + (idig << 8); 
 			//if (dbiv.On_c(idig, cell)				|| pairs.On_c(cell))	w.u16[1] = ++nb;// index to off_store
-			w.u16[1] = nb++;// here a store all version, multi chains in use
+			w.u16[1] = (uint16_t)(nb++);// here a store all version, multi chains in use
 			ind_pm[idig][cell] = ntcands;// direct index to tcand
 			tcands[ntcands++] = w;
 		}
@@ -1914,8 +1915,8 @@ int XYSEARCH::Search(int fast){// search using zh_g.zerobased_sol[81] as digit
 				else if (rating == maxrating) {// store it for later use
 					// need to store tback, nsteps mode
 					wsloop.SetAll_0();
-					wstore[0].u16[1] = mode;
-					wstore[0].u16[0] = nsteps + 2;//total length to store
+					wstore[0].u16[1] = (uint16_t)mode;
+					wstore[0].u16[0] = (uint16_t)(nsteps + 2);//total length to store
 					for (int i = 0; i <= nsteps; i++){
 						GINT64 w = tback[i];
 						wstore[i + 1].u32=w.u32[0];
@@ -1935,7 +1936,7 @@ int XYSEARCH::Search(int fast){// search using zh_g.zerobased_sol[81] as digit
 	if (locdiag)cout << " exit search iret=" << iret<<endl<<endl;
 	if (iret){
 		if (locdiag)zhou_solve.ImageCandidats();
-		pm_go.hint.rating_done = maxrating;
+		pm_go.hint.rating_done = (USHORT)maxrating;
 		return 1;
 	}
 	if (fast || maxrating == 100)return iret;// no chain/loop in wait state
@@ -1950,7 +1951,7 @@ int XYSEARCH::Search(int fast){// search using zh_g.zerobased_sol[81] as digit
 		if (locdiag)PrintTback();
 		iret += CleanXYChain();
 	}
-	pm_go.hint.rating_done = maxrating;
+	pm_go.hint.rating_done = (USHORT)maxrating;
 	if (iret){
 		if (locdiag)cout << "exit final rating=" << maxrating << endl;
 		if (locdiag)zhou_solve.ImageCandidats();
@@ -1978,7 +1979,7 @@ int XYSEARCH::SearchMulti(int fast){
 			if (!(digs & bit))continue;
 			if (active_all.Off_c(idig,cell)){
 				if (n) goto nextcell;
-				n++; d = idig;
+				n++; d = idig; //MD: warning: variable ‘d’ set but not used
 			}
 		}
 		iret += MultiCell(cell);
@@ -2087,7 +2088,7 @@ int XYSEARCH::MultiCell(int c0){
 	if (diagloc>1)cout << "start Multicell for " << cellsFixedData[c0].pt << endl;
 	cleang = zh_g.pm;
 	if (diagloc>1)	cleang.Print("cleang at start");
-	int digs = zh_g.dig_cells[c0], ndigits = _popcnt32(digs);
+	int digs = zh_g.dig_cells[c0]/*, ndigits = _popcnt32(digs)*/;
 	npaths = 0;
 	for (int idig = 0, bit = 1; idig < 9; idig++, bit <<= 1){
 		if (!(digs & bit))continue;
@@ -2503,7 +2504,7 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 			BF128 wu = units3xBM[iu]; wu &= zh_g.pm.pmdig[id1];
 			if (wu.isEmpty())continue;
 			int tcu[10], ntcu = wu.Table3X27(tcu);
-			BF128 rwu = wu;
+			//BF128 rwu = wu;
 			if (opprint)			cout << "unit " << iu << endl;
 			welims.SetAll_1();
 			for (int icu = 0; icu < ntcu; icu++){
@@ -2564,7 +2565,7 @@ int XYSEARCH::SearchDyn(int fast){
 	SearchDynPass(6);// try a first pass limited to 6 steps
 	if (elim_done) return 1;
 	if (ntelims && maxrating <= 88){// do it if small enough 
-		pm_go.hint.rating_done = maxrating;
+		pm_go.hint.rating_done = (USHORT)maxrating;
 		for (int i = 0; i < ntelims; i++){
 			GINT w = telims[i];
 			zhou_solve.ClearCandidate_c(w.u16[1], w.u16[0]);
@@ -2578,7 +2579,7 @@ int XYSEARCH::SearchDyn(int fast){
 	else SearchDynPass(20);// try a second  pass "no limit"
 	if (elim_done) return 1;
 	if (ntelims ){// do it  
-		pm_go.hint.rating_done = maxrating;
+		pm_go.hint.rating_done = (USHORT)maxrating;
 		for (int i = 0; i < ntelims; i++){
 			GINT w = telims[i];
 			zhou_solve.ClearCandidate_c(w.u16[1], w.u16[0]);
@@ -2799,10 +2800,10 @@ USHORT  steps[] = { 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128,
 
 int PM_GO::HINT::ChainLengthAdjusted(int base, int length){
 	if (length < 2 || length>8192)		return 0; // should not happen
-	USHORT wrating = 300, lg = length - 2;
+	USHORT wrating = 300, lg = (USHORT)(length - 2);
 	for (int ii = 0; ii<22; ii++)
 		if (lg <= steps[ii]) {
-			wrating = base + ii;
+			wrating = (USHORT)(base + ii);
 			break;
 		}
 	return wrating;
@@ -2834,7 +2835,7 @@ int PM_GO::HINT::AddCand(USHORT dig, USHORT cell, USHORT rate){
 		}
 		if (pmelims.On(dig, cell)){ parent->bdsp[0]->ClearCurrent(); return 0; }
 		pmelims.Set(dig, cell);
-		rating = parent->rat_er; // just to say something hapenned
+		rating = (USHORT)parent->rat_er; // just to say something hapenned
 		return 1;
 	}
 	if (rate>rating) { parent->bdsp[0]->ClearCurrent(); return 0; }
@@ -2925,7 +2926,7 @@ int PM_GO::SolveStartZhouSolverx(GG & gg) {
 	ur_serate_mode = 0;
 	return 0;
 }
-void PM_GO::Status(char * lib, int option){
+void PM_GO::Status(const char * lib, int option){
 	if ((!option )||(opprint2 & option)){
 		cout <<"status "<< lib << endl;
 		zhou_solve.ImageCandidats();
@@ -2981,7 +2982,8 @@ int PM_GO::SolveGetLow61() {
 		//Status("after no WXYZwing", 2);
 		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
 		if (Rate45_52()) continue;
-		if (Rate52())continue;		if (Rate54())continue;
+		if (Rate52())continue;
+		if (Rate54())continue;
 		if (Rate56())continue;
 		break;
 	}
@@ -3024,7 +3026,8 @@ void PM_GO::SolveSerate110() {
 		if (Next30_44()) continue;
 		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
 		if (Rate45_52()) continue;
-		if (Rate52())continue;		if (Rate54())continue;
+		if (Rate52())continue;
+		if (Rate54())continue;
 		if (Rate56())continue;
 		if (sgo.vx[2] <= 61) goto exit_limit;
 		if (Rate62())continue;
@@ -3119,7 +3122,8 @@ void PM_GO::SolveSerate111(){// quick rate ans split serate mode
 	phase2:// entry phase 2 not solved below 45
 		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
 		if (Rate45_52()) continue;
-		if (Rate52())continue;		if (Rate54())continue;
+		if (Rate52())continue;
+		if (Rate54())continue;
 		if (Rate56())continue;
 		if (Rate62())continue;
 		SetupActiveDigits();
@@ -3182,14 +3186,19 @@ void PM_GO::Solve199test() {
 
 //_________________________________________________________ Solve serate steps
 int PM_GO::Next10_28(){
-	if (Rate10())return 1;		if (Rate12())return 1;
-	if (Rate15())return 1;		if (Rate17())return 1;
+	if (Rate10())return 1;
+	if (Rate12())return 1;
+	if (Rate15())return 1;
+	if (Rate17())return 1;
 	zh_g.Pm_Status(&zhou_solve);
 	zhou_solve.FindNakedPairsTriplets_NoSingle();
 	zhou_solve.Naked_Pairs_Seen();
-	if (Rate20())return 1;		if (Rate23())return 1;
-	if (Rate25())return 1;		if (Rate26())return 1;
-	if (Rate28())return 1;		return 0;
+	if (Rate20())return 1;
+	if (Rate23())return 1;
+	if (Rate25())return 1;
+	if (Rate26())return 1;
+	if (Rate28())return 1;
+	return 0;
 }
 int PM_GO::Next28(){
 	BF128 ru = zhou_solve.cells_unsolved;
@@ -3204,18 +3213,23 @@ int PM_GO::Next28(){
 	zh_g.Pm_Status(&zhou_solve);
 	zhou_solve.FindNakedPairsTriplets_NoSingle();
 	zhou_solve.Naked_Pairs_Seen();
-	if (Rate20())return 1;		if (Rate25())return 1;
-	if (Rate26())return 1;		if (Rate28())return 1;
+	if (Rate20())return 1;
+	if (Rate25())return 1;
+	if (Rate26())return 1;
+	if (Rate28())return 1;
 	return 0;// can continue in the same cycle 
 }
 int PM_GO::Next30_44(){
 	if (Rate30())return 1;
-	if (Rate32())return 1;		if (Rate34())return 1;
+	if (Rate32())return 1;
+	if (Rate34())return 1;
 	zh_g.Pm_Status_End(&zhou_solve);// cell digits and box digit/cells
 	if (Rate36())return 1;
 	if (Rate38())return 1;
-	if (Rate40())return 1;		if (Rate42())return 1;
-	if (Rate44())return 1;		return 0;
+	if (Rate40())return 1;
+	if (Rate42())return 1;
+	if (Rate44())return 1;
+	return 0;
 }
 int PM_GO::Rate10(){
 	if (zhou_solve.Rate10_LastInUnit()){
@@ -3418,7 +3432,7 @@ int  PM_GO::Rate45_52(){//
 		}
 		if (target == 50) 			iret += zhou_solve.Rate50_NakedQuad();
 		if (iret){
-			Quickrate(target);
+			Quickrate((USHORT)target);
 			return 1;
 		}
 	}
@@ -3504,7 +3518,7 @@ int PM_GO::Rate6xXcycle(int rating){
 		if (pm_go.opprint2 & 2)cout << "try r6xcycle rating" << rating << " istore=" << i << endl;
 		iret += xstatus[s.dig].CleanLoop(s.t, s.nt);
 	}
-	if (iret) 		Quickrate(rating);
+	if (iret) 		Quickrate((USHORT)rating);
 	return iret;
 }
 int PM_GO::Rate66Xchain(int fast){
@@ -3519,7 +3533,7 @@ int PM_GO::Rate66Xchain(int fast){
 int PM_GO::Rate67_70(int rating){
 	for (int irating = 67; irating <= 70; irating++){
 		if (R67_70(irating)){
-			Quickrate(irating);
+			Quickrate((USHORT)irating);
 			return 1;
 		}
 	}
@@ -3593,7 +3607,7 @@ int PM_GO::Rate76Nishio(int fast){
 			zhou_solve.ClearCandidate_c(x.u8[1], x.u8[0]);
 			if (diagloc)cout << "deferred clearing" << x.u8[1] + 1 << cellsFixedData[x.u8[0]].pt << endl;
 		}
-		Quickrate(xcom.hintrating);
+		Quickrate((USHORT)xcom.hintrating);
 		return 1;
 	}
 
@@ -3603,7 +3617,7 @@ int PM_GO::Rate80Multi(int fast){
 	if (opprint2 & 8)cout << "rate 80 multi chains" << endl;
 	if (xysearch.SearchMulti(fast))	{
 		if (fast)Quickrate(82);
-		else Quickrate(xysearch.maxrating);
+		else Quickrate((USHORT)xysearch.maxrating);
 		return 1;
 	}
 	return 0;
@@ -3612,7 +3626,7 @@ int PM_GO::Rate85Dynamic(int fast){
 	if (opprint2 & 8)cout << "rate 85 dynamic chains" << endl;
 	if (xysearch.SearchDyn(fast))	{
 		if (fast)Quickrate(85);
-		else Quickrate(xysearch.maxrating);
+		else Quickrate((USHORT)xysearch.maxrating);
 		return 1;
 	}
 	return 0;
@@ -3719,10 +3733,10 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 								//cout << "startbox1=" << startbox << "startbox2=" << startbox2 << endl;
 								GINT64 & ws = t[nt++];
 								ws.u64 = 0;
-								ws.u8[0] = c1;
-								ws.u8[1] = c2;
-								ws.u16[1] = digs;
-								ws.u16[3] = (digc1|digc2)^digs;
+								ws.u8[0] = (uint8_t)c1;
+								ws.u8[1] = (uint8_t)c2;
+								ws.u16[1] = (uint16_t)digs;
+								ws.u16[3] = (uint16_t)((digc1|digc2)^digs);
 								ws.u8[5] = (uint8_t)_popcnt32(ws.u16[3]);
 							}
 						}
@@ -3734,10 +3748,10 @@ int PM_GO::Rate45_URs(GINT64 * t, int & nt){
 	return iret;
 }
 int PM_GO::Rate2cellsGo(GINT64 & w){
-	int iret = 0;
+	//int iret = 0;
 	if (!w.u16[1]) return 0;;// closed digits sets to 0
 	int cell1 = w.u8[0], cell2 = w.u8[1], digs = w.u16[1];
-	CELL_FIX cf1 = cellsFixedData[cell1], cf2 = cellsFixedData[cell2];
+	//CELL_FIX cf1 = cellsFixedData[cell1], cf2 = cellsFixedData[cell2];
 	// solve the bi-value case
 	uint32_t d1, d2;
 	bitscanforward(d1, digs); bitscanreverse(d2, digs);
@@ -3782,7 +3796,7 @@ int PM_GO::Rate45Plus(GINT64 * t, int  nt, int plus){
 		GINT64 & w = t[iur];
 		if (!w.u16[1]) continue;// closed (digits sets to 0)
 		//if ((int)w.u8[4]>plus)continue; // not yet this UL but not the right test
-		int cell1 = w.u8[0], cell2 = w.u8[1], digs = w.u16[1], nothers = w.u8[5];
+		int cell1 = w.u8[0], cell2 = w.u8[1]/*, digs = w.u16[1]*/, nothers = w.u8[5];
 		int degree = nothers;
 		if (degree< plus) degree = plus; //crazy but  to copy serate mode
 		CELL_FIX cf1 = cellsFixedData[cell1], cf2 = cellsFixedData[cell2];
@@ -4031,7 +4045,7 @@ go_plus3:
 int PM_GO::RateUL_base(STORE_UL & wul){// try to rate the UL table
 	int locdiag = 0;
 	int cell1 = (int)wul.ur2.u8[0], cell2 = (int)wul.ur2.u8[1],
-		digs = wul.ur2.u16[1], ul_plus = wul.ur2.u8[4], digc1 = zh_g.dig_cells[cell1];
+		digs = wul.ur2.u16[1]/*, ul_plus = wul.ur2.u8[4]*/, digc1 = zh_g.dig_cells[cell1];
 
 	if (locdiag)cout << "rate_uls plus=" << " wul.type=" << wul.type << " my_plus=" << (int)wul.ur2.u8[4]
 		<< " c1=" << cellsFixedData[cell1].pt << " c2=" << cellsFixedData[cell2].pt << endl;
@@ -4137,21 +4151,21 @@ int PM_GO::Rate46_Find_ULs(){
 						s->nplus++;
 						if (ndigst > 3){// in serate, only 2 cells same units
 							if (s->nplus > 2) goto back;
-							if (s->nplus == 1) s->cellfirstplus = scell;
+							if (s->nplus == 1) s->cellfirstplus = (word)scell;
 							else{// the 2 cells must be in the same unit.
 								BF128 w = cell_z3x[scell];
 								if (w.Off_c(s->cellfirstplus)) goto back;
-								s->cellsecondplus = scell;
+								s->cellsecondplus = (word)scell;
 							}
 						}
 						else{// only one digit in excess, see if possible elimination
 							if (!s->more_one){// first cell init the digit pattern 
-								s->cellfirstplus = scell;
-								s->more_one = s->digst^spots[0].digst;
+								s->cellfirstplus = (word)scell;
+								s->more_one = (word)(s->digst^spots[0].digst);
 								bitscanforward(digit_one, s->more_one);
 								s->bf_one_digit = zh_g.pm.pmdig[digit_one];
 							}
-							s->cellsecondplus = scell;
+							s->cellsecondplus = (word)scell;
 							s->bf_one_digit &= cell_z3x[scell];
 							if (s->nplus > 1 && s->bf_one_digit.isEmpty()) goto back;
 						}
@@ -4189,8 +4203,8 @@ int PM_GO::Rate46_Find_ULs(){
 						wsul.one_digit_elims = s->bf_one_digit;
 						wsul.ur2.u8[0] = (uint8_t)s->cellfirstplus;
 						wsul.ur2.u8[1] = (uint8_t)s->cellsecondplus;
-						wsul.ur2.u16[1] = spots[0].digst;
-						wsul.ur2.u8[4] = ser_ul;
+						wsul.ur2.u16[1] = (uint16_t)spots[0].digst;
+						wsul.ur2.u8[4] = (uint8_t)ser_ul;
 						wsul.type = 0;//0 1 cell 1 one digit 2 2 cells
 						wsul.digit_one = digit_one;
 						if (s->nplus == 1)goto nextidig2;
@@ -4199,8 +4213,8 @@ int PM_GO::Rate46_Find_ULs(){
 						BF128 z = cell_z3x[wsul.ur2.u8[0]];
 						z &= cell_z3x[wsul.ur2.u8[1]];
 						if (z.isEmpty())ntul--;// skipped if not same unit
-						wsul.ur2.u16[3] = (zh_g.dig_cells[wsul.ur2.u8[0]]| zh_g.dig_cells[wsul.ur2.u8[1]])
-							^ wsul.ur2.u16[1];
+						wsul.ur2.u16[3] = (uint16_t)((zh_g.dig_cells[wsul.ur2.u8[0]]| zh_g.dig_cells[wsul.ur2.u8[1]])
+							^ wsul.ur2.u16[1]);
 						wsul.ur2.u8[5] = (uint8_t)_popcnt32(wsul.ur2.u16[3]);
 						wsul.type++;// goto nextidig2;// only on valid UL per pair is enough
 					}
@@ -4317,7 +4331,7 @@ int PM_GO::Rate56BUG() {
 		//must have self eliminations with bug.or_change
 		BF128 wu_pairs = wu&zh_g.pairs, wupw = wu_pairs;// cells pair of the unit
 		int or_pairs = 0, tpairs[10],tpairs_digits[10], ntpairs = 0,cell;
-		int nmix = 0, nchange = 0, nothers = 0,
+		int nmix = 0, nchange = 0/*, nothers = 0*/,
 			changet=bug.or_change,
 			changen=0x1ff^changet,
 			count_change = _popcnt32(changet);
@@ -4453,9 +4467,9 @@ int PM_GO::Rate62_APE(){
 		int cell_base;// source where on digit can be cleaned (any number of digits
 		while ((cell_base = base.getFirsCell()) >= 0){
 			base.Clear_c(cell_base);
-			int cbase_digs = zh_g.dig_cells[cell_base], // must have links to pairs
-				//base_count = __popcnt(cbase_digs),
-				search_digits=active_digs & (~cbase_digs);
+			int cbase_digs = zh_g.dig_cells[cell_base] // must have links to pairs
+				//, base_count = __popcnt(cbase_digs),
+				/*search_digits=active_digs & (~cbase_digs)*/;
 
 			BF128 wp = cell_z3x[cell_base]; wp &= bpairs;// pairs seen by cell_base
 			// try to find a digit to check

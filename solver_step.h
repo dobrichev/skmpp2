@@ -596,7 +596,7 @@ public:
 	// data for kites
 	int nbiv,nempty;
 	uint32_t ratfound[17]; // set to 0 in the constructor
-	char * det_mess;
+	const char * det_mess;
 
 	GINT64 tur[20];	STORE_UL tul[10];	WWUR2 wwur2; BF128 lastul; int ntur, ntul;//==== UR UL handling
 	BUG bug; // bug handling
@@ -632,7 +632,7 @@ public:
 	void Solve199test();
 
 	void Quickrate(USHORT x) ;
-	void Status(char * lib, int option);
+	void Status(const char * lib, int option);
 	int Rate10(); int Rate12();	int Rate15(); int Rate17(); 
 	int Rate20(); int Rate23(); int Rate25(); int Rate26();
 	int Rate28(); int Rate30(); int Rate32(); int Rate34();

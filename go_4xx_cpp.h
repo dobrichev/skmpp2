@@ -165,7 +165,7 @@ void Go_c400() {// small tasks on entry -v0- is the task
 			break;
 		case 23://sampling start sgo.vx[1] one every sgo.vx[2]
 			if (++npuz < sgo.vx[1]) break;
-			{	int rn = (npuz - sgo.vx[1]) % sgo.vx[2];
+			{	int rn = (int)((npuz - sgo.vx[1]) % sgo.vx[2]);
 				if (!rn)fout1 << ze << endl;
 			}
 			break;
@@ -254,7 +254,7 @@ void Go_cxx() {
 		cerr << "error open file " << sgo.finput_name << endl;
 		return;
 	}
-	char * ze = finput.ze;
+	//char * ze = finput.ze;
 	while (finput.GetLigne()) {
 	}
 
@@ -388,7 +388,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 
 	//__________________________________
 	int lcmp = 0;
-	char scomp[10]; scomp[0] = 0;
+	//char scomp[10]; scomp[0] = 0;
 	char * zcompress = &ze[81],*zeb= fin2.ze;;
 	zeb[0] = 0;
 	while (finput.GetLigne()) {
@@ -423,7 +423,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 			//char zout[200];
 	next_add:;
 	}
-	if (update && zeb[0] < 255) {// copy the rest of the base
+	if (update && zeb[0] < 255) {// copy the rest of the base //MD: warning: comparison is always true due to limited range of data type
 		fout2 << zeb << endl;
 		while(fin2.GetLigne())fout2 << zeb << endl;
 	}
@@ -445,7 +445,7 @@ void Go_c484() {
 		cerr << "error open file " << sgo.finput_name << endl;
 		return;
 	}
-	char * ze = finput.ze;
+	//char * ze = finput.ze;
 	char zout[82];
 	strcpy(zout, empty_puzzle);
 	int tclues[50], nclues = 0,puz_int[81];
@@ -453,9 +453,9 @@ void Go_c484() {
 	char *w = sgo.s_strings[0];
 	for (int i = 0; i < 81; i++)
 		if (w[i] >= '1' && w[i] <= '9')puz_int[i] = w[i];
-	for (int i = 0; i < 9; i++) if (puz_int[i]) zout[i] = puz_int[i];
+	for (int i = 0; i < 9; i++) if (puz_int[i]) zout[i] = (char)puz_int[i];
 	for (int i = 9; i < 81; i++) 
-		if (puz_int[i]&& nclues<40) tclues[nclues++]=i;
+		if (puz_int[i]&& nclues<40) tclues[nclues++]=i; //MD: warning: variable ‘tclues’ set but not used
 	if (nclues > 30) {
 		cerr << "-s1- too many clues cancel " << endl;
 		return;
