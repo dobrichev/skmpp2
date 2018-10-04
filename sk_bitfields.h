@@ -157,7 +157,6 @@ struct BF32 {
 	}
 	inline void operator -=(BF32 & e) { f ^= (f & e.f); }
 	int Table (int * r); 
-	USHORT String(USHORT * r, int i1, int i2);
 };
 
 struct BF64 {

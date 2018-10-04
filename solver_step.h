@@ -131,7 +131,8 @@ struct XYSEARCH{
 		int nt, dig,cell;
 	}paths[9];
 	
-	int idig, digit, nt,ntd,ntp, cell, maxpas,maxrating, npaths,elim_done,
+	int idig, digit,  cell, ddig,dcell,
+		nt,ntd,ntp, maxpas,maxrating, npaths,elim_done,
 		nsteps, c1, c2, locdiag, diag, mode,fastmode,opprint;
 	int dig_sets[9][27];
 	uint32_t d2;
@@ -328,9 +329,9 @@ public:
 
 		USHORT rating,rating_done;
 
-		inline void Set_Target(USHORT r){ rating = r; rating_done = 0; }
-		inline int IsToDo(USHORT r){ return (r <= rating); }
-		inline void Done(int r){ if (r > rating_done) rating_done = (USHORT)r; }
+		inline void Set_Target(int r){ rating = r; rating_done = 0; }
+		inline int IsToDo(int r){ return (r <= rating); }
+		inline void Done(int r){ if (r > rating_done) rating_done = r; }
 
 
 		inline void Init() {rating=999;pmelims.SetAll_0();}

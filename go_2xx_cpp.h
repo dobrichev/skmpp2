@@ -358,7 +358,7 @@ void Go_c201(){
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	//int cpt = 0;
+	int cpt = 0;
 	if (!sgo.finput_name) return;
 	cout << "c201 entry for input " << sgo.finput_name << " mode upto=" << sgo.vx[1] << endl;
 	finput.open(sgo.finput_name);
@@ -405,17 +405,6 @@ void Go_c201(){
 				for (int i = istart; i < myn; i++){
 					int digit = gscom.tclues[i].u8[1];
 					gscom.tc[i].unlocked = 0777 ^ (1 << digit);
-				}
-				if (0 &&nfix){
-					char zs[82];
-					strcpy(zs, empty_puzzle);
-					for (int i = 0; i < istart; i++)
-						zs[gscom.tclues[i].u8[0]] = (char)(gscom.tclues[i].u8[1] + '1');
-					for (int i = istart; i < myn; i++)
-						zs[gscom.tclues[i].u8[0]] = 'x';
-
-
-					cout <<zs<< "call gengo " << endl;
 				}
 				gscom.Gengo(istart);
 				if (!combi.Next()) break;
@@ -522,13 +511,13 @@ void Go_c210(){// create a seed file on a pattern
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	int cpt = 0/*, cpt2 = 0*/;
+	int cpt = 0;
 	if (!sgo.finput_name) return;
 	cout << "c203 entry create a seed file for input " << sgo.finput_name << endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
 	char ze[82]; ze[81] = 0;
-	int nclues/*, cclue = 0*/, n1 = sgo.vx[0];
+	int nclues, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
 	uint32_t digit;
@@ -608,17 +597,6 @@ void Go_c210(){// create a seed file on a pattern
 						}// end of a good puzzle
 
 					}// end of while loop2 not a good puzzle
-					if (0){
-						for (int ic = n1; ic < nclues; ic++){
-							GINT16 w = gscom.tclues[ic];
-							int cell = w.u8[0], digit = w.u8[1] + '1';
-							zs[cell] = (char)digit;
-						}
-						if (!(++cpt & 1023)){
-							cout << zs << " pas ok cpt/1024=" << (cpt >> 10) << endl;
-						}
-
-					}
 					gscom.Restore();
 					if ((int)digit > tmaxdig[i - 1]) break;
 				}
@@ -657,13 +635,12 @@ void Go_c211(){// create a seed file on a pattern
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	//int cpt = 0, cpt2 = 0;
 	if (!sgo.finput_name) return;
 	cout << "c203 entry create a seed file for input " << sgo.finput_name << endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
 	char ze[82]; ze[81] = 0;
-	int nclues/*, cclue = 0*/, n1 = sgo.vx[0];
+	int nclues, n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14)n1 = 9;
 	n1--; //set n1 to test limit
 	uint32_t digit;
@@ -677,7 +654,7 @@ void Go_c211(){// create a seed file on a pattern
 		cout << "nclues=" << nclues << endl;
 		if (nclues < 17 || nclues>30) return;// not a good range
 		// set a digit limit for the first 8 clues
-		int bit = 1/*, n2 = nclues - 1*/;
+		int bit = 1;
 		for (int i = 0; i < 8; i++){
 			gscom.tc[i].unlocked = bit;
 			bit = (bit << 1) | 1;
@@ -729,13 +706,12 @@ void Go_c212(){// create a seed file on a pattern based on primary status
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	//int cpt = 0, cpt2 = 0;
 	if (!sgo.finput_name) return;
 	cout << "c203 entry create a seed file for input " << sgo.finput_name << endl;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){ cerr << "error open " << sgo.finput_name << endl; return; }
 	char ze[82], zs[82]; ze[81] = 0;
-	int tclues[40],nclues/*, cclue = 0*/, n1 = sgo.vx[0];
+	int tclues[40],nclues,  n1 = sgo.vx[0];
 	if (n1 < 4 || n1>14){
 		cout << n1 << " given clues not an accepted value" << endl;
 		return;
@@ -851,7 +827,7 @@ void Go_c218(){// get known seeds on a pattern
 	if (!sgo.s_strings[0]){
 		cerr << "missins gbase input name" << endl; return;
 	}
-	int cpt = 0/*, cpt2=0*/;
+	int cpt = 0;
 	if (!sgo.finput_name) return;
 	cout << "c218 find known seeds input " << sgo.finput_name << endl;
 	finput.open(sgo.finput_name);
@@ -874,7 +850,6 @@ void Go_c218(){// get known seeds on a pattern
 		}
 		cout << ze << " pattern unknown set to 1" << endl;
 		while (input2.GetLigne()){
-			//if (++cpt2 < 10) cout << ze2 << " base" << endl;
 			if ((int)strlen(ze2) < n1)return;// not the right file
 			// store the 10 first in case
 			strcpy(wstore, ze2);
