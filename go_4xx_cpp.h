@@ -25,7 +25,7 @@ void Go_c400_40p(char *ze, int task) {// work on bitfields std puz
 	memset(d_units, 0, sizeof d_units);
 	memset(c_bands, 0, sizeof c_bands);
 	memset(c_units, 0, sizeof c_units);
-	char *const rcb  = "RCB";
+	const char * rcb  = "RCB";
 	for (int i = 0; i < 81; i++)if (ze[i] != '.') {
 		pattern.Set_c(i);
 		int d = ze[i] - '1',bit=1<<d;
@@ -254,7 +254,7 @@ void Go_cxx() {
 		cerr << "error open file " << sgo.finput_name << endl;
 		return;
 	}
-	char * ze = finput.ze;
+	//char * ze = finput.ze;
 	while (finput.GetLigne()) {
 	}
 
@@ -267,7 +267,6 @@ void Go_cxx() {
 
 void Go_c440(){
 	cout << "Go_440 entry " << sgo.finput_name  <<" game results to parse"<< endl;
-	int v = sgo.vx[0];
 	char * ze = finput.ze;
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()){
@@ -338,7 +337,6 @@ void Go_c480() {//add  compressed clues to entry
 		cerr << "missing base out" << endl;
 		return;
 	}
-	int update = sgo.vx[0];
 	finput.open(sgo.finput_name);
 	if (!finput.is_open()) {
 		cerr << "error open file " << sgo.finput_name << endl;
@@ -347,7 +345,7 @@ void Go_c480() {//add  compressed clues to entry
 	char ze[200]; ze[81] = ';';
 	int lcmp = 0;
 	while (finput.GetPuzzle(ze)) {
-		int n = 0, p = 82;
+		int  p = 82;
 		for (int i = 9; i < 81; i++)if (ze[i] - '.')
 			ze[p++] = ze[i];
 
@@ -404,7 +402,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 			}
 		}
 		else lcmp = ll;
-		int lbase = (int)strlen(zcompress);
+		//int lbase = (int)strlen(zcompress);
 		// read/ out if update base as long as below
 	loop_base:
 		int icomp = strcmp(zcompress, zeb);
@@ -423,7 +421,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 			//char zout[200];
 	next_add:;
 	}
-	if (update && zeb[0] < 255) {// copy the rest of the base
+	if (update && zeb[0] !=-1) {// copy the rest of the base
 		fout2 << zeb << endl;
 		while(fin2.GetLigne())fout2 << zeb << endl;
 	}
@@ -453,7 +451,7 @@ void Go_c484() {
 	char *w = sgo.s_strings[0];
 	for (int i = 0; i < 81; i++)
 		if (w[i] >= '1' && w[i] <= '9')puz_int[i] = w[i];
-	for (int i = 0; i < 9; i++) if (puz_int[i]) zout[i] = puz_int[i];
+	for (int i = 0; i < 9; i++) if (puz_int[i]) zout[i] = (char)puz_int[i];
 	for (int i = 9; i < 81; i++) 
 		if (puz_int[i]&& nclues<40) tclues[nclues++]=i;
 	if (nclues > 30) {
@@ -464,6 +462,8 @@ void Go_c484() {
 	while (finput.GetLigne()) {
 		if (++ne < nd)continue;
 		if (nf && ne >= nf)break;
+		ze[1] = 0;// temp code to clear the warning
+		cout << ze << tclues[0] << endl;
 	}
 
 }

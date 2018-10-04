@@ -33,7 +33,7 @@ struct STORE_UL{
 	GINT64 ur2;// ur 2 cells equivalent (see UR)
 	int type,digit_one;// keep it nx128 bits
 
-	void Print(char * lib);
+	void Print(const char * lib);
 };
 struct BUG{// in wpaires, data for bug processing
 	int cell,  el_par_ch[27];    // parity of digits for pairs in units
@@ -131,10 +131,11 @@ struct XYSEARCH{
 		int nt, dig,cell;
 	}paths[9];
 	
-	int idig, digit, nt,ntd,ntp, cell, maxpas,maxrating, npaths,elim_done,
+	int idig, digit,  cell, ddig,dcell,
+		nt,ntd,ntp, maxpas,maxrating, npaths,elim_done,
 		nsteps, c1, c2, locdiag, diag, mode,fastmode,opprint;
 	int dig_sets[9][27];
-	unsigned long d2;
+	uint32_t d2;
 	BF128 pairs, cells_biv_all, cells_all,cells_biv_true,  dig_b_true[9];
 	BF128 loop, wb;
 	BF32 dig_bivsets[9],dig_sets3[9];
@@ -202,7 +203,7 @@ struct XYSEARCH{
 	void DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell2, PM3X cont);
 	void PrintTback();
 	void PrintBackMulti(int elim_dig, int elim_cell);
-	void PrintBackCom(char * lib,GINT64 * ptback, int nback,int mode );
+	void PrintBackCom(const char * lib,GINT64 * ptback, int nback,int mode );
 	void DebugT();
 };
 
@@ -596,7 +597,7 @@ public:
 	// data for kites
 	int nbiv,nempty;
 	UINT ratfound[17]; // set to 0 in the constructor
-	char * det_mess;
+	const char * det_mess;
 
 	GINT64 tur[20];	STORE_UL tul[10];	WWUR2 wwur2; BF128 lastul; int ntur, ntul;//==== UR UL handling
 	BUG bug; // bug handling
@@ -631,8 +632,8 @@ public:
 	void SolveSerate111();
 	void Solve199test();
 
-	void Quickrate(USHORT x) ;
-	void Status(char * lib, int option);
+	void Quickrate(int x) ;
+	void Status(const char * lib, int option);
 	int Rate10(); int Rate12();	int Rate15(); int Rate17(); 
 	int Rate20(); int Rate23(); int Rate25(); int Rate26();
 	int Rate28(); int Rate30(); int Rate32(); int Rate34();

@@ -27,14 +27,6 @@ int BF32::Table(int * r) {
 	return n;
 }
 
-USHORT BF32::String(USHORT * r, int i1, int i2){
-	UINT  n = 0, x = 1 << i1;
-	for (int i = i1; i<i2; i++){
-		if (f&x) r[n++] =(USHORT) i;
-		x = x << 1;
-	}
-	return n;
-}
 
 void  BF128::ClearDiag(int band, int stack) {
 	// stack appears here as a band
