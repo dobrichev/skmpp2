@@ -386,7 +386,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 
 	//__________________________________
 	int lcmp = 0;
-	char scomp[10]; scomp[0] = 0;
+	//char scomp[10]; scomp[0] = 0;
 	char * zcompress = &ze[81],*zeb= fin2.ze;;
 	zeb[0] = 0;
 	while (finput.GetLigne()) {

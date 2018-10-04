@@ -4067,7 +4067,7 @@ int PM_GO::RateUL_base(STORE_UL & wul){// try to rate the UL table
 		zhou_solve.FD[wul.digit_one][0] -= wul.one_digit_elims;
 		if (opprint2 & 2)wul.Print("one active extra digit ");
 		wul.ur2.u16[1] = 0;
-		return 1;;
+		return 1;
 	}
 	case 2:{// 2 cells same unit same as for a UR
 		if (opprint2 & 2)wul.Print("call common process  ");
@@ -4465,7 +4465,7 @@ int PM_GO::Rate62_APE(){
 			if (npdigs[idig] >= 3)active_digs |= 1<<idig;
 		}
 		if (!active_digs) continue; //no APE to come
-		if (0 &&opprint2 & 2){
+		if (0 && (opprint2 & 2)){
 			cout << "study band  " << iband
 				<< " active digs 0" << oct << active_digs << dec << endl;
 			//continue;

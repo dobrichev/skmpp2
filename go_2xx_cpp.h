@@ -358,7 +358,7 @@ void Go_c201(){
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	int cpt = 0;
+	//int cpt = 0;
 	if (!sgo.finput_name) return;
 	cout << "c201 entry for input " << sgo.finput_name << " mode upto=" << sgo.vx[1] << endl;
 	finput.open(sgo.finput_name);
@@ -511,7 +511,7 @@ void Go_c210(){// create a seed file on a pattern
 	if (!sgo.foutput_name){
 		cerr << "missing output name" << endl; return;
 	}
-	int cpt = 0;
+	//int cpt = 0;
 	if (!sgo.finput_name) return;
 	cout << "c203 entry create a seed file for input " << sgo.finput_name << endl;
 	finput.open(sgo.finput_name);
