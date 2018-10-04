@@ -329,9 +329,9 @@ public:
 
 		USHORT rating,rating_done;
 
-		inline void Set_Target(int r){ rating = r; rating_done = 0; }
+		inline void Set_Target(int r){ rating = (USHORT)r; rating_done = 0; }
 		inline int IsToDo(int r){ return (r <= rating); }
-		inline void Done(int r){ if (r > rating_done) rating_done = r; }
+		inline void Done(int r){ if (r > rating_done) rating_done = (USHORT)r; }
 
 
 		inline void Init() {rating=999;pmelims.SetAll_0();}
@@ -632,7 +632,7 @@ public:
 	void SolveSerate111();
 	void Solve199test();
 
-	void Quickrate(USHORT x) ;
+	void Quickrate(int x) ;
 	void Status(const char * lib, int option);
 	int Rate10(); int Rate12();	int Rate15(); int Rate17(); 
 	int Rate20(); int Rate23(); int Rate25(); int Rate26();

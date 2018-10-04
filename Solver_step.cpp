@@ -4219,8 +4219,8 @@ int PM_GO::Rate46_Find_ULs(){
 						BF128 z = cell_z3x[wsul.ur2.u8[0]];
 						z &= cell_z3x[wsul.ur2.u8[1]];
 						if (z.isEmpty())ntul--;// skipped if not same unit
-						wsul.ur2.u16[3] = (zh_g.dig_cells[wsul.ur2.u8[0]]| zh_g.dig_cells[wsul.ur2.u8[1]])
-							^ wsul.ur2.u16[1];
+						wsul.ur2.u16[3] = (uint16_t)((zh_g.dig_cells[wsul.ur2.u8[0]]| zh_g.dig_cells[wsul.ur2.u8[1]])
+							^ wsul.ur2.u16[1]);
 						wsul.ur2.u8[5] = (uint8_t)_popcnt32(wsul.ur2.u16[3]);
 						wsul.type++;// goto nextidig2;// only on valid UL per pair is enough
 					}
