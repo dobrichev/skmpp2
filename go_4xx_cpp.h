@@ -421,7 +421,7 @@ void Go_c481() {//base check -i ads -s1- base -o add root
 			//char zout[200];
 	next_add:;
 	}
-	if (update && zeb[0] < 255) {// copy the rest of the base //MD: warning: comparison is always true due to limited range of data type
+	if (update && zeb[0] != -1) {// copy the rest of the base
 		fout2 << zeb << endl;
 		while(fin2.GetLigne())fout2 << zeb << endl;
 	}
