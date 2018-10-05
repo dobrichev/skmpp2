@@ -2250,11 +2250,12 @@ int XYSEARCH::AddElim(int d, int c, int rating){
 	if (rating > maxrating) return 0;
 	if (elim_done)return 0;
 	if (opprint)	cout << "addelim " << d + 1 << cellsFixedData[c].pt << " rating=" << rating
-		<< "  pm_go.rat_er=" << pm_go.rat_er << " nt=" << nt << endl;
+		<< "  pm_go.rat_er=" << pm_go.rat_er << " nt=" << nt << " ntelim=" << ntelims << endl;
 	if (rating < maxrating){
 		maxrating = rating;
 		ntelims = 0;
 		elim_stored.SetAll_0();
+		if (opprint)cout<< "reset elim_count to 0" << endl;
 	}
 	if (ntelims < 40 && elim_stored.Off_c(d,c)){// must continue to look for smaller
 		telims[ntelims++].u32 = c | (d << 16);
@@ -2305,7 +2306,7 @@ void XYSEARCH::ExpandDynamic(GINT cand){// start with cand on
 	int dind = cand.u16[1];
 	int diag = 0;
 	//if (dcell == 34) diag = 1;
-	if (pm_go.cycle==5 && ddig ==8  && dcell==52 )		diag = 2;
+	//if (pm_go.cycle==8 && ddig ==2  && dcell==0 )		diag = 2;
 	//if (pm_go.cycle == 16 && maxpas>6 &&  ddig == 1 && dcell == 5)diag = 3;
 	nsteps = is_contradiction = 0;// start with 1 step 
 	//if (zh_g.zerobased_sol[c1] == idig)is_contradiction = 2;// skip test if valid
@@ -2324,6 +2325,7 @@ void XYSEARCH::ExpandDynamic(GINT cand){// start with cand on
 			cell = t[i].u16[0];		 digit = t[i].u16[1];
 			if (diag > 1)cout << "go for " << digit + 1 << cellsFixedData[cell].pt << endl;
 			if (nsteps & 1)		 OnToOff_Dyn(i); 		else OffToOn_Dyn(i);
+			if (nt > 350) break;
 		}
 		if (nt == ntd) 	break;
 		if (!is_contradiction){
@@ -2346,6 +2348,7 @@ void XYSEARCH::ExpandDynamic(GINT cand){// start with cand on
 		if ((maxpas== 6 && nt > 150)|| nt>300)break;
 	}
 	if (diag) {
+		cout << "expand closed nt=" << nt << " off count" << used_off_digits.Count() << endl;
 		used_off_digits.Print("dyn off status ");
 	}
 	off_status[dind] = used_off_digits;// store off status 
@@ -2353,15 +2356,18 @@ void XYSEARCH::ExpandDynamic(GINT cand){// start with cand on
 }
 int XYSEARCH::ExpandDynamicToElim(GINT cand,GINT target){// start with cand on
 	int tdig = target.u16[1], tcell = target.u16[0];
+	ddig = cand.u16[1];
+	dcell = cand.u16[0];
 	int locdiag = 0;
-	//if (pm_go.cycle == 16 && cand.u16[1] ==5 && tdig== 1 && cand.u16[0] == 23 &&tcell == 23)		locdiag = 1;
-	if (locdiag)cout << "expand to elim diag mode "
-		<< endl;
+	//if (pm_go.cycle == 5 && ddig == 7 && dcell == 19 && tdig ==4 && tcell== 20)		locdiag = 1;
+	if (locdiag)cout << "expand to elim diag mode target " << cand.u16[1] + 1 << cellsFixedData[cand.u16[0]].pt
+		<< " to "<< tdig + 1 << cellsFixedData[tcell].pt << endl;
 	//if( tcell == 33) locdiag = 1;
 	nsteps = 0;
-	nt = 1;	t[0].u64 =cand.u32;	// source to 0
+	nt = 1;	
+	t[0].u64 = dcell | (ddig << 16);	// source to 0
 	used_off_digits.SetAll_0();	used_on_digits.SetAll_0();
-	used_on_digits.Set_c(cand.u16[1], cand.u16[0]);
+	used_on_digits.Set_c(ddig, dcell);
 	ntd = 0;
 	while (nsteps++ < 40){// should never pass the target
 		ntp = ntd;
@@ -2373,13 +2379,22 @@ int XYSEARCH::ExpandDynamicToElim(GINT cand,GINT target){// start with cand on
 				if (used_off_digits.On_c(tdig, tcell)) return 1;
 			}
 			else OffToOn_Dyn(i);
+			if (nt > 350)return  0;// TEMP SAFETY TEST
+		}
+		if (nt > 350) {
+			if (locdiag) {
+				cout << "limit reached  npas=" << nsteps << " nt=" << nt << endl;
+				if (nsteps & 1)used_off_digits.Print("off status");
+				else used_on_digits.Print("on status");
+			}
+			return 0;
 		}
 		if (locdiag ){
 			cout << "end npas=" << nsteps << " nt=" << nt<< endl;
 			if (nsteps&1)used_off_digits.Print("off status");
 			else used_on_digits.Print("on status");
 		}
-		if (nt == ntd) 	break;// should never be
+		if (nt == ntd ) 	break;// should never be
 	}
 	return 0;
 }
@@ -2415,6 +2430,7 @@ void XYSEARCH::SearchDynPass(int nmax){	// try a  pass limited to nmax steps
 	}
 	if (opprint)cout << "try unit bi values" << endl;
 	for (int id = 0; id < 9; id++){
+		//if (nmax > 10)cout << "digit=" << id + 1 << endl;
 		for (int iu = 0; iu < 27; iu++){
 			if (dig_bivsets[id].Off(iu))continue;
 			BF128 wu = units3xBM[iu]; wu &= zh_g.pm.pmdig[id];
@@ -2456,11 +2472,11 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 			welims &= off_status[coff];
 		}
 		if (welims.IsEmpty()) continue;
-		if (opprint) {
-			cout << "cell multi analysis " << cellsFixedData[xcell].pt << endl;
-			welims.Print(" elims seen ");
-		}
 		if (fastmode){// do it in bloc and return
+			if (opprint) {
+				cout << "cell multi analysis " << cellsFixedData[xcell].pt << endl;
+				welims.Print(" elims seen ");
+			}
 			zhou_solve.Clean(welims);
 			elim_done = 1;
 			continue;
@@ -2478,7 +2494,8 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 					digs ^= 1 << d2;
 					p.u32 = xcell | (d2 << 16);
 					if (!ExpandDynamicToElim(p, target)) {// redo expansion should work
-						cout<< "anomaly in cell redo" << endl;
+						cout<< "anomaly in cell redo "<<d2+1<<cellsFixedData[xcell].pt
+							<<" to target "<< id+1<< cellsFixedData[elim_cell].pt << endl;
 						fout1 << "anomaly in cell redo" << endl;
 						return;
 					}
@@ -2533,12 +2550,13 @@ void XYSEARCH::SearchDynPassMulti(int nmax){// try multi chains if nothing low
 				while ((elim_cell = elimd.getFirsCell()) >= 0){
 					elimd.Clear_c(elim_cell);
 					target.u32 = elim_cell | (id << 16);
-					if (opprint)cout << "try unit elim" << id + 1 << cellsFixedData[elim_cell].pt << endl;
+					if (locdiag)cout << "try unit elim" << id + 1 << cellsFixedData[elim_cell].pt << endl;
 					int length = 0, n = 0,xcell;
 					for (int icu = 0; icu < ntcu; icu++){
 						xcell = tcu[icu];
 						p.u32 = xcell | (id1 << 16);
 						if (!ExpandDynamicToElim(p, target)) {// redo expansion should work
+							cout << "trying unit elim" << id + 1 << cellsFixedData[elim_cell].pt << endl;
 							cout << "anomaly in unit/cell redo start "
 								<<id1+1<<cellsFixedData[xcell].pt<< endl;
 							fout1 << "anomaly in unit/cell redo" << endl;
@@ -2636,9 +2654,10 @@ void XYSEARCH::DynamicSolveContradiction(GINT cand,PM3X cont){// find path and e
 			//cout << "rating " << rating<<endl<<endl;
 			if (AddElim(tback[0].u16[1], tback[0].u16[0], rating)){
 				if (opprint){
-					cout << "cleaned or stored rating " << rating << endl;
+					cout << "cleaned or stored rating " << rating <<" ntelim="<<ntelims<< endl;
 					PrintBackCom("off path ", tback, n2, 1);
 					PrintBackCom("on  path ", t1b, n1, 1);
+					cout << "done" << endl;
 				}
 			}
 		}
@@ -2656,7 +2675,7 @@ void XYSEARCH::DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell
 		return;
 	}
 	int locdiag = 0;
-	//if (pm_go.cycle == 10 && dig1 !=dig2 && cell1>=57)		locdiag = 1;
+	//if (pm_go.cycle == 13 && dig1==2 &&dig2==2 && cell1>=72)		locdiag = 1;
 	//if (dig1 != dig2 && cell1 == 62) locdiag = 1;
 	if (locdiag){
 		cout << "DynamicSolveContradiction " << dig1 + 1 << cellsFixedData[cell1].pt << " "
@@ -2697,7 +2716,7 @@ void XYSEARCH::DynamicSolveContradiction(int dig1, int cell1, int dig2, int cell
 			int rating = pm_go.hint.ChainLengthAdjusted(85, n1 + n2);
 			if (AddElim(id, elim_cell, rating)){
 				if (opprint){
-					cout << "cleaned or stored rating " << rating << endl;
+					cout << "cleaned or stored rating " << rating << " ntelim=" << ntelims << endl;
 					PrintBackCom("off path ", tback, n2, 1);
 					PrintBackCom("on  path ", t1b, n1, 1);
 				}
@@ -2711,7 +2730,7 @@ int XYSEARCH::BackDynamic(GINT64 target, GINT64 * tb, int ntb) {
 
 	PM3X back_bf; back_bf.SetAll_0(); // no possible conflict in the way back
 	int itret = 1, itret1 = 0;
-	GINT64 tretw[200];// cell;digit;source/last in;step/sign
+	GINT64 tretw[300];// cell;digit;source/last in;step/sign
 	tretw[0] =target;
 	back_bf.Set_c(target.u16[1], target.u16[0]);
 	while (itret1 < itret){// && itret < 100 ) { // solve each entry back
