@@ -139,14 +139,14 @@ struct XYSEARCH{
 	BF128 pairs, cells_biv_all, cells_all,cells_biv_true,  dig_b_true[9];
 	BF128 loop, wb;
 	BF32 dig_bivsets[9],dig_sets3[9];
-	GINT64 tback[200],t[400];// cell,digit,digit2,source
+	GINT64 tback[300],t[400];// cell,digit,digit2,source
 	PM3X used_off_digits, used_on_digits, cleang, cleanstart,
 		active_all,active_unit,dbiv;
 	GINT telims[50];	int ntelims ;
 	//====== for dynamic and more
 	int ind_pm[9][81],nind,is_contradiction,ntcands; // direct index for storing tables
 	PM3X off_status[400],contradiction,elim_stored;
-	GINT64 off_path[100][100];
+	GINT64 off_path[100][400];
 	GINT tcands[400]; // candidates tables and index if belong to binary
 	int tex[9][81]; // index to first "on" index in the path
 	inline void SearchInit(int fast){
