@@ -134,9 +134,9 @@ void ZH_GLOBAL::Pm_Status(ZHOU * z){
 		}
 	}
 }
-void ZH_GLOBAL::Pm_Status_End(ZHOU * z){// prepare boxes and cells status
-	__stosd((unsigned long *)dig_cells, 0, 81);
-	__stosd((unsigned long *)cells_count, 0, 81);
+void ZH_GLOBAL::Pm_Status_End(){// prepare boxes and cells status
+	memset(dig_cells, 0, sizeof dig_cells);
+	memset(cells_count, 0, sizeof cells_count);
 	for (int idig = 0; idig < 9; idig++){
 		int box = 0;
 		for (int iband = 0; iband < 3; iband++){// fill rows cols 9 bits
@@ -199,7 +199,7 @@ void ZHOU::AssignSolver(int rating){
 
 }
 void ZHOU::Naked_Pairs_Seen(){
-	__stosq((unsigned long long *)zh_g.locked_nacked_brc_seen[0].bf.u64, 0, 6);
+	memset(zh_g.locked_nacked_brc_seen, 0, sizeof zh_g.locked_nacked_brc_seen);
 	BF128 & pa = zh_g.pairs, fd[9];
 	if (pa.Count() < 2) return;
 	int td[9], nd = 0;

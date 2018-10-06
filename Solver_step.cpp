@@ -1234,7 +1234,7 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 		BF128 used_cells,wcells;
 		int mycell,cell,digit,ispot;
 		uint32_t d2;
-		inline void Init(int ca, int cb,int idig){
+		inline void Init(int ca, int idig){
 			ispot = 0;
 			used_cells.SetAll_0();
 			used_cells.Set_c(ca); // lock start cell
@@ -1305,7 +1305,7 @@ int YLSEARCH::ExpandOut(){//search start c1 target c2
 			<< " c0,c1,c2 go yloopout maxpas=" << maxpas << endl;
 	}
 	ncells = 0;
-	s = spots;	s->Init(c1, c0,idig);
+	s = spots;	s->Init(c1,idig);
 	slim = &spots[(maxpas - 3)];	slim2 = &spots[maxpas];
 	goto next;
 nextspot:
@@ -2943,17 +2943,7 @@ void PM_GO::Quickrate(int x) {// used in serate mode
 	else if (rat_er<x) rat_er = x;
 }
 //__________________________________________________________Solve
-int PM_GO::SolveStartZhouSolverx(GG & gg) {
-	//PM_DATA & myd = zpmd[0];
-	//strcpy(myd.start_puz, gg.pg);
-	//for (int i = 0; i < 81; i++) 	myd.puz_zero_based[i] = (gg.pg[i] - '.') ? gg.pg[i] - '0' : 0;
-	if (opprint)cout << zh_g.zsol << "valid puzzle" << endl;
-	stop_rating = cycle = assigned = 0;
-	rat_er = rat_ep = rat_ed = 10;
-	zh_g.nsol = 0; zh_g.lim = 1;
-	ur_serate_mode = 0;
-	return 0;
-}
+
 void PM_GO::Status(const char * lib, int option){
 	if ((!option )||(opprint2 & option)){
 		cout <<"status "<< lib << endl;
@@ -3071,7 +3061,7 @@ void PM_GO::SolveSerate110() {
 		if (Rate66Xchain(0)) continue;
 		if (rat_er < 75)// skip Y loop if XY chain can be applied
 		if (ylsearch.Search()){ Quickrate(66); continue; }
-		if (Rate67_70(0)) continue;
+		if (Rate67_70()) continue;
 		if (Rate70_75(rat_er > 75)) continue;
 		if (Rate75())continue;
 		if (Rate76Nishio(rat_er >82)) continue;// fast mode above
@@ -3251,7 +3241,7 @@ int PM_GO::Next30_44(){
 	if (Rate30())return 1;
 	if (Rate32())return 1;		
 	if (Rate34())return 1;
-	zh_g.Pm_Status_End(&zhou_solve);// cell digits and box digit/cells
+	zh_g.Pm_Status_End();// cell digits and box digit/cells
 	if (Rate36())return 1;
 	if (Rate38())return 1;
 	if (Rate40())return 1;		
@@ -3558,7 +3548,7 @@ int PM_GO::Rate66Xchain(int fast){
 	if (iret) 		Quickrate(66);
 	return iret;
 }
-int PM_GO::Rate67_70(int rating){
+int PM_GO::Rate67_70(){
 	for (int irating = 67; irating <= 70; irating++){
 		if (R67_70(irating)){
 			Quickrate(irating);
@@ -4137,7 +4127,7 @@ int PM_GO::Rate46_Find_ULs(){
 				if (locdiag)cout << "search unit" << iu  << endl;
 				s = spots;
 				int cell1 = wpu.getFirsCell(), cell2;
-				uint32_t digit_one;
+				uint32_t digit_one=0;
 				wpu.Clear_c(cell1);
 				cell2 = wpu.getFirsCell();
 				s->Init(wpu, wp, cell1, cell2);

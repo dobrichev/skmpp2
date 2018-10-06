@@ -98,7 +98,7 @@ struct ZH_GLOBAL { // global variables for the game table
 	// located in go_0xxcpp
 	inline void Init_Assign(){ nsingles = 0; cells_assigned.SetAll_0(); }
 	void Pm_Status(ZHOU * z);
-	void Pm_Status_End(ZHOU * z);// box and cells
+	void Pm_Status_End();// box and cells
 	void AddSingle(int band, int vband);
 	void AddSingleDiag(int band, int vband);
 	void Build_digits_cells_pair_bf();

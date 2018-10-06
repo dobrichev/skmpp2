@@ -318,11 +318,6 @@ struct PM_DATA{ // keep it open for dynamic expansion process
 class PM_GO{
 public:
 
-	struct REG_LISTx{// list canonical form for a set, cell + digit
-		USHORT tc[10],td[10],n;
-		void LoadUnit(BF16 wp,int iu,int dig);
-		void LoadCell(BF16 wd,int cell);
-	}reglw;
 	struct HINT {  // combine all hints having the same "lowest"rating
 		PM_GO * parent;
 		PM3X pmelims;
@@ -620,8 +615,6 @@ public:
 	int CleanOr(int d1, int c1, int d2, int c2);
 	//void Start();
 
-	int SolveStartZhouSolverx(GG & gg);
-	//int SolveCheckDoElims(PMBF & eli);
 	//int Solve_All_Singles(char * ze);
 	//int  SolveFinalFilter(char * puz);
 
@@ -657,7 +650,7 @@ public:
 	int Rate65Xcycle(int fast);
 	int Rate6xXcycle(int rating);
 	int Rate66Xchain(int fast);
-	int Rate67_70(int rating); int R67_70(int rating);
+	int Rate67_70(); int R67_70(int rating);
 	int Rate70_75(int rat_ed);
 	int Rate75(); int Rate75_ATE();// aligned triplet exclusion
 	int Rate76Nishio(int fast);
