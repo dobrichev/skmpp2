@@ -3086,6 +3086,7 @@ exit_limit:
 	if (sgo.bfx[7] & 1)fout2 << zh_g.puz << endl;
 }
 void PM_GO::SolveSerate111(){// quick rate ans split serate mode
+
 	zh_g.diag = opprint = opprint2 = 0;
 	stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
 	zh_g.nsol = 0; zh_g.lim = 1;
@@ -3124,21 +3125,22 @@ void PM_GO::SolveSerate111(){// quick rate ans split serate mode
 	//=============================== rating over 44
 
 	while (cycle++ < 150) {
+		//cout << "next cycle=" << cycle << endl;
 		if (cycle > 148) { stop_rating = 7;	break; }
 		if (stop_rating) 	break;
 		if (zhou_solve.cells_unsolved.isEmpty())break;
-		if (0){
-			cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<next cycle=" << cycle
-				<< " rating=" << rat_er
-				<< " unsolved=" << zhou_solve.cells_unsolved.Count() << " assigned=" << assigned << endl;
-			zhou_solve.ImageCandidats();
-			if (cycle > 10)opprint = opprint2 = 0xfe;
-		}
 		zh_g.Init_Assign();
 		if (Next28()) continue;
 		if (Next30_44()) continue;
 	phase2:// entry phase 2 not solved below 45
 		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
+		if (0) {
+			cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<next cycle=" << cycle
+				<< " rating=" << rat_er
+				<< " unsolved=" << zhou_solve.cells_unsolved.Count() << " assigned=" << assigned << endl;
+			zhou_solve.ImageCandidats();
+			//if (cycle > 10)opprint = opprint2 = 0xfe;
+		}
 		if (Rate45_52()) continue;
 		if (Rate52())continue;		
 		if (Rate54())continue;
@@ -4103,7 +4105,8 @@ int PM_GO::Rate46_Find_ULs(){
 		int  digst,parity_rcb;
 		int more_one, nplus, cellfirstplus, cellsecondplus;
 		inline void Init(BF128 & wpu,BF128 & wp,int cell1,int cell2){ 
-			more_one = nplus = 0; 
+			memset(this, 0, sizeof SPOT);
+			//more_one = nplus = 0; 
 			parity[0] = cell_z3x[cell2];// can not reenter with even value of ispot
 			parity[1] = cell_z3x[cell1];// can not reenter with odd value of ispot
 			pairs = wp; 
