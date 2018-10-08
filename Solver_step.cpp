@@ -4105,7 +4105,8 @@ int PM_GO::Rate46_Find_ULs(){
 		int  digst,parity_rcb;
 		int more_one, nplus, cellfirstplus, cellsecondplus;
 		inline void Init(BF128 & wpu,BF128 & wp,int cell1,int cell2){ 
-			memset(this, 0, sizeof SPOT);
+			//memset(this, 0, sizeof SPOT); //MD: this doesn't compile, see the line below
+			memset(this, 0, sizeof (*this));
 			//more_one = nplus = 0; 
 			parity[0] = cell_z3x[cell2];// can not reenter with even value of ispot
 			parity[1] = cell_z3x[cell1];// can not reenter with odd value of ispot
