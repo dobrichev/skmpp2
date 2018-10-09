@@ -1,15 +1,9 @@
 
 
 //========================================
-const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
-"fupd ", "hpair ", "htripl ", " ", " " };
+const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ", "fupd ", "hpair ", "htripl ", " ", " " };
 #include "go_0xx_cpp.h"
 #include "go_1xx_cpp.h"
-//#include "go_2xx_cpp.h"
-#include "go_4xx_cpp.h"
-// void Go_0xx(){
-//		Go_c0();
-//}
 void Go_sol_1xx(){
 	cout << "command 1xx command=" << sgo.command << endl;
 	pm_go.opprint =sgo.bfx[9];
@@ -20,43 +14,6 @@ void Go_sol_1xx(){
 	case 199: Go_c199(); break;// current test 
 	}
 	cerr << "back go-sol_1xx" << endl;
-
-}
-void Go_can_3xx(){
-
-}
-/* subtask v0 for task 400
-0 add sequence
-1 add string0
-2 add nclues
-9 add stcd puz to entry
-10 '.' for empty cell
-11 erase '"' in entry
-12 cut entry to v1
-15 mantext in output
-16 mintext in output
-21 extract 81 character starting in v1
-22 first v1 puzzles in output 1 others output2
-23 sampling start v1 one every v2
-40 count digits
-41 count given per band
-42 count digits per band
-43 count given per unit
-44count digits per unit
-*/
-
-void Go_misc_4xx(){
-	cout << "command 4xx command=" << sgo.command << endl;
-	switch (sgo.command){
-	case 400: Go_c400(); break;// small tasks  see subtask v0
-	case 401: Go_c401(); break;// .dat to .txt  
-	case 402: Go_c402(); break;// morph rows cols diag  s1 s2 v1
-	case 440: Go_c440(); break;// parse game submissions  
-	case 445: Go_c445(); break;// split the entry file on int param 
-
-	case 480: Go_c480(); break;// add compressed clues to entry (game data base)
-	case 481: Go_c480(); break;// check/update game data base
-	}
 
 }
 
@@ -73,8 +30,6 @@ void Go_0( ){
 	}
 	switch (sgo.command / 100){
 	case 1: Go_sol_1xx(); break;
-	//case 3: Go_can_3xx(); break;
-	//case 4: Go_misc_4xx(); break;
 	}
 	cerr << "go_0 return" << endl;
 }
