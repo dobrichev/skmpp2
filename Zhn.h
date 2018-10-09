@@ -289,31 +289,31 @@ struct ZHOU{// size 32 bytes
    */
  };
 
- struct ZHBAND{// similar to  ZHOU for one band
-	 int FD[9][2],cells_unsolved;
-	 int ndigits, index, unsolved_digits;
-
-	 inline void Copy(ZHBAND & o);
-	 inline void Assign(int digit, int cell, int xcell);
-	 int Update();
-	 char * SetKnown(char * zs);
-	 int ApplySingleOrEmptyCells_Band3();
-	 int ApplySingleOrEmptyCells_B12();
-	 int ApplySingleOrEmptyCells();
-	 int FullUpdate();
-	 void SetaCom(int digit, int cell);
-	 void Setcell(int cell);
-	 inline void GuessBivalueInCell(BF128 & wc);
-	 inline int GuessHiddenBivalue();
-	 int GuessHiddenTriplet();
-	 void Guess();
-	 inline void ComputeNext(){	 if (FullUpdate())	 Guess();	 	 }
-	 int GetFreeDigits_c(int cell){ return GetFreeDigits(C_To128[cell]); }
-	 int GetFreeDigits(int xcell);
-	 int GetSolvedDigitForCell(int cell);
-	 // debugging code or print code
-	 void Debug(int all = 0);
-	 int GetAllDigits(int cell);
-	 void ImageCandidats();
-	 void ImageCandidats_b3();
- };
+// struct ZHBAND{// similar to  ZHOU for one band
+//	 int FD[9][2],cells_unsolved;
+//	 int ndigits, index, unsolved_digits;
+//
+//	 inline void Copy(ZHBAND & o);
+//	 inline void Assign(int digit, int cell, int xcell);
+//	 int Update();
+//	 char * SetKnown(char * zs);
+//	 int ApplySingleOrEmptyCells_Band3();
+//	 int ApplySingleOrEmptyCells_B12();
+//	 int ApplySingleOrEmptyCells();
+//	 int FullUpdate();
+//	 void SetaCom(int digit, int cell);
+//	 void Setcell(int cell);
+//	 inline void GuessBivalueInCell(BF128 & wc);
+//	 inline int GuessHiddenBivalue();
+//	 int GuessHiddenTriplet();
+//	 void Guess();
+//	 inline void ComputeNext(){	 if (FullUpdate())	 Guess();	 	 }
+//	 int GetFreeDigits_c(int cell){ return GetFreeDigits(C_To128[cell]); }
+//	 int GetFreeDigits(int xcell);
+//	 int GetSolvedDigitForCell(int cell);
+//	 // debugging code or print code
+//	 void Debug(int all = 0);
+//	 int GetAllDigits(int cell);
+//	 void ImageCandidats();
+//	 void ImageCandidats_b3();
+// };
