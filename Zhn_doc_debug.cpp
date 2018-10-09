@@ -3,7 +3,7 @@
 #include "Zhn.h"
 //#include "Zhtables.cpp" // also describes the pattern
 
-extern PM_GO pm_go;
+//extern PM_GO pm_go;
 extern ZHOU zhou_i;
 
 /*

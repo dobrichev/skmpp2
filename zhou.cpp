@@ -10,7 +10,6 @@ ZHOU zhou_i,zhou_ip,//zhou_i================== initial for a GAME
 
 
 void ZH_GLOBAL::Pm_Status(ZHOU * z){
-	zhou_current = z;
 	oldcount = z->CountDigs();
 	pmelims.SetAll_0();
 	cells_unsolved_e = z->cells_unsolved;
@@ -20,7 +19,6 @@ void ZH_GLOBAL::Pm_Status(ZHOU * z){
 		pm.pmdig[idig] = w& cells_unsolved_e;
 		pmdiag.pmdig[idig].Diag3x27(pm.pmdig[idig]);
 		unsolved_r_count[idig] = _popcnt32(w.bf.u32[3]);
-		//unsolved_c_count[idig] = __popcnt(pmdiag.pmdig[idig].bf.u32[3]);  idiot
 		int row = 0;
 		for (int iband = 0; iband < 3; iband++){// fill rows cols 9 bits
 			register int band = pm.pmdig[idig].bf.u32[iband],
@@ -115,92 +113,92 @@ void ZH_GLOBAL::NoMorph(){
 	}
 	for (int i = 0; i < 81; i++)x3_cmap[i] = i;
 }
-void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
-	char zdiag[81], *source;
-	int count[6], *sourcei, zei[81], *zdiagi = C_transpose_d;
-	memset(count, 0, sizeof count);
-	for (int i = 0; i < 81; i++) {
-		if (ze[i] - '.'){
-			int band = i / 27, stack = C_stack[i] + 3;
-			++count[band];			++count[stack];
-		}
-		zdiag[C_transpose_d[i]] = ze[i];
-		zei[i] = i;
-	}
-	int imax = 0, nmax = 0;// find biggest count band stack
-	for (int ib = 0; ib < 6; ib++)if (count[ib]>nmax){	nmax = count[ib];	imax = ib;	}
-	// morph the puzzle to the high band in band
-	if (imax > 2){
-		source = zdiag;		sourcei = zdiagi;
-		__movsd((uint32_t*)count, (uint32_t *) &count[3], 3);
-	}
-	else { source = ze; sourcei = zei; }
-	int tsort[3], w;// sort bands increasing order of count
-	tsort[0] = count[0] << 8;
-	tsort[1] = 1 | (count[1] << 8);
-	tsort[2] = 2 | (count[2] << 8);
-	for (int i = 0; i < 2; i++) for (int j = i + 1; j < 3; j++)
-		if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
-	int ib1 = tsort[0] & 3, ib2 = tsort[1] & 3, ib3 = tsort[2] & 3;
-	puz[81]=0,
-	memcpy(puz, &source[27 * ib1], 27);
-	memcpy(&puz[27], &source[27 * ib2], 27);
-	memcpy(&puz[54], &source[27 * ib3], 27);
-	__movsd((uint32_t*)x3_cmap, (uint32_t *)&sourcei[27 * ib1], 27);
-	__movsd((uint32_t*)&x3_cmap[27], (uint32_t *)&sourcei[27 * ib2], 27);
-	__movsd((uint32_t*)&x3_cmap[54], (uint32_t *)&sourcei[27 * ib3], 27);
-
-}
+//void ZH_GLOBAL::MorphPat(char * ze){// sort entry to optimize brute force
+//	char zdiag[81], *source;
+//	int count[6], *sourcei, zei[81], *zdiagi = C_transpose_d;
+//	memset(count, 0, sizeof count);
+//	for (int i = 0; i < 81; i++) {
+//		if (ze[i] - '.'){
+//			int band = i / 27, stack = C_stack[i] + 3;
+//			++count[band];			++count[stack];
+//		}
+//		zdiag[C_transpose_d[i]] = ze[i];
+//		zei[i] = i;
+//	}
+//	int imax = 0, nmax = 0;// find biggest count band stack
+//	for (int ib = 0; ib < 6; ib++)if (count[ib]>nmax){	nmax = count[ib];	imax = ib;	}
+//	// morph the puzzle to the high band in band
+//	if (imax > 2){
+//		source = zdiag;		sourcei = zdiagi;
+//		__movsd((uint32_t*)count, (uint32_t *) &count[3], 3);
+//	}
+//	else { source = ze; sourcei = zei; }
+//	int tsort[3], w;// sort bands increasing order of count
+//	tsort[0] = count[0] << 8;
+//	tsort[1] = 1 | (count[1] << 8);
+//	tsort[2] = 2 | (count[2] << 8);
+//	for (int i = 0; i < 2; i++) for (int j = i + 1; j < 3; j++)
+//		if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
+//	int ib1 = tsort[0] & 3, ib2 = tsort[1] & 3, ib3 = tsort[2] & 3;
+//	puz[81]=0,
+//	memcpy(puz, &source[27 * ib1], 27);
+//	memcpy(&puz[27], &source[27 * ib2], 27);
+//	memcpy(&puz[54], &source[27 * ib3], 27);
+//	__movsd((uint32_t*)x3_cmap, (uint32_t *)&sourcei[27 * ib1], 27);
+//	__movsd((uint32_t*)&x3_cmap[27], (uint32_t *)&sourcei[27 * ib2], 27);
+//	__movsd((uint32_t*)&x3_cmap[54], (uint32_t *)&sourcei[27 * ib3], 27);
+//
+//}
 //td is 8bits cell + 8 bits digits
-void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
-	ngiven = 0;
-	uint32_t count[9];
-	memset(count,0,sizeof count);
-	for (int i = 0; i < 81; i++){
-		register int c = puz[i];
-		if (c<'1' || c>'9') continue;
-		c -= '1';
-		count[c]++;
-		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
-	}
-	if (morph){// if morph asked, map digits on increasing count.
-		int tsort[9], w;// sort bands increasing order of count
-		for (int i = 0; i < 9; i++)tsort[i] = (count[i] << 8) | i;
-		for (int i = 0; i < 8; i++) for (int j = i + 1; j < 9; j++)
-			if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
-		for (int i = 0; i < 9; i++){
-			register int ii = tsort[i] & 15;
-			zhou_i.FD[i][1].bf.u32[3] = ii;
-			x3_dmap_inv[ii] = i;
-		}
-		// map the given to new order
-		for (int ic = 0; ic < ngiven; ic++)
-			tgiven[ic].u8[1] = (uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
-	}
-}
+//void ZH_GLOBAL::Morph_digits(int morph){// using the given entry
+//	ngiven = 0;
+//	uint32_t count[9];
+//	memset(count,0,sizeof count);
+//	for (int i = 0; i < 81; i++){
+//		register int c = puz[i];
+//		if (c<'1' || c>'9') continue;
+//		c -= '1';
+//		count[c]++;
+//		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
+//	}
+//	if (morph){// if morph asked, map digits on increasing count.
+//		int tsort[9], w;// sort bands increasing order of count
+//		for (int i = 0; i < 9; i++)tsort[i] = (count[i] << 8) | i;
+//		for (int i = 0; i < 8; i++) for (int j = i + 1; j < 9; j++)
+//			if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
+//		for (int i = 0; i < 9; i++){
+//			register int ii = tsort[i] & 15;
+//			zhou_i.FD[i][1].bf.u32[3] = ii;
+//			x3_dmap_inv[ii] = i;
+//		}
+//		// map the given to new order
+//		for (int ic = 0; ic < ngiven; ic++)
+//			tgiven[ic].u8[1] = (uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
+//	}
+//}
 //void ZH_GLOBAL::Map_Morph_digits(GINT16 * td, int nc){//applying x3_cmap to the cells
 //}
-void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the morphed pattern
-	ngiven = 0;
-	uint32_t count[9];
-	memset(count, 0, sizeof count);
-	for (int it = 0; it < nc; it++){
-		register int  dig = td[it].u8[1];
-		count[dig]++;
-	}
-	int tsort[9], w;// sort bands increasing order of count
-	for (int i = 0; i < 9; i++)tsort[i] = (count[i] << 8) | i;
-	for (int i = 0; i < 8; i++) for (int j = i + 1; j < 9; j++)
-		if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
-	for (int i = 0; i < 9; i++){
-		register int ii = tsort[i] & 15;
-		zhou_i.FD[i][1].bf.u32[3] = ii;
-		x3_dmap_inv[ii] = i;
-	}
-	// map the given to new order
-	for (int ic = 0; ic < ngiven; ic++)
-		tgiven[ic].u8[1] =(uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
-}
+//void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the morphed pattern
+//	ngiven = 0;
+//	uint32_t count[9];
+//	memset(count, 0, sizeof count);
+//	for (int it = 0; it < nc; it++){
+//		register int  dig = td[it].u8[1];
+//		count[dig]++;
+//	}
+//	int tsort[9], w;// sort bands increasing order of count
+//	for (int i = 0; i < 9; i++)tsort[i] = (count[i] << 8) | i;
+//	for (int i = 0; i < 8; i++) for (int j = i + 1; j < 9; j++)
+//		if (tsort[i]>tsort[j]){ w = tsort[i]; tsort[i] = tsort[j]; tsort[j] = w; }
+//	for (int i = 0; i < 9; i++){
+//		register int ii = tsort[i] & 15;
+//		zhou_i.FD[i][1].bf.u32[3] = ii;
+//		x3_dmap_inv[ii] = i;
+//	}
+//	// map the given to new order
+//	for (int ic = 0; ic < ngiven; ic++)
+//		tgiven[ic].u8[1] =(uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
+//}
 int ZH_GLOBAL::InitSudoku(){ return zhou[0].InitSudoku(tgiven,ngiven); }
 //int ZH_GLOBAL::Go_InitSudoku(char * ze){
 //	MorphPat(ze);
@@ -209,22 +207,22 @@ int ZH_GLOBAL::InitSudoku(){ return zhou[0].InitSudoku(tgiven,ngiven); }
 //	//if (diag)Debug();
 //	return InitSudoku();
 //}
-int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
-	ze[81] = 0;
-	strcpy(puz, ze);
-	NoMorph();
-	ngiven = 0;
-	int digs = 0;
-    for (int i = 0; i < 81; i++){
-		register int c = puz[i];
-		if (c<'1' || c>'9') continue;
-		c -= '1';
-		digs |= 1 << c;
-		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
-	}
-	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
-	return InitSudoku();
-}
+//int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
+//	ze[81] = 0;
+//	strcpy(puz, ze);
+//	NoMorph();
+//	ngiven = 0;
+//	int digs = 0;
+//    for (int i = 0; i < 81; i++){
+//		register int c = puz[i];
+//		if (c<'1' || c>'9') continue;
+//		c -= '1';
+//		digs |= 1 << c;
+//		tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
+//	}
+//	if (_popcnt32(digs) < 8) return 1; // don't accept less than 8 digits given
+//	return InitSudoku();
+//}
 int ZH_GLOBAL::Go_InitSolve(char * ze){
 	zsol = stdfirstsol;
 	InitCount(1);
@@ -251,25 +249,25 @@ int ZH_GLOBAL::Go_InitSolve(char * ze){
 	return 0;
 }
 
-int ZH_GLOBAL::Go_InitSolve(GINT16 * td, int nc){
-	zsol = stdfirstsol;
-	InitCount(1);
-	strcpy(puz, empty_puzzle);
-	NoMorph();
-	ngiven = nc;
-	for (int i = 0; i < nc; i++){
-		puz[td[i].u8[0]] = (char)(td[i].u8[1] + '1');
-		tgiven[i] = td[i];
-	}
-	if (InitSudoku()) return 1;
-	zhou_solve = zhou[0];
-	zhou[0].ComputeNext();
-	if (nsol != 1) return 1;
-	for (int i = 0; i < 81; i++)zerobased_sol[i] =(char)( stdfirstsol[i] - '1');
-	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
-	memset(row_col_x2, 0, sizeof row_col_x2);
-	return 0;
-}
+//int ZH_GLOBAL::Go_InitSolve(GINT16 * td, int nc){
+//	zsol = stdfirstsol;
+//	InitCount(1);
+//	strcpy(puz, empty_puzzle);
+//	NoMorph();
+//	ngiven = nc;
+//	for (int i = 0; i < nc; i++){
+//		puz[td[i].u8[0]] = (char)(td[i].u8[1] + '1');
+//		tgiven[i] = td[i];
+//	}
+//	if (InitSudoku()) return 1;
+//	zhou_solve = zhou[0];
+//	zhou[0].ComputeNext();
+//	if (nsol != 1) return 1;
+//	for (int i = 0; i < 81; i++)zerobased_sol[i] =(char)( stdfirstsol[i] - '1');
+//	memset(locked_nacked_brc_done, 0, sizeof locked_nacked_brc_done);
+//	memset(row_col_x2, 0, sizeof row_col_x2);
+//	return 0;
+//}
 void ZH_GLOBAL::ValidPuzzle(ZHOU * z){
 	if (zsol && (!nsol)){// store the first solution
 		z->SetKnown(zsol);

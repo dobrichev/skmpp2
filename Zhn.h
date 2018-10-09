@@ -26,88 +26,7 @@ funtions have been added to work in generation mode
 //const extern int TblRowUniq[512]; // 1 is row not defined in block  mode  to 111
 //const extern T128 AssignMask_Digit[81];
 ////const extern T128 AssignMask_OtherDigits[81];
-struct ZHOU;
 
-struct ZH_GLOBAL { // global variables for the game table
-	uint64_t cpt[10],cptg[10],npuz;
-	// morphing a puzzle at the start
-	int x3_dmap_inv[9];// digit map 3 bands (start)
-	int x3_cmap[81];// cells map at start
-	char puz[82]; // the solved puzzle (after morph)
-	//given and singles found
-	GINT16 tgiven[81];
-	int ngiven, tsingles[40], nsingles;
-
-	BF128 digit_sol[9]; // final solution per digit original sort sequence
-	int nsol, lim, icount, ntsol, single_applied, new_single_in_Update,
-		go_back, goadduas,// usually 0, special treatment for a solution
-		rdigit, loop, diag, modeguess,maxindex;
-	BF128 Digit_cell_Assigned[9];
-	BF128 init_3x, init_digit, pairs,triplets, pairs_naked;
-	char * zsol, *puzfinal, *pat, 
-		stdfirstsol[82],
-		zerobased_sol[81];
-
-	// switching to solver mode
-	PM3X pm, pmdiag,pmelims;
-	BF128  cells_unsolved_e, cells_unsolved_diag,// pm status direct and diagonal
-		cells_assigned;// to avoid redundancy in new assignments 
-	// in locked.. column "[2]" is in diagonal mode 
-	BF128 locked_nacked_brc_seen[3],// seen nacked in row; column; box (priority box)
-		locked_nacked_brc_done[3];// same cleaning done  nacked in row; column; box (priority box)
-	int  dig_rows[9][9], dig_cols[9][9];//rows cols in 9 bits mode
-	int  dig_boxes[9][9];// box in 9 bits mode
-	int dig_cells[81], cells_count[81];//cells digits  in 9 bits mode
-	int unsolved_r_count[9], unsolved_c_count[9]; // pm status unsolved rows columns per digit
-	int row_col_x2[9][2], dig_unsolved_col[9], oldcount;
-	BF128 digits_cells_pair_bf[9]; 
-	ZHOU * zhou_current;
-
-    //=================== floor analysis (one digit)
-	int current_digit,active_floor;
-	BF128  or_floor[9], elim_floor[9];
-
-	// specific to the attempt to optimize the X+Y+27 process
-	char *entry_base0, zdebug[82];
-	int * grid0; // using a process with known solution grid
-	// specific to symmetry of given generation
-	USHORT * ptcor;
-	// specific to the search 17 process
-	int s2_ind, naddtable;// see go_17sol
-	BF128 * addtable;
-	int band3digits[9], band3nextua;// specific to 17 search
-	uint64_t * digsols, b12nextua; // pointer to solution grid per digit
-	ZH_GLOBAL();
-	inline void InitCount(int elim){
-		memset(cpt, 0, sizeof cpt);
-		nsol = 0;
-		lim = elim;
-	}
-	void MorphPat(char * ze);
-	void Morph_digits(int morph);
-	void Morph_digits(GINT16 * td, int nc);
-	//void Map_Morph_digits(GINT16 * td, int nc);
-	void NoMorph();
-	int InitSudoku();
-	//int Go_InitSudoku(char * ze);
-	int Go_InitSudoku_NoMorph(char * ze);
-	int Go_InitSolve(char * ze);
-	int Go_InitSolve(GINT16 * td, int nc);
-	void ValidPuzzle(ZHOU * z);
-	void Debug();
-	// located in go_0xxcpp
-	inline void Init_Assign(){ nsingles = 0; cells_assigned.SetAll_0(); }
-	void Pm_Status(ZHOU * z);
-	void Pm_Status_End();// box and cells
-	void AddSingle(int band, int vband);
-	void AddSingleDiag(int band, int vband);
-	void Build_digits_cells_pair_bf();
-
-
-	// located in solver step
-	void DebugNacked();
-
-};
 /* 2 BF 128 per digit
 	equivalent to F and Fcomp in Zhou
 	Last 32 bits in FD[0] is a  bits field for unknown rows
@@ -271,6 +190,86 @@ struct ZHOU{// size 32 bytes
 	void AssignSolver(int print = 0);
 	//void XW_template(int idig);
 	void Naked_Pairs_Seen();
+};
+
+struct ZH_GLOBAL { // global variables for the game table
+	uint64_t cpt[10],/*cptg[10],*/npuz;
+	// morphing a puzzle at the start
+	int x3_dmap_inv[9];// digit map 3 bands (start)
+	int x3_cmap[81];// cells map at start
+	char puz[82]; // the solved puzzle (after morph)
+	//given and singles found
+	GINT16 tgiven[81];
+	int ngiven, tsingles[40], nsingles;
+
+	BF128 digit_sol[9]; // final solution per digit original sort sequence
+	int nsol, lim, icount, ntsol, single_applied, new_single_in_Update,
+		go_back, goadduas,// usually 0, special treatment for a solution
+		rdigit, loop, diag, modeguess,maxindex;
+	BF128 Digit_cell_Assigned[9];
+	BF128 init_3x, init_digit, pairs,triplets, pairs_naked;
+	char * zsol, *puzfinal, *pat,
+		stdfirstsol[82],
+		zerobased_sol[81];
+
+	// switching to solver mode
+	PM3X pm, pmdiag,pmelims;
+	BF128  cells_unsolved_e, cells_unsolved_diag,// pm status direct and diagonal
+		cells_assigned;// to avoid redundancy in new assignments
+	// in locked.. column "[2]" is in diagonal mode
+	BF128 locked_nacked_brc_seen[3],// seen nacked in row; column; box (priority box)
+		locked_nacked_brc_done[3];// same cleaning done  nacked in row; column; box (priority box)
+	int  dig_rows[9][9], dig_cols[9][9];//rows cols in 9 bits mode
+	int  dig_boxes[9][9];// box in 9 bits mode
+	int dig_cells[81], cells_count[81];//cells digits  in 9 bits mode
+	int unsolved_r_count[9], unsolved_c_count[9]; // pm status unsolved rows columns per digit
+	int row_col_x2[9][2], dig_unsolved_col[9], oldcount;
+	BF128 digits_cells_pair_bf[9];
+	//ZHOU * zhou_current;
+
+    //=================== floor analysis (one digit)
+	int current_digit,active_floor;
+	BF128  or_floor[9], elim_floor[9];
+
+	// specific to the attempt to optimize the X+Y+27 process
+	char *entry_base0, zdebug[82];
+	int * grid0; // using a process with known solution grid
+	// specific to symmetry of given generation
+	USHORT * ptcor;
+	// specific to the search 17 process
+	int s2_ind, naddtable;// see go_17sol
+	BF128 * addtable;
+	int band3digits[9], band3nextua;// specific to 17 search
+	uint64_t * digsols, b12nextua; // pointer to solution grid per digit
+	ZH_GLOBAL();
+	inline void InitCount(int elim){
+		memset(cpt, 0, sizeof cpt);
+		nsol = 0;
+		lim = elim;
+	}
+	//void MorphPat(char * ze);
+	//void Morph_digits(int morph);
+	//void Morph_digits(GINT16 * td, int nc);
+	//void Map_Morph_digits(GINT16 * td, int nc);
+	void NoMorph();
+	int InitSudoku();
+	//int Go_InitSudoku(char * ze);
+	//int Go_InitSudoku_NoMorph(char * ze);
+	int Go_InitSolve(char * ze);
+	//int Go_InitSolve(GINT16 * td, int nc);
+	void ValidPuzzle(ZHOU * z);
+	void Debug();
+	// located in go_0xxcpp
+	inline void Init_Assign(){ nsingles = 0; cells_assigned.SetAll_0(); }
+	void Pm_Status(ZHOU * z);
+	void Pm_Status_End();// box and cells
+	void AddSingle(int band, int vband);
+	void AddSingleDiag(int band, int vband);
+	void Build_digits_cells_pair_bf();
+
+
+	// located in solver step
+	void DebugNacked();
 };
 
 extern ZH_GLOBAL zh_g;

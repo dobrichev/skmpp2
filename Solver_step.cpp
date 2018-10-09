@@ -3004,8 +3004,6 @@ int PM_GO::SolveGetLow61() {
 	if (rat_ed) return rat_ed; else return 100;
 }
 
-
-
 void PM_GO::SolveSerate110() {
 	//===========================================================
 	zh_g.diag = sgo.vx[9];	opprint = sgo.bfx[9];	opprint2 = sgo.bfx[8];

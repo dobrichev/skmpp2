@@ -241,73 +241,73 @@ public:
 	}
 };
 
-struct TWO_DIGITS{// one of 36 possible 2 digits 
-	BF128 bf2,bf2d;
-	int free_units,digit[2],nhp;
-	GINT64 thp[20];// band 2 cells ; i band ; 
-	int Hiden_Pairs_Box();
-	int Hiden_Pairs_Rows();
-
-};
+//struct TWO_DIGITS{// one of 36 possible 2 digits
+//	BF128 bf2,bf2d;
+//	int free_units,digit[2],nhp;
+//	GINT64 thp[20];// band 2 cells ; i band ;
+//	int Hiden_Pairs_Box();
+//	int Hiden_Pairs_Rows();
+//
+//};
 
 class PM_GO{
-	struct PM_DATA{ // keep it open for dynamic expansion process
-
-		/*
-		PMBF pm,pm_diag;
-		int free_unit_per_digit [9]; // 9 27 bits fields
-		int unknown_count_per_unit [27];
-		int locked_count_per_unit [27];
-		int free_unit_for_search2,free_unit_for_search3,free_unit_for_search4;
-		*/
-		PM_GO * parent;
-		int unknown_count;
-		BF81 unknown;
-		PMBF pm;
-		BF16 dig_cells[81],emptyrows,emptycolumns;
-		RBF27 unassigned_sets, changed_sets;
-
-		BF16 dig_reg[9][27];
-		BF81 dig_reg81[9][27];
-		char res_zero_based[81], // 0 to 8
-	         puz_zero_based[81],
-			 start_puz[82];
-		int	 contradiction_in_set;
-		// all above updated live at each assignment
-		void AssignStandard(int dig,int cell);
-		void CleanAll81(int dig,int cell);
-		void CleanDyn(int dig,int cell);
-		void Clean(BF16 & digs,USHORT cell);
-		void Clean(USHORT dig,BF81 & cells);
-		//
-		void InitialAndFirstAssignmentx();
-		int  Std_SetDigRegsAndSinglesx(int boxonly=0);  //12
-		void DoInit_zhou_to_me();
-		void Do_Zhou_Assign(int dig,int cell);
-		void Do_Zhou_Row_Transfer(int dig,int irow,int vrow);
-		void DoEndInitAfterZhou();
-		int DoZhouCycle();
-		int  Std_HiddenSingles(int boxonly);          //15
-		int  Std_SinglesInCells();
-		int  Std_LastCellInUnit();  //10
-
-		inline int IsAssigned(int digit,int unit)
-			{return unassigned_sets.t[digit].Off(unit);}
-		int Set(SCAND x); // return 0,1, contradiction_in_set if conflict
-		int IsGameLocked(PM_DATA & pmst,PMBF & bf);
-		int SetsNowAssigned(RCAND * tass);
-		int  FindNewOn(SCAND * tnewon,RCAND * tue,USHORT & nue);
-
-		int  ApplyOn(UCAND x,SCAND * telims);
-		void TrackError(char * lib);
-		void GetStdCharPuzzleStatus(char * zs);
-		void ImageUn_myd(int ch);
-		void ImageFloors_myd(BF16 ff);
-		void ImageDump(char * lib);
-		void ImageCandidats();
-		void DynSet(PMBFONOFF & offon,PMBFONOFF & offonold); // create the dyn status for dynamic plus
-		void PrepareSubGrids();
-	};
+//	struct PM_DATA{ // keep it open for dynamic expansion process
+//
+//		/*
+//		PMBF pm,pm_diag;
+//		int free_unit_per_digit [9]; // 9 27 bits fields
+//		int unknown_count_per_unit [27];
+//		int locked_count_per_unit [27];
+//		int free_unit_for_search2,free_unit_for_search3,free_unit_for_search4;
+//		*/
+//		PM_GO * parent;
+//		int unknown_count;
+//		BF81 unknown;
+//		PMBF pm;
+//		BF16 dig_cells[81],emptyrows,emptycolumns;
+//		RBF27 unassigned_sets, changed_sets;
+//
+//		BF16 dig_reg[9][27];
+//		BF81 dig_reg81[9][27];
+//		char res_zero_based[81], // 0 to 8
+//	         puz_zero_based[81],
+//			 start_puz[82];
+//		int	 contradiction_in_set;
+//		// all above updated live at each assignment
+//		void AssignStandard(int dig,int cell);
+//		void CleanAll81(int dig,int cell);
+//		void CleanDyn(int dig,int cell);
+//		void Clean(BF16 & digs,USHORT cell);
+//		void Clean(USHORT dig,BF81 & cells);
+//		//
+//		void InitialAndFirstAssignmentx();
+//		int  Std_SetDigRegsAndSinglesx(int boxonly=0);  //12
+//		void DoInit_zhou_to_me();
+//		void Do_Zhou_Assign(int dig,int cell);
+//		void Do_Zhou_Row_Transfer(int dig,int irow,int vrow);
+//		void DoEndInitAfterZhou();
+//		int DoZhouCycle();
+//		int  Std_HiddenSingles(int boxonly);          //15
+//		int  Std_SinglesInCells();
+//		int  Std_LastCellInUnit();  //10
+//
+//		inline int IsAssigned(int digit,int unit)
+//			{return unassigned_sets.t[digit].Off(unit);}
+//		int Set(SCAND x); // return 0,1, contradiction_in_set if conflict
+//		//int IsGameLocked(PM_DATA & pmst,PMBF & bf);
+//		int SetsNowAssigned(RCAND * tass);
+//		int  FindNewOn(SCAND * tnewon,RCAND * tue,USHORT & nue);
+//
+//		int  ApplyOn(UCAND x,SCAND * telims);
+//		void TrackError(char * lib);
+//		void GetStdCharPuzzleStatus(char * zs);
+//		void ImageUn_myd(int ch);
+//		void ImageFloors_myd(BF16 ff);
+//		void ImageDump(char * lib);
+//		void ImageCandidats();
+//		void DynSet(PMBFONOFF & offon,PMBFONOFF & offonold); // create the dyn status for dynamic plus
+//		void PrepareSubGrids();
+//	}; //struct PM_DATA
 public:
 
 	struct HINT {  // combine all hints having the same "lowest"rating
@@ -317,18 +317,18 @@ public:
 		USHORT rating,rating_done;
 
 		inline void Set_Target(int r){ rating = (USHORT)r; rating_done = 0; }
-		inline int IsToDo(int r){ return (r <= rating); }
+		//inline int IsToDo(int r){ return (r <= rating); }
 		inline void Done(int r){ if (r > rating_done) rating_done = (USHORT)r; }
 
 
-		inline void Init() {rating=999;pmelims.SetAll_0();}
+		//inline void Init() {rating=999;pmelims.SetAll_0();}
 
 		int ChainLengthAdjusted(int base,int length);
 		int MaxLengthForRating(int newbase);
 		void Add(PM3X & elime, USHORT rate);
 		int AddCand(USHORT dig,USHORT cell,USHORT rate);
 	}hint;  
-	class XYCOM;
+	//class XYCOM;
 	enum Ex_End{
 		ex_end_nothing=0,  // process assumes 0 for nothing
 		ex_end_contradiction,
@@ -342,62 +342,62 @@ public:
 	};
 
 
-	class XYCOM{ // expansion common to base and nested levels
-	public:
-		PM_GO * parent;
-		PM_DATA * tpmd, // pointers to main and dynam expansion areas 
-			pmddyncycle; // tpmd[1] at the start of a new cycle
-
-		BF16 * dr,* drcells;// pointers to cells and regions in use
-		BF81  *dr81;
-
-		SCAND wc			; //current cand in progress  cell 7 + digit 4 +off 1
-		USHORT  wcoff,wcdig,wcell;
-		// data used in expansion processes 
-		PMBFONOFF onoff,onoff_back,onoffold,lastonoff, usednn;
-		PMBF biv_map,ybiv_map,cont, //expon,expoff,cont,
-			store_expoff[320]; //keep Init() results for multi chains
-
-		SCAND xtex[2*16*128 ],tcand[640],tback[150],tempty[9],	wtempty[9],
-			ttback[9][400]	;  // used inGet MAICS
-		UCAND telims[200], store_list[320],store_index[16*128],
-			tret1[400],ntret1,tret2[400],ntret2,itret;
-		RBF27 biv_sets,touched_sets_assigned,seen_set_empty;
-		BF81  biv_cells,touched_cells,touched_assigned,seen_cell_empty;
-		USHORT  ispluscycle,plusmode,firstnested,
-				nelims,npas,indtcand[50],ntcand,ntcandr,maxpas,
-				diag,diagplus,nstore,rating,nempty,wnempty,
-				plusnested,myplusnested,minlength;
-		Ex_End xend;
-
-		BUILDSTRING buildstring;
-		USHORT * texplain [2000],ntexplain,nttback[9];
-		EXPLAIN_BUFFER expbuf;
-
-		int ExplainRegion(int dest,int unit ,int dig);
-		int ExplainCell(int dest,int cell);
-
-		int LocateStep (SCAND x);
-		int LocateStepInd (int x);
-
-		void FishStoreOff(BF81 & wcum,SCAND wsc);
-		int FalseAddBack(SCAND sc);
-		void NewExpand(SCAND x); // start a new on/off to expand
-
-		int DynLiveAdd(SCAND sc);
-		void DynLiveAddBiv(SCAND sc,SCAND xorr);
-
-		void XYexpandDynamicStart(UCAND cand1,PM_DATA & myd);
-		void DynLastInSet();
-		void DynLastInCell();
-		void DynOnToOff(PM_DATA & myd);
-		void DiagTcandTexplain(int mainprocess=0);
-		void DynCycleInit();
-		int DynPlusPointingClaiming();
-		void DynPlusCycle();
-		int DynBackSkfrCom(UCAND x,USHORT * tret,PM_DATA & myd);
-
-	};
+//	class XYCOM{ // expansion common to base and nested levels
+//	public:
+//		PM_GO * parent;
+//		PM_DATA * tpmd, // pointers to main and dynam expansion areas
+//			pmddyncycle; // tpmd[1] at the start of a new cycle
+//
+//		BF16 * dr,* drcells;// pointers to cells and regions in use
+//		BF81  *dr81;
+//
+//		SCAND wc			; //current cand in progress  cell 7 + digit 4 +off 1
+//		USHORT  wcoff,wcdig,wcell;
+//		// data used in expansion processes
+//		PMBFONOFF onoff,onoff_back,onoffold,lastonoff, usednn;
+//		PMBF biv_map,ybiv_map,cont, //expon,expoff,cont,
+//			store_expoff[320]; //keep Init() results for multi chains
+//
+//		SCAND xtex[2*16*128 ],tcand[640],tback[150],tempty[9],	wtempty[9],
+//			ttback[9][400]	;  // used inGet MAICS
+//		UCAND telims[200], store_list[320],store_index[16*128],
+//			tret1[400],ntret1,tret2[400],ntret2,itret;
+//		RBF27 biv_sets,touched_sets_assigned,seen_set_empty;
+//		BF81  biv_cells,touched_cells,touched_assigned,seen_cell_empty;
+//		USHORT  ispluscycle,plusmode,firstnested,
+//				nelims,npas,indtcand[50],ntcand,ntcandr,maxpas,
+//				diag,diagplus,nstore,rating,nempty,wnempty,
+//				plusnested,myplusnested,minlength;
+//		Ex_End xend;
+//
+//		BUILDSTRING buildstring;
+//		USHORT * texplain [2000],ntexplain,nttback[9];
+//		EXPLAIN_BUFFER expbuf;
+//
+//		int ExplainRegion(int dest,int unit ,int dig);
+//		int ExplainCell(int dest,int cell);
+//
+//		int LocateStep (SCAND x);
+//		int LocateStepInd (int x);
+//
+//		void FishStoreOff(BF81 & wcum,SCAND wsc);
+//		int FalseAddBack(SCAND sc);
+//		void NewExpand(SCAND x); // start a new on/off to expand
+//
+//		int DynLiveAdd(SCAND sc);
+//		void DynLiveAddBiv(SCAND sc,SCAND xorr);
+//
+//		void XYexpandDynamicStart(UCAND cand1,PM_DATA & myd);
+//		void DynLastInSet();
+//		void DynLastInCell();
+//		void DynOnToOff(PM_DATA & myd);
+//		void DiagTcandTexplain(int mainprocess=0);
+//		void DynCycleInit();
+//		int DynPlusPointingClaiming();
+//		void DynPlusCycle();
+//		int DynBackSkfrCom(UCAND x,USHORT * tret,PM_DATA & myd);
+//
+//	}; //class XYCOM
 	
 /*
 	class  NESTED:public XYCOM{ // work area to search nested chains
