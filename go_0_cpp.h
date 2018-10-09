@@ -5,11 +5,11 @@ const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ",
 "fupd ", "hpair ", "htripl ", " ", " " };
 #include "go_0xx_cpp.h"
 #include "go_1xx_cpp.h"
-#include "go_2xx_cpp.h"
+//#include "go_2xx_cpp.h"
 #include "go_4xx_cpp.h"
- void Go_0xx(){
-		Go_c0();
-}
+// void Go_0xx(){
+//		Go_c0();
+//}
 void Go_sol_1xx(){
 	cout << "command 1xx command=" << sgo.command << endl;
 	pm_go.opprint =sgo.bfx[9];
@@ -21,20 +21,6 @@ void Go_sol_1xx(){
 	}
 	cerr << "back go-sol_1xx" << endl;
 
-}
-void Go_gen_2xx(){
-	cout << "command 2xx command=" << sgo.command << endl;
-	switch (sgo.command){
-	case 200: Go_c200(); break;// split the entry file in files 1;2;3
-	case 201: Go_c201(); break;// change n clues or 1 to n clues
-	case 202: Go_c202(); break;// gen symmetry of given
-	case 210:  Go_c210(); break;// create a seed on a pattern
-	case 211:  Go_c211(); break;// create a seed gen interim file
-	case 212:  Go_c212(); break;// create a seed gen interim file
-	case 217:  Go_c217(); break;// restore a data base (v1=n v2=guesses)
-	case 218:  Go_c218(); break;// extract played seeds
-	case 219:  Go_c219(); break;// restore a data base
-	}
 }
 void Go_can_3xx(){
 
@@ -86,11 +72,9 @@ void Go_0( ){
 		zn[ll + 5] = '3'; fout3.open(zn);
 	}
 	switch (sgo.command / 100){
-	case 0: Go_0xx(); break;
 	case 1: Go_sol_1xx(); break;
-	case 2: Go_gen_2xx(); break;
-	case 3: Go_can_3xx(); break;
-	case 4: Go_misc_4xx(); break;
+	//case 3: Go_can_3xx(); break;
+	//case 4: Go_misc_4xx(); break;
 	}
 	cerr << "go_0 return" << endl;
 }

@@ -1,115 +1,115 @@
 extern PM_GO pm_go;
 
-void Go_c0(){
-	if (!sgo.finput_name) return;
-	long long cptg[20];
-	memset(cptg, 0, sizeof cptg);
-	cout << "Go_0 entry " << sgo.finput_name << " input" << endl;
-	// temporary code extract solution with a known 17 6 6 5
-	finput.open(sgo.finput_name);
-	if (!finput.is_open()){
-		cerr << "error open file " << sgo.finput_name << endl;
-		return;
-	}
-	char ze[82]; ze[81] = 0;
-	uint32_t npuz = 0;
-	int nn[3] = { 0, 0, 0 };
-	long ttdeb = GetTimeMillis();
-	while (finput.GetPuzzle(ze)){
-		npuz++;
-		if (npuz < sgo.vx[0]) continue;
-		if (sgo.vx[8])cout << ze << "to process npuz=" << npuz << endl;
-		long tdeb = GetTimeMillis();
-#ifdef ZHOU_OLD
-		zhou[0].glb.diag = sgo.vx[9];
-		for (uint32_t i = 0; i< sgo.vx[2]; i++){
-			int ir = (zhou[0].CheckValidityQuick(ze));
-			nn[ir]++;
-			//			if (!ir && !i) cout << finput.ze << " invalide" << endl;
-		}
-		if (sgo.vx[8]){
-			cout << "loop sommaire nsol=" << zhou[0].glb.nsol << endl;
-			for (int i = 0; i < 10; i++) if (zhou[0].glb.cpt[i])
-				cout << zh_g_cpt[i] << "\t" << zhou[0].glb.cpt[i] << endl;
-			long tfin = GetTimeMillis();
-			cout << "puz loop t=" << tfin - tdeb << endl;
-
-		}
-
-		for (int i = 0; i < 10; i++) cptg[i] += zhou[0].glb.cpt[i];
-		if (npuz >= sgo.vx[1]) break;
-
-#else
-		zh_g.diag = sgo.vx[9];
-		for (uint32_t loop = 0; loop < sgo.vx[2]; loop++){
-			zh_g.InitCount(1);
-			if (0){
-				zh_g.Go_InitSudoku(ze);
-				if (sgo.vx[8] && zh_g.diag)cout << zh_g.puz << "morphed" << endl << endl;
-				//zh_g.Debug();
-				zhou[0].ComputeNext();
-			}
-			else{
-				zhou[0].CheckValidityQuick(ze);
-			}
-			if (!sgo.vx[8]) nn[zh_g.nsol]++;
-
-			if (1){
-				GINT16 tgiven[40];
-				int ngiven = 0;
-				for (int i = 0; i < 81; i++){
-					register int c = ze[i];
-					if (c<'1' || c>'9') continue;
-					c -= '1';
-					tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
-				}
-				cout << "check minimale=" << zhou[0].IsMinimale(tgiven,ngiven) << endl;
-				if (1) return;
-			}
-		}
-		if (sgo.vx[8]){
-			cout << "loop sommaire nsol=" << zh_g.nsol << endl;
-			for (int i = 0; i < 10; i++) if (zh_g.cpt[i])
-				cout << zh_g_cpt[i] << "\t" << zh_g.cpt[i] << endl;
-			long tfin = GetTimeMillis();
-			cout << "puz loop t=" << tfin - tdeb << endl;
-
-		}
-		for (int i = 0; i < 10; i++) cptg[i] += zh_g.cpt[i];
-		if (npuz >= sgo.vx[1]) break;
-
-#endif
-		if (1) return;
-	}
-	if (1) {
-		cout << "compte nsol 0;1;2 \t"
-			<< nn[0] << "\t" << nn[1] << "\t" << nn[2] << endl;
-		long ttfin = GetTimeMillis();
-		cout << "t=" << ttfin - ttdeb << endl;
-		for (int i = 0; i < 10; i++) if (cptg[i])
-			cout << zh_g_cpt[i] << "\t" << cptg[i] << endl;
-
-	}
-
-}
-
-int TWO_DIGITS::Hiden_Pairs_Box(){// etude recherche hidden biv
-	nhp = 0;
-	for (int iband = 0; iband < 3; iband++){
-		int band = bf2.bf.u32[iband];
-		if (!iband) continue;
-		for (int ibox = 0; ibox < 3; ibox++){
-			int box = band & tband_box[ibox];
-			if (_popcnt32(box) - 2) continue;
-			// if ! naked pair store it  set up naked pair 
-			int locked = box & zh_g.pairs.bf.u32[ibox];
-			if (box & (~locked)){// some eliminations 
-				zh_g.pairs.bf.u32[ibox] |= box;
-			}
-		}
-	}
-	return nhp;
-}
+//void Go_c0(){
+//	if (!sgo.finput_name) return;
+//	long long cptg[20];
+//	memset(cptg, 0, sizeof cptg);
+//	cout << "Go_0 entry " << sgo.finput_name << " input" << endl;
+//	// temporary code extract solution with a known 17 6 6 5
+//	finput.open(sgo.finput_name);
+//	if (!finput.is_open()){
+//		cerr << "error open file " << sgo.finput_name << endl;
+//		return;
+//	}
+//	char ze[82]; ze[81] = 0;
+//	uint32_t npuz = 0;
+//	int nn[3] = { 0, 0, 0 };
+//	long ttdeb = GetTimeMillis();
+//	while (finput.GetPuzzle(ze)){
+//		npuz++;
+//		if (npuz < sgo.vx[0]) continue;
+//		if (sgo.vx[8])cout << ze << "to process npuz=" << npuz << endl;
+//		long tdeb = GetTimeMillis();
+//#ifdef ZHOU_OLD
+//		zhou[0].glb.diag = sgo.vx[9];
+//		for (uint32_t i = 0; i< sgo.vx[2]; i++){
+//			int ir = (zhou[0].CheckValidityQuick(ze));
+//			nn[ir]++;
+//			//			if (!ir && !i) cout << finput.ze << " invalide" << endl;
+//		}
+//		if (sgo.vx[8]){
+//			cout << "loop sommaire nsol=" << zhou[0].glb.nsol << endl;
+//			for (int i = 0; i < 10; i++) if (zhou[0].glb.cpt[i])
+//				cout << zh_g_cpt[i] << "\t" << zhou[0].glb.cpt[i] << endl;
+//			long tfin = GetTimeMillis();
+//			cout << "puz loop t=" << tfin - tdeb << endl;
+//
+//		}
+//
+//		for (int i = 0; i < 10; i++) cptg[i] += zhou[0].glb.cpt[i];
+//		if (npuz >= sgo.vx[1]) break;
+//
+//#else
+//		zh_g.diag = sgo.vx[9];
+//		for (uint32_t loop = 0; loop < sgo.vx[2]; loop++){
+//			zh_g.InitCount(1);
+//			if (0){
+//				zh_g.Go_InitSudoku(ze);
+//				if (sgo.vx[8] && zh_g.diag)cout << zh_g.puz << "morphed" << endl << endl;
+//				//zh_g.Debug();
+//				zhou[0].ComputeNext();
+//			}
+//			else{
+//				zhou[0].CheckValidityQuick(ze);
+//			}
+//			if (!sgo.vx[8]) nn[zh_g.nsol]++;
+//
+//			if (1){
+//				GINT16 tgiven[40];
+//				int ngiven = 0;
+//				for (int i = 0; i < 81; i++){
+//					register int c = ze[i];
+//					if (c<'1' || c>'9') continue;
+//					c -= '1';
+//					tgiven[ngiven++].u16 =(uint16_t)( i | (c << 8));
+//				}
+//				cout << "check minimale=" << zhou[0].IsMinimale(tgiven,ngiven) << endl;
+//				if (1) return;
+//			}
+//		}
+//		if (sgo.vx[8]){
+//			cout << "loop sommaire nsol=" << zh_g.nsol << endl;
+//			for (int i = 0; i < 10; i++) if (zh_g.cpt[i])
+//				cout << zh_g_cpt[i] << "\t" << zh_g.cpt[i] << endl;
+//			long tfin = GetTimeMillis();
+//			cout << "puz loop t=" << tfin - tdeb << endl;
+//
+//		}
+//		for (int i = 0; i < 10; i++) cptg[i] += zh_g.cpt[i];
+//		if (npuz >= sgo.vx[1]) break;
+//
+//#endif
+//		if (1) return;
+//	}
+//	if (1) {
+//		cout << "compte nsol 0;1;2 \t"
+//			<< nn[0] << "\t" << nn[1] << "\t" << nn[2] << endl;
+//		long ttfin = GetTimeMillis();
+//		cout << "t=" << ttfin - ttdeb << endl;
+//		for (int i = 0; i < 10; i++) if (cptg[i])
+//			cout << zh_g_cpt[i] << "\t" << cptg[i] << endl;
+//
+//	}
+//
+//}
+//
+//int TWO_DIGITS::Hiden_Pairs_Box(){// etude recherche hidden biv
+//	nhp = 0;
+//	for (int iband = 0; iband < 3; iband++){
+//		int band = bf2.bf.u32[iband];
+//		if (!iband) continue;
+//		for (int ibox = 0; ibox < 3; ibox++){
+//			int box = band & tband_box[ibox];
+//			if (_popcnt32(box) - 2) continue;
+//			// if ! naked pair store it  set up naked pair
+//			int locked = box & zh_g.pairs.bf.u32[ibox];
+//			if (box & (~locked)){// some eliminations
+//				zh_g.pairs.bf.u32[ibox] |= box;
+//			}
+//		}
+//	}
+//	return nhp;
+//}
 
 void ZH_GLOBAL::Pm_Status(ZHOU * z){
 	zhou_current = z;
