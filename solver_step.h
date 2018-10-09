@@ -622,8 +622,8 @@ public:
 	int SolveGetLow61();// internal call valid puzzle 
 	int SolveGetLow44(int pack=0);// internal call valid puzzle 
 	void SolveSerate110();
-	void SolveSerate111();
-	void Solve199test();
+	//void SolveSerate111();
+	//void Solve199test();
 
 	void Quickrate(int x) ;
 	void Status(const char * lib, int option);

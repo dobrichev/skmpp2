@@ -3085,123 +3085,123 @@ void PM_GO::SolveSerate110() {
 exit_limit:
 	if (sgo.bfx[7] & 1)fout2 << zh_g.puz << endl;
 }
-void PM_GO::SolveSerate111(){// quick rate ans split serate mode
+//void PM_GO::SolveSerate111(){// quick rate ans split serate mode
+//
+//	zh_g.diag = opprint = opprint2 = 0;
+//	stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
+//	zh_g.nsol = 0; zh_g.lim = 1;
+//	ur_serate_mode = 1;
+//	sgo.vx[2] = 200;
+//	//phase 1 is it below 45
+//	while (cycle++ < 150) {
+//		if (stop_rating) 	return;// should never be skip it
+//		if (zhou_solve.cells_unsolved.isEmpty())break;
+//		zh_g.Init_Assign();
+//		if (rat_er < 28){ if (Next10_28()) continue; }
+//		else if (Next28()) continue;
+//		if (Next30_44()) continue;
+//		//cout << "goto phase2" << endl;
+//		goto phase2;// not solved
+//	}
+//	//cout << "end low " << rat_er / 10 << "." << rat_er % 10 << ";" << rat_ep / 10 << "." << rat_ep % 10
+//	//	<< ";" << rat_ed / 10 << "." << rat_ed % 10 << endl;
+//	// the puzzle is solved pack the results
+//	{
+//	int r_list[17] = { 10, 12, 15, 17, 20, 23, 25, 26,
+//		28, 30, 32, 34, 36, 38, 40, 42, 44 };
+//	// ignore it if already the same ER
+//	int i;
+//	for (i = 0; i < 17; i++) if (rat_er == r_list[i]) break;
+//	if (i > 16) return; // should never be
+//	uint32_t rr = ((rat_er * 100) + rat_ep) * 100 + rat_ed;
+//	if (rr > ratfound[i]){
+//		ratfound[i] = rr;
+//		fout1 << zh_g.puz << ";" << rat_er << ";" << rat_ep	<< ";" << rat_ed << endl;
+//		return;
+//	}
+//	return;// ask to ignore it
+//	}//end of int r_list scope
+//
+//	//=============================== rating over 44
+//
+//	while (cycle++ < 150) {
+//		//cout << "next cycle=" << cycle << endl;
+//		if (cycle > 148) { stop_rating = 7;	break; }
+//		if (stop_rating) 	break;
+//		if (zhou_solve.cells_unsolved.isEmpty())break;
+//		zh_g.Init_Assign();
+//		if (Next28()) continue;
+//		if (Next30_44()) continue;
+//	phase2:// entry phase 2 not solved below 45
+//		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
+//		if (0) {
+//			cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<next cycle=" << cycle
+//				<< " rating=" << rat_er
+//				<< " unsolved=" << zhou_solve.cells_unsolved.Count() << " assigned=" << assigned << endl;
+//			zhou_solve.ImageCandidats();
+//			//if (cycle > 10)opprint = opprint2 = 0xfe;
+//		}
+//		if (Rate45_52()) continue;
+//		if (Rate52())continue;
+//		if (Rate54())continue;
+//		if (Rate56())continue;
+//		if (Rate62())continue;
+//		SetupActiveDigits();
+//		XStatusPrepare();
+//		if (Rate65Xcycle(1)) continue;
+//		if (Rate66Xchain(1)) continue;
+//		if (rat_er < 75)// skip Y loop if XY chain can be applied
+//			if (ylsearch.Search(1)
+//				|| ylsearch.SearchOut(1)){		Quickrate(66); continue;	}
+//		if (Rate70_75(1)) continue;
+//		if (Rate75())continue;
+//		if (Rate76Nishio(1)) continue;
+//		if (xysearch.SearchMulti(1))	{ Quickrate(83); continue; }
+//		if (xysearch.SearchDyn(1))	{ Quickrate(85); continue; }
+//		stop_rating = 1;
+//		break;
+//		//next_cycle:;
+//	}
+//	//cout << "end std " << rat_er / 10 << "." << rat_er % 10 << ";" << rat_ep / 10 << "." << rat_ep % 10
+//	//	<< ";" << rat_ed / 10 << "." << rat_ed % 10 << " stop=" << stop_rating << endl;
+//	if (stop_rating){
+//		fout3 << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed  << "; unsolved" << stop_rating << endl;
+//	}
+//	else if (rat_ed==rat_er)
+//		fout_diam << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
+//	else if (rat_ep == rat_er)
+//		fout_pearl << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
+//	else if (rat_er<65)
+//		fout_l65  << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
+//	else fout2 << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
+//
+//}
 
-	zh_g.diag = opprint = opprint2 = 0;
-	stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
-	zh_g.nsol = 0; zh_g.lim = 1;
-	ur_serate_mode = 1;
-	sgo.vx[2] = 200;
-	//phase 1 is it below 45
-	while (cycle++ < 150) {
-		if (stop_rating) 	return;// should never be skip it
-		if (zhou_solve.cells_unsolved.isEmpty())break;
-		zh_g.Init_Assign();
-		if (rat_er < 28){ if (Next10_28()) continue; }
-		else if (Next28()) continue;
-		if (Next30_44()) continue;
-		//cout << "goto phase2" << endl;
-		goto phase2;// not solved 
-	}
-	//cout << "end low " << rat_er / 10 << "." << rat_er % 10 << ";" << rat_ep / 10 << "." << rat_ep % 10
-	//	<< ";" << rat_ed / 10 << "." << rat_ed % 10 << endl;
-	// the puzzle is solved pack the results
-	{
-	int r_list[17] = { 10, 12, 15, 17, 20, 23, 25, 26,
-		28, 30, 32, 34, 36, 38, 40, 42, 44 };
-	// ignore it if already the same ER
-	int i;
-	for (i = 0; i < 17; i++) if (rat_er == r_list[i]) break;
-	if (i > 16) return; // should never be
-	uint32_t rr = ((rat_er * 100) + rat_ep) * 100 + rat_ed;
-	if (rr > ratfound[i]){
-		ratfound[i] = rr;
-		fout1 << zh_g.puz << ";" << rat_er << ";" << rat_ep	<< ";" << rat_ed << endl;
-		return;
-	}
-	return;// ask to ignore it
-	}//end of int r_list scope
-
-	//=============================== rating over 44
-
-	while (cycle++ < 150) {
-		//cout << "next cycle=" << cycle << endl;
-		if (cycle > 148) { stop_rating = 7;	break; }
-		if (stop_rating) 	break;
-		if (zhou_solve.cells_unsolved.isEmpty())break;
-		zh_g.Init_Assign();
-		if (Next28()) continue;
-		if (Next30_44()) continue;
-	phase2:// entry phase 2 not solved below 45
-		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
-		if (0) {
-			cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<next cycle=" << cycle
-				<< " rating=" << rat_er
-				<< " unsolved=" << zhou_solve.cells_unsolved.Count() << " assigned=" << assigned << endl;
-			zhou_solve.ImageCandidats();
-			//if (cycle > 10)opprint = opprint2 = 0xfe;
-		}
-		if (Rate45_52()) continue;
-		if (Rate52())continue;
-		if (Rate54())continue;
-		if (Rate56())continue;
-		if (Rate62())continue;
-		SetupActiveDigits();
-		XStatusPrepare();
-		if (Rate65Xcycle(1)) continue;
-		if (Rate66Xchain(1)) continue;
-		if (rat_er < 75)// skip Y loop if XY chain can be applied
-			if (ylsearch.Search(1)
-				|| ylsearch.SearchOut(1)){		Quickrate(66); continue;	}
-		if (Rate70_75(1)) continue;
-		if (Rate75())continue;
-		if (Rate76Nishio(1)) continue; 
-		if (xysearch.SearchMulti(1))	{ Quickrate(83); continue; }
-		if (xysearch.SearchDyn(1))	{ Quickrate(85); continue; }
-		stop_rating = 1;
-		break;
-		//next_cycle:;
-	}
-	//cout << "end std " << rat_er / 10 << "." << rat_er % 10 << ";" << rat_ep / 10 << "." << rat_ep % 10
-	//	<< ";" << rat_ed / 10 << "." << rat_ed % 10 << " stop=" << stop_rating << endl;
-	if (stop_rating){
-		fout3 << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed  << "; unsolved" << stop_rating << endl;
-	}
-	else if (rat_ed==rat_er)		
-		fout_diam << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
-	else if (rat_ep == rat_er)
-		fout_pearl << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
-	else if (rat_er<65)
-		fout_l65  << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
-	else fout2 << zh_g.puz << ";" << rat_er << ";" << rat_ep << ";" << rat_ed << endl;
-
-}
-
-void PM_GO::Solve199test() {
-	//===========================================================
-	zh_g.diag = sgo.vx[9];	opprint = sgo.bfx[9];	opprint2 = sgo.bfx[8];
-	if (opprint2)cout << zh_g.zsol << "valid puzzle printoption=" << opprint << "  print2=" << opprint2 << endl;
-	stop_rating = cycle = assigned = 0;
-	rat_er = rat_ep = rat_ed = 0;
-	zh_g.nsol = 0; zh_g.lim = 1;
-	ur_serate_mode = 1;
-	while (cycle++ < 150) {
-		if (cycle > 148) { stop_rating = 7;	break; }
-		if (stop_rating) 	break;
-		if (zhou_solve.cells_unsolved.isEmpty()){
-			break;
-		}
-		zh_g.Init_Assign();
-		if (Next10_28()) continue;// clean easy cases
-		if (Rate30())continue;
-		Status("after Next30()", 0);
-		zhou_solve.Debug(1);
-		zh_g.active_floor = 0;// no elim
-		SetupActiveDigits();
-		cout << Char9out(zh_g.active_floor) << " active digits" << endl;
-		break;
-	}
-}
+//void PM_GO::Solve199test() {
+//	//===========================================================
+//	zh_g.diag = sgo.vx[9];	opprint = sgo.bfx[9];	opprint2 = sgo.bfx[8];
+//	if (opprint2)cout << zh_g.zsol << "valid puzzle printoption=" << opprint << "  print2=" << opprint2 << endl;
+//	stop_rating = cycle = assigned = 0;
+//	rat_er = rat_ep = rat_ed = 0;
+//	zh_g.nsol = 0; zh_g.lim = 1;
+//	ur_serate_mode = 1;
+//	while (cycle++ < 150) {
+//		if (cycle > 148) { stop_rating = 7;	break; }
+//		if (stop_rating) 	break;
+//		if (zhou_solve.cells_unsolved.isEmpty()){
+//			break;
+//		}
+//		zh_g.Init_Assign();
+//		if (Next10_28()) continue;// clean easy cases
+//		if (Rate30())continue;
+//		Status("after Next30()", 0);
+//		zhou_solve.Debug(1);
+//		zh_g.active_floor = 0;// no elim
+//		SetupActiveDigits();
+//		cout << Char9out(zh_g.active_floor) << " active digits" << endl;
+//		break;
+//	}
+//}
 
 
 //_________________________________________________________ Solve serate steps
