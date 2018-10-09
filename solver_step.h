@@ -611,14 +611,14 @@ public:
 	//int  SolveFinalFilter(char * puz);
 
 	//int Solve();
-	int SolveGetLow61();// internal call valid puzzle 
-	int SolveGetLow44(int pack=0);// internal call valid puzzle 
+	//int SolveGetLow61();// internal call valid puzzle
+	//int SolveGetLow44(int pack=0);// internal call valid puzzle
 	void SolveSerate110();
 	//void SolveSerate111();
 	//void Solve199test();
 
 	void Quickrate(int x) ;
-	void Status(const char * lib, int option);
+	//void Status(const char * lib, int option);
 	int Rate10(); int Rate12();	int Rate15(); int Rate17(); 
 	int Rate20(); int Rate23(); int Rate25(); int Rate26();
 	int Rate28(); int Rate30(); int Rate32(); int Rate34();

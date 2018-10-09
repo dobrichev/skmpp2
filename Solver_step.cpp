@@ -2940,69 +2940,69 @@ void PM_GO::Quickrate(int x) {// used in serate mode
 }
 //__________________________________________________________Solve
 
-void PM_GO::Status(const char * lib, int option){
-	if ((!option )||(opprint2 & option)){
-		cout <<"status "<< lib << endl;
-		zhou_solve.ImageCandidats();
-	}
-
-}
-int PM_GO::SolveGetLow44(int pack) {
-	//===========================================================
-	zh_g.diag = opprint = opprint2 = stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
-	zh_g.nsol = 0; zh_g.lim = 1;	ur_serate_mode = 1;
-	while (cycle++ < 150) {
-		if (cycle > 148 || stop_rating) return 0;
-		if (zhou_solve.cells_unsolved.isEmpty())break; // solved below 4.5
-		zh_g.Init_Assign();
-		if (rat_er < 28){ if (Next10_28()) continue; }
-		else if (Next28()) continue;
-		if (Next30_44()) continue;
-		//Status("after no WXYZwing", 2);
-		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
-		//if (Rate45_52()) continue;
-		if (!rat_ed)rat_er = rat_ep = rat_ed = 200; else rat_er = 200;
-		return 0;
-	}
-	// the puzzle is solved 
-	if (!pack) return 1;
-	int r_list[17] = { 10, 12, 15, 17, 20, 23, 25, 26,
-		28, 30, 32, 34, 36, 38, 40, 42, 44 };
-	// ignore it if already the same ER
-	if (rat_er < 45){// safety always true here
-		int i;
-		for (i = 0; i < 17; i++) if (rat_er == r_list[i]) break;
-		if (i > 16) return 0; // should never be
-		uint32_t rr = ((rat_er * 100) + rat_ep) * 100 + rat_ed;
-		if (rr > ratfound[i]){
-			ratfound[i] = rr;
-			return 1;
-		}
-		return -1;// ask to ignore it
-	}
-	return 0;
-}
-int PM_GO::SolveGetLow61() {
-	//===========================================================
-	zh_g.diag = opprint = opprint2 = stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
-	zh_g.nsol = 0; zh_g.lim = 1;	ur_serate_mode = 1;
-	while (cycle++ < 150) {
-		if (cycle > 148 || stop_rating) break;;
-		if (zhou_solve.cells_unsolved.isEmpty())return 0; // solved below 4.5
-		zh_g.Init_Assign();
-		if (rat_er < 28){ if (Next10_28()) continue; }
-		else if (Next28()) continue;
-		if (Next30_44()) continue;
-		//Status("after no WXYZwing", 2);
-		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
-		if (Rate45_52()) continue;
-		if (Rate52())continue;
-		if (Rate54())continue;
-		if (Rate56())continue;
-		break;
-	}
-	if (rat_ed) return rat_ed; else return 100;
-}
+//void PM_GO::Status(const char * lib, int option){
+//	if ((!option )||(opprint2 & option)){
+//		cout <<"status "<< lib << endl;
+//		zhou_solve.ImageCandidats();
+//	}
+//
+//}
+//int PM_GO::SolveGetLow44(int pack) {
+//	//===========================================================
+//	zh_g.diag = opprint = opprint2 = stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
+//	zh_g.nsol = 0; zh_g.lim = 1;	ur_serate_mode = 1;
+//	while (cycle++ < 150) {
+//		if (cycle > 148 || stop_rating) return 0;
+//		if (zhou_solve.cells_unsolved.isEmpty())break; // solved below 4.5
+//		zh_g.Init_Assign();
+//		if (rat_er < 28){ if (Next10_28()) continue; }
+//		else if (Next28()) continue;
+//		if (Next30_44()) continue;
+//		//Status("after no WXYZwing", 2);
+//		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
+//		//if (Rate45_52()) continue;
+//		if (!rat_ed)rat_er = rat_ep = rat_ed = 200; else rat_er = 200;
+//		return 0;
+//	}
+//	// the puzzle is solved
+//	if (!pack) return 1;
+//	int r_list[17] = { 10, 12, 15, 17, 20, 23, 25, 26,
+//		28, 30, 32, 34, 36, 38, 40, 42, 44 };
+//	// ignore it if already the same ER
+//	if (rat_er < 45){// safety always true here
+//		int i;
+//		for (i = 0; i < 17; i++) if (rat_er == r_list[i]) break;
+//		if (i > 16) return 0; // should never be
+//		uint32_t rr = ((rat_er * 100) + rat_ep) * 100 + rat_ed;
+//		if (rr > ratfound[i]){
+//			ratfound[i] = rr;
+//			return 1;
+//		}
+//		return -1;// ask to ignore it
+//	}
+//	return 0;
+//}
+//int PM_GO::SolveGetLow61() {
+//	//===========================================================
+//	zh_g.diag = opprint = opprint2 = stop_rating = cycle = assigned = rat_er = rat_ep = rat_ed = 0;
+//	zh_g.nsol = 0; zh_g.lim = 1;	ur_serate_mode = 1;
+//	while (cycle++ < 150) {
+//		if (cycle > 148 || stop_rating) break;;
+//		if (zhou_solve.cells_unsolved.isEmpty())return 0; // solved below 4.5
+//		zh_g.Init_Assign();
+//		if (rat_er < 28){ if (Next10_28()) continue; }
+//		else if (Next28()) continue;
+//		if (Next30_44()) continue;
+//		//Status("after no WXYZwing", 2);
+//		//to test Rate45_52_Fast () smal additional risk with multi URs ULs
+//		if (Rate45_52()) continue;
+//		if (Rate52())continue;
+//		if (Rate54())continue;
+//		if (Rate56())continue;
+//		break;
+//	}
+//	if (rat_ed) return rat_ed; else return 100;
+//}
 
 void PM_GO::SolveSerate110() {
 	//===========================================================
