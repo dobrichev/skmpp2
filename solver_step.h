@@ -242,9 +242,6 @@ public:
 	}
 };
 
-
-
-class PM_GO;
 struct TWO_DIGITS{// one of 36 possible 2 digits 
 	BF128 bf2,bf2d;
 	int free_units,digit[2],nhp;
@@ -253,69 +250,65 @@ struct TWO_DIGITS{// one of 36 possible 2 digits
 	int Hiden_Pairs_Rows();
 
 };
-/*
-*/
-
-struct PM_DATA{ // keep it open for dynamic expansion process
-
-	/* 
-	PMBF pm,pm_diag;
-	int free_unit_per_digit [9]; // 9 27 bits fields
-	int unknown_count_per_unit [27];
-	int locked_count_per_unit [27];
-	int free_unit_for_search2,free_unit_for_search3,free_unit_for_search4;
-	*/
-	PM_GO * parent;
-	int unknown_count;
-	BF81 unknown;
-	PMBF pm;
-	BF16 dig_cells[81],emptyrows,emptycolumns;
-	RBF27 unassigned_sets, changed_sets;
-
-	BF16 dig_reg[9][27];
-	BF81 dig_reg81[9][27];
-	char res_zero_based[81], // 0 to 8
-         puz_zero_based[81],
-		 start_puz[82];
-	int	 contradiction_in_set;
-	// all above updated live at each assignment
-	void AssignStandard(int dig,int cell);
-	void CleanAll81(int dig,int cell);
-	void CleanDyn(int dig,int cell);
-	void Clean(BF16 & digs,USHORT cell);
-	void Clean(USHORT dig,BF81 & cells);
-	//
-	void InitialAndFirstAssignmentx();
-	int  Std_SetDigRegsAndSinglesx(int boxonly=0);  //12
-	void DoInit_zhou_to_me(); 
-	void Do_Zhou_Assign(int dig,int cell);
-	void Do_Zhou_Row_Transfer(int dig,int irow,int vrow);
-	void DoEndInitAfterZhou();
-	int DoZhouCycle();
-	int  Std_HiddenSingles(int boxonly);          //15
-	int  Std_SinglesInCells();
-	int  Std_LastCellInUnit();  //10
-
-	inline int IsAssigned(int digit,int unit)
-		{return unassigned_sets.t[digit].Off(unit);}
-	int Set(SCAND x); // return 0,1, contradiction_in_set if conflict
-	int IsGameLocked(PM_DATA & pmst,PMBF & bf);
-	int SetsNowAssigned(RCAND * tass);
-	int  FindNewOn(SCAND * tnewon,RCAND * tue,USHORT & nue);
-
-	int  ApplyOn(UCAND x,SCAND * telims);
-	void TrackError(char * lib);
-	void GetStdCharPuzzleStatus(char * zs);
-	void ImageUn_myd(int ch);
-	void ImageFloors_myd(BF16 ff);
-	void ImageDump(char * lib);
-	void ImageCandidats();
-	void DynSet(PMBFONOFF & offon,PMBFONOFF & offonold); // create the dyn status for dynamic plus
-	void PrepareSubGrids();
-};
-
 
 class PM_GO{
+	struct PM_DATA{ // keep it open for dynamic expansion process
+
+		/*
+		PMBF pm,pm_diag;
+		int free_unit_per_digit [9]; // 9 27 bits fields
+		int unknown_count_per_unit [27];
+		int locked_count_per_unit [27];
+		int free_unit_for_search2,free_unit_for_search3,free_unit_for_search4;
+		*/
+		PM_GO * parent;
+		int unknown_count;
+		BF81 unknown;
+		PMBF pm;
+		BF16 dig_cells[81],emptyrows,emptycolumns;
+		RBF27 unassigned_sets, changed_sets;
+
+		BF16 dig_reg[9][27];
+		BF81 dig_reg81[9][27];
+		char res_zero_based[81], // 0 to 8
+	         puz_zero_based[81],
+			 start_puz[82];
+		int	 contradiction_in_set;
+		// all above updated live at each assignment
+		void AssignStandard(int dig,int cell);
+		void CleanAll81(int dig,int cell);
+		void CleanDyn(int dig,int cell);
+		void Clean(BF16 & digs,USHORT cell);
+		void Clean(USHORT dig,BF81 & cells);
+		//
+		void InitialAndFirstAssignmentx();
+		int  Std_SetDigRegsAndSinglesx(int boxonly=0);  //12
+		void DoInit_zhou_to_me();
+		void Do_Zhou_Assign(int dig,int cell);
+		void Do_Zhou_Row_Transfer(int dig,int irow,int vrow);
+		void DoEndInitAfterZhou();
+		int DoZhouCycle();
+		int  Std_HiddenSingles(int boxonly);          //15
+		int  Std_SinglesInCells();
+		int  Std_LastCellInUnit();  //10
+
+		inline int IsAssigned(int digit,int unit)
+			{return unassigned_sets.t[digit].Off(unit);}
+		int Set(SCAND x); // return 0,1, contradiction_in_set if conflict
+		int IsGameLocked(PM_DATA & pmst,PMBF & bf);
+		int SetsNowAssigned(RCAND * tass);
+		int  FindNewOn(SCAND * tnewon,RCAND * tue,USHORT & nue);
+
+		int  ApplyOn(UCAND x,SCAND * telims);
+		void TrackError(char * lib);
+		void GetStdCharPuzzleStatus(char * zs);
+		void ImageUn_myd(int ch);
+		void ImageFloors_myd(BF16 ff);
+		void ImageDump(char * lib);
+		void ImageCandidats();
+		void DynSet(PMBFONOFF & offon,PMBFONOFF & offonold); // create the dyn status for dynamic plus
+		void PrepareSubGrids();
+	};
 public:
 
 	struct HINT {  // combine all hints having the same "lowest"rating
