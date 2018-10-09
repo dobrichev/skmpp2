@@ -1,7 +1,7 @@
 #include "sk_t.h"
 #include "solver_step.h"
 #include "Zhn.h"
-#include "Zhtables_cpp.h" // also describes the pattern
+//#include "Zhtables.cpp" // also describes the pattern
 
 extern PM_GO pm_go;
 ZHOU zhou[50]; // must host main brute force plus minimality analysis and recursive generation
@@ -202,13 +202,13 @@ void ZH_GLOBAL::Morph_digits(GINT16 * td, int nc){// must be in line with the mo
 		tgiven[ic].u8[1] =(uint8_t) x3_dmap_inv[tgiven[ic].u8[1]];
 }
 int ZH_GLOBAL::InitSudoku(){ return zhou[0].InitSudoku(tgiven,ngiven); }
-int ZH_GLOBAL::Go_InitSudoku(char * ze){
-	MorphPat(ze);
-	if (diag)cout << puz << " morphed puzzle" << endl;
-	Morph_digits(1);
-	//if (diag)Debug();
-	return InitSudoku();
-}
+//int ZH_GLOBAL::Go_InitSudoku(char * ze){
+//	MorphPat(ze);
+//	if (diag)cout << puz << " morphed puzzle" << endl;
+//	Morph_digits(1);
+//	//if (diag)Debug();
+//	return InitSudoku();
+//}
 int ZH_GLOBAL::Go_InitSudoku_NoMorph(char * ze){
 	ze[81] = 0;
 	strcpy(puz, ze);
@@ -338,32 +338,32 @@ void ZHOU::Naked_Pairs_Seen(){
 		}
 	}
 }
-void ZHOU::XW_template(int idig){
-	int rx2 = zh_g.row_col_x2[idig][0]/*, cx2 = zh_g.row_col_x2[idig][1]*/;
-	int tr[9], nr = 0, nfree = zh_g.unsolved_r_count[idig];
-	if (nfree - _popcnt32(rx2) < 3) return;
-	int *rows = zh_g.dig_rows[idig]/*, *cols = zh_g.dig_cols[idig]*/;
-	// collect all rows/cols 2 cells
-	for (int irow = 0; irow < 9; irow++){
-		if (rx2 & (1 << irow))continue;
-		if (_popcnt32(rows[irow]) == 2)tr[nr++] = irow;
-	}
-	if (nr < 2) return;
-	for (int ir1 = 0; ir1 < nr - 1; ir1++){
-		register int R = rows[tr[ir1]];
-		for (int ir2 = ir1 + 1; ir2 < nr; ir2++){
-			if (R != rows[tr[ir2]]) continue;
-			// new XW lock it  and check if active
-			//Find column mask
-			// aply column and row mask
-			//check if active and exit if active
-			// exit if now <3
-			// next ir1 anyway
-
-		}
-
-	}
-}
+//void ZHOU::XW_template(int idig){
+//	int rx2 = zh_g.row_col_x2[idig][0]/*, cx2 = zh_g.row_col_x2[idig][1]*/;
+//	int tr[9], nr = 0, nfree = zh_g.unsolved_r_count[idig];
+//	if (nfree - _popcnt32(rx2) < 3) return;
+//	int *rows = zh_g.dig_rows[idig]/*, *cols = zh_g.dig_cols[idig]*/;
+//	// collect all rows/cols 2 cells
+//	for (int irow = 0; irow < 9; irow++){
+//		if (rx2 & (1 << irow))continue;
+//		if (_popcnt32(rows[irow]) == 2)tr[nr++] = irow;
+//	}
+//	if (nr < 2) return;
+//	for (int ir1 = 0; ir1 < nr - 1; ir1++){
+//		register int R = rows[tr[ir1]];
+//		for (int ir2 = ir1 + 1; ir2 < nr; ir2++){
+//			if (R != rows[tr[ir2]]) continue;
+//			// new XW lock it  and check if active
+//			//Find column mask
+//			// aply column and row mask
+//			//check if active and exit if active
+//			// exit if now <3
+//			// next ir1 anyway
+//
+//		}
+//
+//	}
+//}
 
 
 /*
@@ -610,44 +610,44 @@ int ZHOU::RateSingle(GINT64 * t, int nt){// look if a single appears after a hid
 	}
 	return zh_g.nsingles;
 }
-int ZHOU::RateSingleDiag(GINT64 * t, int nt){// look if a single appears after a hidden locked set in column
-	if (!nt) return 0;
-	for (int i = 0; i < nt; i++){
-		GINT64 w = t[i];
-		register int R = w.u32[1]; // cells pattern of the locked set
-		int iband = w.u16[0], digs = w.u16[1];
-		for (int idig = 0, dig = 1; idig < 9; dig <<= 1, idig++){
-			if (dig &digs)continue;// skip digs of the hidden set
-			BF128 fd = zh_g.pmdiag.pmdig[idig];
-			int fdb = fd.bf.u32[iband];
-			if (!(fdb&R)) continue;// no clearing    
-			for (int iboxr = 0; iboxr < 3; iboxr++){// try a box
-				int box = fdb & tband_box[iboxr];		if (!(box&R))continue;
-				int hidden = box & (~R);
-				if (_popcnt32(hidden) == 1)	zh_g.AddSingleDiag(iband, hidden);
-			}
-			for (int irow = 0; irow < 3; irow++){// try a row
-				int row = fdb & tband_row[irow];		if (!(row&R))continue;
-				int hidden = row & (~R);
-				if (_popcnt32(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
-			}
-			for (int icol = 0, col = Zhoucol; icol < 9; icol++, col <<= 1){// try a column
-				int Rcol = R & col; if (!Rcol) continue;
-				if (!(fdb & Rcol)) continue;
-				int * p = tperm3[iband],
-					b0 = fdb & col & (~R),
-					b1 = fd.bf.u32[p[1]] & col,
-					b2 = fd.bf.u32[p[2]] & col;
-				if ((_popcnt32(b0) + _popcnt32(b1) + _popcnt32(b2)) != 1) continue;
-				if (b1)zh_g.AddSingleDiag(p[1], b1);
-				else if (b2)zh_g.AddSingleDiag(p[2], b2);
-				else zh_g.AddSingleDiag(iband, b0);
-			}
-			//cout << "apr�s col zh_g.nsingles=" << zh_g.nsingles << endl;
-		}
-	}
-	return zh_g.nsingles;
-}
+//int ZHOU::RateSingleDiag(GINT64 * t, int nt){// look if a single appears after a hidden locked set in column
+//	if (!nt) return 0;
+//	for (int i = 0; i < nt; i++){
+//		GINT64 w = t[i];
+//		register int R = w.u32[1]; // cells pattern of the locked set
+//		int iband = w.u16[0], digs = w.u16[1];
+//		for (int idig = 0, dig = 1; idig < 9; dig <<= 1, idig++){
+//			if (dig &digs)continue;// skip digs of the hidden set
+//			BF128 fd = zh_g.pmdiag.pmdig[idig];
+//			int fdb = fd.bf.u32[iband];
+//			if (!(fdb&R)) continue;// no clearing
+//			for (int iboxr = 0; iboxr < 3; iboxr++){// try a box
+//				int box = fdb & tband_box[iboxr];		if (!(box&R))continue;
+//				int hidden = box & (~R);
+//				if (_popcnt32(hidden) == 1)	zh_g.AddSingleDiag(iband, hidden);
+//			}
+//			for (int irow = 0; irow < 3; irow++){// try a row
+//				int row = fdb & tband_row[irow];		if (!(row&R))continue;
+//				int hidden = row & (~R);
+//				if (_popcnt32(hidden) == 1) zh_g.AddSingleDiag(iband, hidden);
+//			}
+//			for (int icol = 0, col = Zhoucol; icol < 9; icol++, col <<= 1){// try a column
+//				int Rcol = R & col; if (!Rcol) continue;
+//				if (!(fdb & Rcol)) continue;
+//				int * p = tperm3[iband],
+//					b0 = fdb & col & (~R),
+//					b1 = fd.bf.u32[p[1]] & col,
+//					b2 = fd.bf.u32[p[2]] & col;
+//				if ((_popcnt32(b0) + _popcnt32(b1) + _popcnt32(b2)) != 1) continue;
+//				if (b1)zh_g.AddSingleDiag(p[1], b1);
+//				else if (b2)zh_g.AddSingleDiag(p[2], b2);
+//				else zh_g.AddSingleDiag(iband, b0);
+//			}
+//			//cout << "apr�s col zh_g.nsingles=" << zh_g.nsingles << endl;
+//		}
+//	}
+//	return zh_g.nsingles;
+//}
 int ZHOU::RateSingleBox(GINT64 * t, int nt){// look if a single appears after a hidden locked set
 	if (!nt) return 0;
 	for (int i = 0; i < nt; i++){
@@ -2020,15 +2020,15 @@ int ZHOU::InitSudoku(GINT16 * t, int n){// if morph, done before
 	for (int i = 0; i<9; i++)  FD[i][0] &= w | Digit_cell_Assigned[i];
 	return 0;
 }
-int ZHOU::InitSudoku(char * zpuz, int morph){
-	if (!morph){
-		zh_g.NoMorph();
-		__movsb((unsigned char *)zh_g.puz, (unsigned char *)zpuz, 82);
-	}
-	else zh_g.MorphPat(zpuz);
-	zh_g.Morph_digits(morph);
-	return InitSudoku(zh_g.tgiven, zh_g.ngiven);
-}
+//int ZHOU::InitSudoku(char * zpuz, int morph){
+//	if (!morph){
+//		zh_g.NoMorph();
+//		__movsb((unsigned char *)zh_g.puz, (unsigned char *)zpuz, 82);
+//	}
+//	else zh_g.MorphPat(zpuz);
+//	zh_g.Morph_digits(morph);
+//	return InitSudoku(zh_g.tgiven, zh_g.ngiven);
+//}
 char * ZHOU::SetKnown(char * zs){
 	strcpy(zs, empty_puzzle);
 	BF128  fd;
@@ -2069,42 +2069,42 @@ Fd->setBit(xcell); // restore bit for digit assigned
 int ZHOU::Isvalid(){ // usually after init 2 steps
 	zh_g.nsol = 0; zh_g.lim = 1; ComputeNext();  return zh_g.nsol;
 }
-int ZHOU::CheckValidityQuick(char *puzzle){
-	zh_g.nsol = 0; zh_g.lim = 1;
-	if (zh_g.Go_InitSudoku_NoMorph(puzzle)) return 0;
-	//if (zh_g.Go_InitSudoku(puzzle)) return 0;;
-	//if (ApplySingleOrEmptyCells())	return 0; // pas bon
-	if (zh_g.diag ) {
-		cout << "opening situation after init"  << endl;
-		Debug(1);
-		ImageCandidats();
-		if (zh_g.diag>2) return 0;
-	}
-	ComputeNext();
-	return zh_g.nsol;
-}
-int ZHOU::IsMinimale(GINT16 * to, int no){// assumed checked valid before
-	zh_g.lim = 0;
-	GINT16 td[81], cx;
-	int nd;
-	for (int i = 0; i < no; i++){
-		nd = 0;
-		for (int i2 = 0; i2 < no; i2++){
-			if (i2 - i)td[nd++] = to[i2];
-			else cx = to[i2];
-		}
-		zh_g.nsol = 0;
-		InitSudoku(td, nd); // always valid
-		ClearCandidate_c(cx.u8[1], cx.u8[0]);// clean the valid known
-		//cout << "check minimale step" << endl;
-		//ImageCandidats();
-		ComputeNext();
-		if (!zh_g.nsol) return 0; //could check also not valid
-	}
-	return 1;
-}
+//int ZHOU::CheckValidityQuick(char *puzzle){
+//	zh_g.nsol = 0; zh_g.lim = 1;
+//	if (zh_g.Go_InitSudoku_NoMorph(puzzle)) return 0;
+//	//if (zh_g.Go_InitSudoku(puzzle)) return 0;;
+//	//if (ApplySingleOrEmptyCells())	return 0; // pas bon
+//	if (zh_g.diag ) {
+//		cout << "opening situation after init"  << endl;
+//		Debug(1);
+//		ImageCandidats();
+//		if (zh_g.diag>2) return 0;
+//	}
+//	ComputeNext();
+//	return zh_g.nsol;
+//}
+//int ZHOU::IsMinimale(GINT16 * to, int no){// assumed checked valid before
+//	zh_g.lim = 0;
+//	GINT16 td[81], cx;
+//	int nd;
+//	for (int i = 0; i < no; i++){
+//		nd = 0;
+//		for (int i2 = 0; i2 < no; i2++){
+//			if (i2 - i)td[nd++] = to[i2];
+//			else cx = to[i2];
+//		}
+//		zh_g.nsol = 0;
+//		InitSudoku(td, nd); // always valid
+//		ClearCandidate_c(cx.u8[1], cx.u8[0]);// clean the valid known
+//		//cout << "check minimale step" << endl;
+//		//ImageCandidats();
+//		ComputeNext();
+//		if (!zh_g.nsol) return 0; //could check also not valid
+//	}
+//	return 1;
+//}
 
-#include "Zhn_doc_debug_cpp.h"
+//#include "Zhn_doc_debug.cpp"
 /*Zhn Control of flow
 -b9- use of hidden pairs triplets zhg_modeguess
  abc  a use pairs  b use triplets c use pairs not hidden pair
@@ -2511,24 +2511,24 @@ int ZHOU::SolveHiddenTriplet_Box_Row(){// look a hidden triplet in row or box
 	zh_g.cpt[7] += vret;
 	return vret;
 }
-int  ZHOU::UpdateFloor(){
-	register uint32_t Shrink = 1, r_free, B, A, S, loop;
-loop_upd:
-	loop = 0;
-	if (FD[0][0].bf.u64[0] != FD[0][1].bf.u64[0]
-		|| FD[0][0].bf.u32[2] != FD[0][1].bf.u32[2]){
-		r_free = FD[0][0].bf.u32[3];
-		UPD_012(0, 0, 1, 2)	if ((r_free & 7) != S){
-			r_free &= 0770 | S;	loop = 1;	}	}
-	    UPD_012(0, 1, 0, 2)	if (((r_free >> 3) & 7) != S){
-		    r_free &= 0707 | (S << 3);	loop = 1;	}}
-        UPD_012(0, 2, 0, 1)	if (((r_free >> 6) & 7) != S){
-	        r_free &= 077 | (S << 6);	loop = 1;}}
-		FD[0][0].bf.u32[3] = r_free;
-	}
-	if (loop) goto loop_upd;// nothing to do in the next cycle
-	return 1;
-}
+//int  ZHOU::UpdateFloor(){
+//	register uint32_t Shrink = 1, r_free, B, A, S, loop;
+//loop_upd:
+//	loop = 0;
+//	if (FD[0][0].bf.u64[0] != FD[0][1].bf.u64[0]
+//		|| FD[0][0].bf.u32[2] != FD[0][1].bf.u32[2]){
+//		r_free = FD[0][0].bf.u32[3];
+//		UPD_012(0, 0, 1, 2)	if ((r_free & 7) != S){
+//			r_free &= 0770 | S;	loop = 1;	}	}
+//	    UPD_012(0, 1, 0, 2)	if (((r_free >> 3) & 7) != S){
+//		    r_free &= 0707 | (S << 3);	loop = 1;	}}
+//        UPD_012(0, 2, 0, 1)	if (((r_free >> 6) & 7) != S){
+//	        r_free &= 077 | (S << 6);	loop = 1;}}
+//		FD[0][0].bf.u32[3] = r_free;
+//	}
+//	if (loop) goto loop_upd;// nothing to do in the next cycle
+//	return 1;
+//}
 void ZHOU::StartFloor(int digit, ZHOU & o){
 	//cout << "start floor for digit " << digit + 1 << endl;
 	zh_g.current_digit = digit;

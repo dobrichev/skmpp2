@@ -1,3 +1,11 @@
+#include "sk_t.h"
+#include "solver_step.h"
+#include "Zhn.h"
+//#include "Zhtables.cpp" // also describes the pattern
+
+extern PM_GO pm_go;
+extern ZHOU zhou_i;
+
 /*
 LastCell=10,				///< last cell in row column box
 SingleBox=12,               ///< single in box
@@ -103,37 +111,37 @@ void ZHOU::ImageCandidats() {// only active digits ??
 
 }
 
-void ZHOU::ImageCandidats_b3() {// only active digits ??
-	int dig_cells[81];for(int i=54;i<81;i++) dig_cells[i]=GetAllDigits(i);
-	int i, j, l, lcol[9], tcol = 0,ncand=0;
-	cout <<"PM map bande 3"<<endl<<endl;
-	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
-		lcol[i] = 2;    // 2  mini tous chiffres impos�s
-		for(j = 6; j < 9; j++) {
-			l = _popcnt32(dig_cells[9 * j + i]);
-			if(l > lcol[i])       lcol[i] = l;
-		}
-		tcol += lcol[i];
-	}
-	for (i = 0; i < 9; i++) {
-		if ((i == 3) || (i == 6))cout << "|";
-		cout << (char)('A' + i) << Blancs(lcol[i], 1);
-	}
-	cout << endl;
-	for (i = 6; i < 9; i++) { // maintenant indice ligne
-		for (j = 0; j < 9; j++) {
-			if ((j == 3) || (j == 6))cout << "|";
-			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = _popcnt32(digs);
-			ncand += ndigs;
-			for (int id = 0; id < 9; id++)if (digs & (1 << id))
-				cout << id + 1;
-			cout << Blancs(lcol[j] + 1 - ndigs, 1);
-		} // end for j
-		cout << endl;
-	} // end for i
-	cout << endl;
-
-}
+//void ZHOU::ImageCandidats_b3() {// only active digits ??
+//	int dig_cells[81];for(int i=54;i<81;i++) dig_cells[i]=GetAllDigits(i);
+//	int i, j, l, lcol[9], tcol = 0,ncand=0;
+//	cout <<"PM map bande 3"<<endl<<endl;
+//	for(i = 0; i < 9; i++) {  // attention ici i indice colonne
+//		lcol[i] = 2;    // 2  mini tous chiffres impos�s
+//		for(j = 6; j < 9; j++) {
+//			l = _popcnt32(dig_cells[9 * j + i]);
+//			if(l > lcol[i])       lcol[i] = l;
+//		}
+//		tcol += lcol[i];
+//	}
+//	for (i = 0; i < 9; i++) {
+//		if ((i == 3) || (i == 6))cout << "|";
+//		cout << (char)('A' + i) << Blancs(lcol[i], 1);
+//	}
+//	cout << endl;
+//	for (i = 6; i < 9; i++) { // maintenant indice ligne
+//		for (j = 0; j < 9; j++) {
+//			if ((j == 3) || (j == 6))cout << "|";
+//			int cell = 9 * i + j, digs = dig_cells[cell], ndigs = _popcnt32(digs);
+//			ncand += ndigs;
+//			for (int id = 0; id < 9; id++)if (digs & (1 << id))
+//				cout << id + 1;
+//			cout << Blancs(lcol[j] + 1 - ndigs, 1);
+//		} // end for j
+//		cout << endl;
+//	} // end for i
+//	cout << endl;
+//
+//}
 
 
 

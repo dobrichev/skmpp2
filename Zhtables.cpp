@@ -10,14 +10,17 @@ one 128 bit field per digit.
  so a pattern very similar to the digit map.
 
 */
-const extern int TblRowUnsolved[8] = {// rows where no single is found  000 to 111
+#include "sk_t.h"
+#include "Zhn.h"
+
+const int ZHOU::TblRowUnsolved[8] = {// rows where no single is found  000 to 111
 	00, 0777, 0777000, 0777777, 0777000000, 0777000777, 0777777000, 0777777777 };
 
-const int TblRowMask[8] = {// rows where single  found  000 to 111
+const int ZHOU::TblRowMask[8] = {// rows where single  found  000 to 111
 	0777777777, 0777777000, 0777000777, 0777000000, 0777777, 0777000, 0777, 00, };
-const int Tblstartblock[27] = { 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, };
+const int ZHOU::Tblstartblock[27] = { 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, 0, 27, 54, };
 
-const int TblShrinkMask[512] = {
+const int ZHOU::TblShrinkMask[512] = {
 	0, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3,
 	2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3,
 	4, 5, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 7, 7, 7, 7, 6, 7, 7, 7, 7, 7, 7, 7, 6, 7, 7, 7, 7, 7, 7, 7,
@@ -37,7 +40,7 @@ const int TblShrinkMask[512] = {
 };
 
 
-const int TblComplexMask[512] = {// keep mini rows still valid 
+const int ZHOU::TblComplexMask[512] = {// keep mini rows still valid
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 07007070700, 07707070700, 07007770700, 07707770700,
@@ -98,7 +101,7 @@ const int TblComplexMask[512] = {// keep mini rows still valid
 };
 
 
-const int TblMaskSingle[512] = {// kill in other blocks locked column /box
+const int ZHOU::TblMaskSingle[512] = {// kill in other blocks locked column /box
 	07777777777, 07776776776, 07775775775, 07777777777, 07773773773, 07777777777, 07777777777, 07777777777,
 	07767767767, 07766766766, 07765765765, 07767767767, 07763763763, 07767767767, 07767767767, 07767767767,
 	07757757757, 07756756756, 07755755755, 07757757757, 07753753753, 07757757757, 07757757757, 07757757757,
@@ -167,7 +170,7 @@ const int TblMaskSingle[512] = {// kill in other blocks locked column /box
 };
 
 
-const int TblMaskDouble[512] = {// kill for locked in box / column
+const int ZHOU::TblMaskDouble[512] = {// kill for locked in box / column
 	07777777777, 07777777777, 07777777777, 07774774774, 07777777777, 07772772772, 07771771771, 07777777777,
 	07777777777, 07777777777, 07777777777, 07774774774, 07777777777, 07772772772, 07771771771, 07777777777,
 	07777777777, 07777777777, 07777777777, 07774774774, 07777777777, 07772772772, 07771771771, 07777777777,
@@ -235,7 +238,7 @@ const int TblMaskDouble[512] = {// kill for locked in box / column
 };
 
 
-const int TblColumnSingle[512] = {// single in column applied to shrinked bloc
+const int ZHOU::TblColumnSingle[512] = {// single in column applied to shrinked bloc
 	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
 	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
 	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
@@ -270,7 +273,7 @@ const int TblColumnSingle[512] = {// single in column applied to shrinked bloc
 	00, 0111, 0111, 00, 0111, 00, 00, 00, 00, 0111, 0111, 00, 0111, 00, 00, 00,
 
 };
-const int TblShrinkSingle[512] = {// keep only rows with single
+const int ZHOU::TblShrinkSingle[512] = {// keep only rows with single
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0124, 0124, 0124, 0124, 0, 0, 0, 0, 0124, 0124, 0124, 0124,
@@ -290,7 +293,7 @@ const int TblShrinkSingle[512] = {// keep only rows with single
 
 };
 
-const int TblRowUniq[512] = { // 1 is row not defined in block  mode  1 to 111
+const int ZHOU::TblRowUniq[512] = { // 1 is row not defined in block  mode  1 to 111
 	7, 6, 6, 6, 6, 6, 6, 6, 5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4,
 	5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4,
 	3, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -309,7 +312,7 @@ const int TblRowUniq[512] = { // 1 is row not defined in block  mode  1 to 111
 	1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-const T128 AssignMask_Digit[81] = {// one mask for each assigned cell
+const T128 ZHOU::AssignMask_Digit[81] = {// one mask for each assigned cell
 	{ 0xfffbfdfe37e3f001, 0xfffffffefffbfdfe },	{ 0xfff7fbfd37e3f002, 0xfffffffefff7fbfd },
 	{ 0xffeff7fb37e3f004, 0xfffffffeffeff7fb },	{ 0xffdfeff7371f8e08, 0xfffffffeffdfeff7 },
 	{ 0xffbfdfef371f8e10, 0xfffffffeffbfdfef },	{ 0xff7fbfdf371f8e20, 0xfffffffeff7fbfdf },
@@ -353,7 +356,7 @@ const T128 AssignMask_Digit[81] = {// one mask for each assigned cell
 	{ 0xfbfdfefffbfdfeff, 0xfffffeff1c007e3f },
 };
 
-const T128 AssignMask_OtherDigits[81] = {//and all but that digit
+const T128 ZHOU::AssignMask_OtherDigits[81] = {//and all but that digit
 	{ 0xfffffffffffffffe, 0xffffffffffffffff },	{ 0xfffffffffffffffd, 0xffffffffffffffff },
 	{ 0xfffffffffffffffb, 0xffffffffffffffff },	{ 0xfffffffffffffff7, 0xffffffffffffffff },
 	{ 0xffffffffffffffef, 0xffffffffffffffff },	{ 0xffffffffffffffdf, 0xffffffffffffffff },
@@ -397,7 +400,7 @@ const T128 AssignMask_OtherDigits[81] = {//and all but that digit
 	{ 0xffffffffffffffff, 0xfffffffffbffffff },
 };
 
-const T128 TblColumnMask[9] = {
+const T128 ZHOU::TblColumnMask[9] = {
 	{ 0x4020100040201, 0x40201 },	{ 0x8040200080402, 0x80402 },		{ 0x10080400100804, 0x100804 },	{ 0x20100800201008, 0x201008 },
 	{ 0x40201000402010, 0x402010 },	{ 0x80402000804020, 0x804020 },	{ 0x100804001008040, 0x1008040 },	{ 0x201008002010080, 0x2010080 },
 	{ 0x402010004020100, 0x4020100 },

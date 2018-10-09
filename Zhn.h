@@ -14,18 +14,18 @@ funtions have been added to work in generation mode
    bits 0-8 9-17 18-26 for the rows 27-29 for unsolved rows
 */
 #include "sk_t.h"
-// tables specific to the brute force located in zh4_tables
-const extern int TblRowMask[8];// rows where single  found  000 to 111
-const extern int  Tblstartblock[27]; // (i%3) * 27 in zhou brute force
-const extern int TblShrinkMask[512];// existing minirows 000 to 111
-const extern int TblComplexMask[512]; // keep mini rows still valid optimised process
-const extern int TblMaskSingle[512]; // kill in other blocks locked column /box
-const extern int TblMaskDouble[512];// kill for locked in box / column
-const extern int TblColumnSingle[512]; // single in column applied to shrinked bloc
-const extern int TblShrinkSingle[512]; // keep only rows with single
-const extern int TblRowUniq[512]; // 1 is row not defined in block  mode  to 111
-const extern T128 AssignMask_Digit[81];
-//const extern T128 AssignMask_OtherDigits[81];
+//// tables specific to the brute force located in zh4_tables
+//const extern int TblRowMask[8];// rows where single  found  000 to 111
+//const extern int  Tblstartblock[27]; // (i%3) * 27 in zhou brute force
+//const extern int TblShrinkMask[512];// existing minirows 000 to 111
+//const extern int TblComplexMask[512]; // keep mini rows still valid optimised process
+//const extern int TblMaskSingle[512]; // kill in other blocks locked column /box
+//const extern int TblMaskDouble[512];// kill for locked in box / column
+//const extern int TblColumnSingle[512]; // single in column applied to shrinked bloc
+//const extern int TblShrinkSingle[512]; // keep only rows with single
+//const extern int TblRowUniq[512]; // 1 is row not defined in block  mode  to 111
+//const extern T128 AssignMask_Digit[81];
+////const extern T128 AssignMask_OtherDigits[81];
 struct ZHOU;
 
 struct ZH_GLOBAL { // global variables for the game table
@@ -89,7 +89,7 @@ struct ZH_GLOBAL { // global variables for the game table
 	//void Map_Morph_digits(GINT16 * td, int nc);
 	void NoMorph();
 	int InitSudoku();
-	int Go_InitSudoku(char * ze);
+	//int Go_InitSudoku(char * ze);
 	int Go_InitSudoku_NoMorph(char * ze);
 	int Go_InitSolve(char * ze);
 	int Go_InitSolve(GINT16 * td, int nc);
@@ -115,6 +115,21 @@ struct ZH_GLOBAL { // global variables for the game table
 */
 // class encapsulating the brute force 
 struct ZHOU{// size 32 bytes 
+
+	static const int TblRowUnsolved[8];
+	static const int TblRowMask[8];
+	static const int Tblstartblock[27];
+	static const int TblShrinkMask[512];
+	static const int TblComplexMask[512];
+	static const int TblMaskSingle[512];
+	static const int TblMaskDouble[512];
+	static const int TblColumnSingle[512];
+	static const int TblShrinkSingle[512];
+	static const int TblRowUniq[512];
+	static const T128 AssignMask_Digit[81];
+	static const T128 AssignMask_OtherDigits[81];
+	static const T128 TblColumnMask[9];
+
 	BF128 FD[9][2];
 	//ZHOUDIG zhd[9];
 	BF128 cells_unsolved;
@@ -126,16 +141,16 @@ struct ZHOU{// size 32 bytes
 	int Upd1(int digit);
 	int Update();
 	int InitSudoku(GINT16 * t, int n);
-	int InitSudoku(char * zpuz,int morph=1);
+	//int InitSudoku(char * zpuz,int morph=1);
 	char * SetKnown(char * zs);
 	int ApplySingleOrEmptyCells_Band3();
 	int ApplySingleOrEmptyCells_B12();
 	int ApplySingleOrEmptyCells();
 	int FullUpdate();
 	void SetaCom(int digit, int cell, int xcell);
-	inline void SetFloor(int cell){ FD[0][0] &= AssignMask_Digit[cell]; }
-	inline void Seta_c(int digit, int cell){ SetaCom(digit, cell, C_To128[cell]); }
-	inline void SetG(GINT16 x){ Seta_c(x.u8[1], x.u8[0]); }
+	//inline void SetFloor(int cell){ FD[0][0] &= AssignMask_Digit[cell]; }
+	//inline void Seta_c(int digit, int cell){ SetaCom(digit, cell, C_To128[cell]); }
+	//inline void SetG(GINT16 x){ Seta_c(x.u8[1], x.u8[0]); }
 	void Setcell(int cell);
 	inline void GuessBivalueInCell(BF128 & wc);
 	inline int GuessHiddenBivalue();
@@ -160,7 +175,7 @@ struct ZHOU{// size 32 bytes
 
 
 	// other calls and functions in Zh4_calls_variants
-	int CheckValidityQuick(char *puzzle);
+	//int CheckValidityQuick(char *puzzle);
 	int GetSol(char *puzzle);
 	int CheckOneStep(char *puzzle, char * zs);
 	inline int StatusValid(GINT16 * t, int n){
@@ -173,17 +188,17 @@ struct ZHOU{// size 32 bytes
 	int EndInitSudoku( GINT16 * t, int n);
 	int EndInitNextUa(ZHOU & o, int bf);// 17 search check know small uas in bloc
 
-	int IsMinimale(GINT16 * t, int n);
-	int IsMinimale(char * ze);
-	void PatFinal();
-	int GetFreeDigits_c(int cell){ return GetFreeDigits(C_To128[cell]); }
-	int GetFreeDigits(int xcell);
-	int GetSolvedDigitForCell(int cell);
+	//int IsMinimale(GINT16 * t, int n);
+	//int IsMinimale(char * ze);
+	//void PatFinal();
+	//int GetFreeDigits_c(int cell){ return GetFreeDigits(C_To128[cell]); }
+	//int GetFreeDigits(int xcell);
+	//int GetSolvedDigitForCell(int cell);
 
 	// inline small functions
 	inline int IsOffCandidate_c(int dig, int cell){return FD[dig][0].Off_c(cell); }
 	inline int IsOnCandidate_c(int dig, int cell){ return FD[dig][0].On_c(cell); }
-	inline void ClearCandidate_x(int dig, int xcell){ FD[dig][0].clearBit(xcell); }
+	//inline void ClearCandidate_x(int dig, int xcell){ FD[dig][0].clearBit(xcell); }
 	inline void ClearCandidate_c(int dig, int cell){ FD[dig][0].clearBit(C_To128[cell]); }
 	void CleanCellForDigits(int cell, int digits);
 	int CleanCellsForDigits(BF128 &  cells, int digits);
@@ -197,17 +212,17 @@ struct ZHOU{// size 32 bytes
 	}
 	//================== find active floors
 	void StartFloor(int digit, ZHOU & o);
-	int  UpdateFloor();
+	//int  UpdateFloor();
 	void GuessFloor();
 
 	// debugging code or print code
 	void Debug(int all = 0);
 	void DebugDigit(int digit);
-	void DebugActiveDigits();
+	//void DebugActiveDigits();
 	int GetAllDigits(int cell);
 	void ImageCandidats();
-	void ImageCandidats_b3();
-	int FullUpdateAtStart();
+	//void ImageCandidats_b3();
+	//int FullUpdateAtStart();
 	int CheckStatus();// located in solver_step 
 
 	// located in go_0xx.cpp
@@ -219,7 +234,7 @@ struct ZHOU{// size 32 bytes
 	int RateSingleBox(GINT64 * t, int nt);
 	int RateSingleRow(GINT64 * t, int nt);
 	int RateSingleCol(GINT64 * t, int nt);
-	int RateSingleDiag(GINT64 * t, int nt);
+	//int RateSingleDiag(GINT64 * t, int nt);
 	int CollectHiddenPairsBox(GINT64* tp, int & np,int lim=4);
 	int CollectHiddenPairsRow(GINT64* tp, int & np, int lim = 4);
 	int CollectHiddenPairsCol(GINT64* tp, int & np, int lim = 4);
@@ -254,7 +269,7 @@ struct ZHOU{// size 32 bytes
 	int Rate54_HiddenQuad();
 
 	void AssignSolver(int print = 0);
-	void XW_template(int idig);
+	//void XW_template(int idig);
 	void Naked_Pairs_Seen();
 };
 
