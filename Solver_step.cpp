@@ -8,14 +8,10 @@
 #include <stdlib.h>
 using namespace std;
 #include "main.h"
+#include "Zhn.h"
 #include "solver_step.h"
 
-
-//extern BF_FIX bf_fix;
-//extern OPTIONS options;
-extern ofstream  fout1, fout2, fout3, //fout4,
-fout_diam,fout_pearl,fout_l65;
-//extern FINPUT finput;
+extern ofstream  fout1, fout2;
 
 const char *orig[]={"row ","column ","box "," "};
 const char *lc="ABCDEFGHI";
@@ -23,7 +19,7 @@ const char *orig1="RCB ";
 
 PM_GO pm_go;
 
-extern ZHOU    zhou[50], zhou_i, zhou_solve;
+extern ZHOU    zhou[50], zhou_solve;
 extern ZH_GLOBAL zh_g;
 extern SGO sgo;
 // index rc/3 -> 3 boxes pas venu par tables, voir pourquoi
@@ -538,7 +534,7 @@ int XSTATUS::R65Xexpand(int xcell1, int xcell2, int loop, int * tback, BF128 & l
 	GINT64 t[160];// xcand, indsource
 	int   nt = 2,  ntd = 1, ntp, npas = 1, xcell;
 	t[0].u64 = xcell1;	t[1].u64 = xcell2;// source to 0
-	if (0 &&pm_go.opprint2 & 4){
+	if (0 && (pm_go.opprint2 & 4)){
 		cout << cellsFixedData[From_128_To_81[xcell1]].pt
 			<< " " << cellsFixedData[From_128_To_81[xcell2]].pt
 			<< " loop=" << loop << endl;
@@ -4501,8 +4497,8 @@ int PM_GO::Rate62_APE(){
 					wdigs ^= bit;
 				}
 				if (wd.Count() < (int) _popcnt32(wdigs))continue; // = is the minimum
-				if (0 &&opprint2 & 2)
-				cout << "more for digit " << idig + 1 << " cell base " << cellsFixedData[cell_base].pt << endl;
+				if (0 && (opprint2 & 2))
+					cout << "more for digit " << idig + 1 << " cell base " << cellsFixedData[cell_base].pt << endl;
 				// digit of the base cell must see a pair of the digit
 				for (int idig2 = 0; idig2 < 9; idig2++) if (wdigs & (1 << idig2)){
 					BF128 wd_dig2 = wd&zh_g.pm.pmdig[idig2];

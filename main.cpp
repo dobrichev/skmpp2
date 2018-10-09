@@ -1,7 +1,6 @@
 
 #define _CRT_SECURE_NO_DEPRECATE
 #include "main.h"
-#include "Zhn_cpp.h"
 
 // catching time as seconds+millis  (seconds since year 1970)
 int32_t GetTimeMillis() {
@@ -53,7 +52,6 @@ int Search_ccd(const char * ww)
 
 SGO sgo;
 extern void Go_0();
-extern FINPUT finput;
 int main(int narg, char *argv[]) {
 	cerr << "mainstart" << endl;
 	int32_t tdeb=GetTimeMillis();
@@ -121,11 +119,7 @@ int main(int narg, char *argv[]) {
 	return 0;
 }
 
-uint64_t p_cptg[40], p_cpt1g[20], p_cpt2g[20];
-
-
-extern ZHOU    zhou[50];
-extern ZH_GLOBAL zh_g;
+ZH_GLOBAL zh_g;
 extern SGO sgo;
 
 ofstream  fout1,fout2;
@@ -133,46 +127,10 @@ ofstream  fout1,fout2;
 #include "solver_step.h"
 
 extern PM_GO pm_go;
-void Go_c110(){// template serate mode
-    if (!sgo.finput_name) return;
-	long long cptg[20];
-	memset(cptg, 0, sizeof cptg);
-	cout << "Go_110 entry " << sgo.finput_name << " input" << endl;
-	FINPUT finput;
-	finput.open(sgo.finput_name);
-	if (!finput.is_open()){
-		cerr << "error open file " << sgo.finput_name << endl;
-		return;
-	}
-	char ze[200]; ze[81] = 0;
-	uint32_t npuz = 0;
-	while (finput.GetPuzzle(ze)){
-		npuz++;
-		if (npuz < sgo.vx[0]) continue;
-		if(pm_go.opprint2)cout << finput.ze << "to process npuz=" << npuz << endl;
-		zh_g.npuz = npuz;
-		if (zh_g.Go_InitSolve(ze)) {
-			cout << finput.ze << "invalid or multiple solutions npuz=" << npuz << endl;
-			continue;
-		}
-		pm_go.SolveSerate110();
-		if (sgo.vx[1] && npuz >= sgo.vx[1]) break;
-	}
-}
 
 //========================================
-const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ", "fupd ", "hpair ", "htripl ", " ", " " };
-#include "go_0xx_cpp.h"
-//#include "go_1xx_cpp.h"
-void Go_sol_1xx(){
-	cout << "command 1xx command=" << sgo.command << endl;
-	pm_go.opprint =sgo.bfx[9];
-	pm_go.opprint2 = sgo.bfx[8];
-	switch (sgo.command){
-	case 110: Go_c110(); break;// template solve serate mode
-	}
-	cerr << "back go-sol_1xx" << endl;
-}
+//const char * zh_g_cpt[10] = { "npuz", "guess", "close_d ", "upd1 ", "upd2 ", "fupd ", "hpair ", "htripl ", " ", " " };
+//#include "zhou.cpp"
 
 void Go_0( ){
 	// open  outputs files 1;2;3 output +_filex.txt
@@ -184,10 +142,28 @@ void Go_0( ){
 		fout1.open(zn);
 		zn[ll + 5] = '2'; fout2.open(zn);
 	}
-	switch (sgo.command / 100){
-	case 1: Go_sol_1xx(); break;
+	pm_go.opprint =sgo.bfx[9];
+	pm_go.opprint2 = sgo.bfx[8];
+	{
+	    if (!sgo.finput_name) return;
+		long long cptg[20];
+		memset(cptg, 0, sizeof cptg);
+		cout << "Go_110 entry " << sgo.finput_name << " input" << endl;
+		FINPUT finput;
+		finput.open(sgo.finput_name);
+		if (!finput.is_open()){
+			cerr << "error open file " << sgo.finput_name << endl;
+			return;
+		}
+		char ze[200]; ze[81] = 0;
+		while (finput.GetPuzzle(ze)){
+			if (zh_g.Go_InitSolve(ze)) {
+				cout << finput.ze << " invalid or multiple solutions" << endl;
+				continue;
+			}
+			pm_go.SolveSerate110();
+		}
 	}
-	cerr << "go_0 return" << endl;
 }
 
 

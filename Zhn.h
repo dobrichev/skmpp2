@@ -1,4 +1,4 @@
-
+#pragma once
 /*
 ZhouSolver.h
 Based on code posted to <http://forum.enjoysudoku.com/3-77us-solver-2-8g-cpu-testcase-17sodoku-t30470.html>
@@ -13,7 +13,7 @@ funtions have been added to work in generation mode
    it is a map of candidates plus 3 bits for unsolved rows
    bits 0-8 9-17 18-26 for the rows 27-29 for unsolved rows
 */
-//#include "t_128GP.h"
+#include "sk_t.h"
 // tables specific to the brute force located in zh4_tables
 const extern int TblRowMask[8];// rows where single  found  000 to 111
 const extern int  Tblstartblock[27]; // (i%3) * 27 in zhou brute force
@@ -256,64 +256,7 @@ struct ZHOU{// size 32 bytes
 	void AssignSolver(int print = 0);
 	void XW_template(int idig);
 	void Naked_Pairs_Seen();
+};
 
-	/*
-    inline void SetPat(char * pat, char * zsol, char * puzfinal){
-		zh_g.pat = pat; zh_g.zsol = zsol; zh_g.puzfinal = puzfinal;
-	};
-    // located in zh_uacollector.cpp  generation of UAs on a multi floor
-	void InitGenUas(char * zpuz);
-	void GenUas( int floors);
-	void GenUasBands12(int floors);
-	void GenUasBands12LessMinirow(int floors,int c1,int c2,int c3);
-	void GenUas2();
-	void GenUas3();
-	void GenUas4();
-	void GenUas5();
-	void GenUas6();
-	void GenMinirows2();
-	void GenMinirows3();
-	int Update2();
-	int Update3();
-	int Update4();
-	int Update5();
-	int Update6();
-	void Guess2();
-	void Guess3();
-	void Guess4();
-	void Guess6();
-	void Guess5();
-	void Guess5_4();
-	void Guess5_3();
-	int CollectFinal(BF128 *td,int &lim10);
-   */
- };
+extern ZH_GLOBAL zh_g;
 
-// struct ZHBAND{// similar to  ZHOU for one band
-//	 int FD[9][2],cells_unsolved;
-//	 int ndigits, index, unsolved_digits;
-//
-//	 inline void Copy(ZHBAND & o);
-//	 inline void Assign(int digit, int cell, int xcell);
-//	 int Update();
-//	 char * SetKnown(char * zs);
-//	 int ApplySingleOrEmptyCells_Band3();
-//	 int ApplySingleOrEmptyCells_B12();
-//	 int ApplySingleOrEmptyCells();
-//	 int FullUpdate();
-//	 void SetaCom(int digit, int cell);
-//	 void Setcell(int cell);
-//	 inline void GuessBivalueInCell(BF128 & wc);
-//	 inline int GuessHiddenBivalue();
-//	 int GuessHiddenTriplet();
-//	 void Guess();
-//	 inline void ComputeNext(){	 if (FullUpdate())	 Guess();	 	 }
-//	 int GetFreeDigits_c(int cell){ return GetFreeDigits(C_To128[cell]); }
-//	 int GetFreeDigits(int xcell);
-//	 int GetSolvedDigitForCell(int cell);
-//	 // debugging code or print code
-//	 void Debug(int all = 0);
-//	 int GetAllDigits(int cell);
-//	 void ImageCandidats();
-//	 void ImageCandidats_b3();
-// };

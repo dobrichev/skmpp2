@@ -1,5 +1,4 @@
-
-//#include "main.h"
+#include "sk_t.h"
 
 struct GINTBUF{//Storing variable lentgh chains .. start one 64 bit limit
 	GINT * buf;
